@@ -9,6 +9,8 @@ class Pointer {
         this.length = 40;
         this.minY = this.length;
         this.maxY = cvs.height - this.length;
+
+        this.onMove = () => {};
     }
 
     draw = () => {
@@ -49,6 +51,7 @@ document.addEventListener("mousemove", e => {
     if (dragging === -1) return;
     const pointer = pointers[dragging];
     pointer.y = Math.max(Math.min(pointer.y + e.movementY, pointer.maxY), pointer.minY);
+    pointer.onMove();
 });
 
 export { Pointer, createPointer };
