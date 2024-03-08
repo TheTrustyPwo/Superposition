@@ -1,17 +1,26 @@
 import { WaveDisplay } from "./shared/waves.js";
 
+const fps = 60;
+
 const cvs = document.querySelector('canvas');
 const c = cvs.getContext('2d');
 const frequencyInput = document.getElementById("frequencyInput");
 const amplitudeInput = document.getElementById("amplitudeInput");
 
 const waveDisplay = new WaveDisplay(cvs, c);
+waveDisplay.frequency = frequencyInput.value;
+waveDisplay.amplitude = amplitudeInput.value;
 
 const animate = () => {
-    requestAnimationFrame(animate);
     c.clearRect(0, 0, cvs.width, cvs.height);
     waveDisplay.update();
+
+    setTimeout(() => {
+        requestAnimationFrame(animate);
+    }, 1000 / fps);
 }
+
+animate();
 
 frequencyInput.oninput = () => {
     document.getElementById("frequencyValue").innerText = frequencyInput.value;
