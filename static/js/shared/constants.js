@@ -1,0 +1,14 @@
+const WAVES  = {
+    WAVES_TOP_COLOR: "#000000",
+    WAVES_BOTTOM_COLOR: "#454a4d",
+    WAVES_WIDTH: 2,
+
+    WAVELENGTH_DISPLAY_COLOR: "#179e7e",
+    WAVELENGTH_DISPLAY_WIDTH: 3
+};
+
+const POINTERS = {
+    POINTER_DEFAULT_COLOR: "#179e7e"
+}
+
+export { WAVES };
