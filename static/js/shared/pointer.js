@@ -39,6 +39,7 @@ function createPointer(pointer) {
 
 ["mousedown", "touchstart"].forEach(event => {
     document.addEventListener(event, e => {
+        console.log(event);
         for (let i = 0; i < pointers.length; i++) {
             // use math check in triangle
             // lazy to code
@@ -51,13 +52,18 @@ function createPointer(pointer) {
     document.addEventListener(event, e => { dragging = -1; });
 });
 
-["mousemove", "touchmove"].forEach(event => {
-    document.addEventListener(event, e => {
-        if (dragging === -1) return;
-        const pointer = pointers[dragging];
-        pointer.y = Math.max(Math.min(pointer.y + e.movementY, pointer.maxY), pointer.minY);
-        pointer.onMove();
-    });
+document.addEventListener("mousemove", e => {
+    if (dragging === -1) return;
+    const pointer = pointers[dragging];
+    pointer.y = Math.max(Math.min(pointer.y + e.movementY, pointer.maxY), pointer.minY);
+    pointer.onMove();
+});
+
+document.addEventListener("touchmove", e => {
+    if (dragging === -1) return;
+    const pointer = pointers[dragging];
+    pointer.y = Math.max(Math.min(e.targetTouches[0].pageY, pointer.maxY), pointer.minY);
+    pointer.onMove();
 });
 
 export { Pointer, createPointer };
