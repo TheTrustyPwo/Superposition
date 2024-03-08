@@ -6,8 +6,12 @@ const frequencyInput = document.getElementById("frequencyInput");
 const amplitudeInput = document.getElementById("amplitudeInput");
 
 const waveDisplay = new WaveDisplay(cvs, c);
-waveDisplay.load(100);
-waveDisplay.animate();
+
+const animate = () => {
+    requestAnimationFrame(animate);
+    c.clearRect(0, 0, cvs.width, cvs.height);
+    waveDisplay.update();
+}
 
 frequencyInput.oninput = () => {
     document.getElementById("frequencyValue").innerText = frequencyInput.value;

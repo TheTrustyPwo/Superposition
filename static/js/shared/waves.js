@@ -1,30 +1,60 @@
 class WaveDisplay {
-    constructor (cvs, c, frequency = 0.5, amplitude = 0.25) {
+    constructor (cvs, c) {
         this.cvs = cvs;
         this.c = c;
 
         this.t = 0;
-        this.frequency = frequency;
-        this.amplitude = amplitude;
+        this.dt = 0.01;
+        this.frequency = 0.25;
+        this.amplitude = 0.5;
         this.spacing = 10;
 
-        this.offsetX = this.cvs.offsetLeft;
         this.vectors = [];
-
-        // Line
-        this.gradient = -5;
-        this.intercept = this.cvs.offsetHeight / 2 + 100;
+        this.setRect(0, this.cvs.height / 2, this.cvs.width, this.cvs.height / 2);
     }
 
-    load = (amount) => {
-        for (let i = 0; i < amount; i++) this.vectors.push(new WaveVector(this, i));
-    }
-
-    animate = () => {
-        requestAnimationFrame(this.animate);
-        this.c.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    update = () => {
         this.vectors.forEach(v => v.draw());
-        this.t += 0.01;
+        this.t += this.dt;
+    }
+
+    setRect = (x1, y1, x2, y2) => {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.gradient = (this.y2 - this.y1) / (this.x2 - this.x1);
+        this.verticalOffset = this.y1 - this.gradient * this.x1;
+
+        const distance = Math.sqrt((this.y2 - this.y1) ** 2 + (this.x2 - this.x1) ** 2);
+        const amount = Math.ceil(distance / this.spacing);
+        while (this.vectors.length > amount) this.vectors.pop();
+
+        for (let i = 0; i < this.vectors.length; i++) {
+            this.vectors[i].x = this.x1 + i * this.spacing;
+            this.vectors[i].base = this.gradient * this.vectors[i].x + this.verticalOffset;
+        }
+
+        for (let i = this.vectors.length; i < amount; i++)
+            this.vectors.push(new WaveVector(this, i));
+
+        console.log(this.vectors.length);
+    }
+
+    set setFrequency(frequency) {
+        this.frequency = frequency;
+    }
+
+    set setAmplitude(amplitude) {
+        this.amplitude = amplitude;
+    }
+
+    set setSpacing(spacing) {
+        this.spacing = spacing;
+    }
+
+    set setDt(dt) {
+        this.dt = dt;
     }
 }
 
@@ -32,8 +62,8 @@ class WaveVector {
     constructor(display, id) {
         this.display = display;
         this.id = id;
-        this.base =  this.display.gradient * this.id + this.display.intercept;
-        this.x = this.display.offsetX + this.id * this.display.spacing;
+        this.x = this.display.x1 + this.id * this.display.spacing;
+        this.base =  this.display.gradient * this.x + this.display.verticalOffset;
         this.y = 0.5 * this.display.amplitude * this.display.cvs.height
             * Math.sin(this.id * this.display.frequency) + this.base;
     }
