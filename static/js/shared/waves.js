@@ -1,16 +1,22 @@
+import { distance } from "../utils/math.js";
+import { WAVES } from "./constants.js";
+
 class WaveDisplay {
     constructor (cvs, c) {
         this.cvs = cvs;
         this.c = c;
 
         this.t = 0;
-        this.dt = 0.01;
-        this.frequency = 0.25;
+        this.dt = 1 / 15
+        this.frequency = 10;
         this.amplitude = 0.5;
         this.spacing = 10;
 
         this.vectors = [];
         this.setRect(0, this.cvs.height / 2, this.cvs.width, this.cvs.height / 2);
+
+        this.waveTopColor = WAVES.WAVES_TOP_COLOR;
+        this.waveBottomColor = WAVES.WAVES_BOTTOM_COLOR;
     }
 
     update = () => {
@@ -26,8 +32,7 @@ class WaveDisplay {
         this.gradient = (this.y2 - this.y1) / (this.x2 - this.x1);
         this.verticalOffset = this.y1 - this.gradient * this.x1;
 
-        const distance = Math.sqrt((this.y2 - this.y1) ** 2 + (this.x2 - this.x1) ** 2);
-        const amount = Math.ceil(distance / this.spacing);
+        const amount = Math.ceil((x2 - x1) / this.spacing);
         while (this.vectors.length > amount) this.vectors.pop();
 
         for (let i = 0; i < this.vectors.length; i++) {
@@ -37,24 +42,54 @@ class WaveDisplay {
 
         for (let i = this.vectors.length; i < amount; i++)
             this.vectors.push(new WaveVector(this, i));
-
-        console.log(this.vectors.length);
     }
 
-    set setFrequency(frequency) {
-        this.frequency = frequency;
+    drawWavelength = (direction) => {
+
+        let y1, y2, dist = distance(this.x1, this.y1, this.x2, this.y2);
+        if (direction) {
+            // On top
+            y1 = this.x1 * this.gradient + this.verticalOffset - 0.5 * this.amplitude * this.cvs.height - 20;
+            y2 = this.x2 * this.gradient + this.verticalOffset - 0.5 * this.amplitude * this.cvs.height - 20
+        } else {
+            // Below
+            y1 = this.x1 * this.gradient + this.verticalOffset + 0.5 * this.amplitude * this.cvs.height + 20;
+            y2 = this.x2 * this.gradient + this.verticalOffset + 0.5 * this.amplitude * this.cvs.height + 20
+        }
+
+        this.c.beginPath();
+        this.c.moveTo(this.x1, y1);
+        this.c.lineTo(this.x2, y2);
+
+        const markerLength = 12;
+        const theta = Math.atan(-1 / this.gradient);
+        this.c.moveTo(this.x1 + markerLength * Math.cos(theta), y1 + markerLength * Math.sin(theta));
+        this.c.lineTo(this.x1 - markerLength * Math.cos(theta), y1 - markerLength * Math.sin(theta))
+        this.c.moveTo(this.x2 + markerLength * Math.cos(theta), y2 + markerLength * Math.sin(theta));
+        this.c.lineTo(this.x2 - markerLength * Math.cos(theta), y2 - markerLength * Math.sin(theta))
+
+        this.c.closePath();
+        this.c.strokeStyle = WAVES.WAVELENGTH_DISPLAY_COLOR;
+        this.c.lineWidth = WAVES.WAVELENGTH_DISPLAY_WIDTH;
+        this.c.stroke();
+
+        const textX = (this.x1 + this.x2) / 2;
+        const textY = (y1 + y2) / 2 + (direction ? -1 : 1) * 18;
+        this.c.save();
+        this.c.font = "30px arial";
+        this.c.textAlign = "center";
+        this.c.translate(textX, textY);
+        this.c.rotate(Math.atan(this.gradient));
+        this.c.fillText(`${(dist / this.wavelength).toFixed(2)}λ`, 0, 10);
+        this.c.restore();
     }
 
-    set setAmplitude(amplitude) {
-        this.amplitude = amplitude;
+    get distance() {
+        return distance(this.x1, this.y1, this.x2, this.y2);
     }
 
-    set setSpacing(spacing) {
-        this.spacing = spacing;
-    }
-
-    set setDt(dt) {
-        this.dt = dt;
+    get wavelength() {
+        return 100 / this.frequency;
     }
 }
 
@@ -62,10 +97,11 @@ class WaveVector {
     constructor(display, id) {
         this.display = display;
         this.id = id;
+
         this.x = this.display.x1 + this.id * this.display.spacing;
         this.base =  this.display.gradient * this.x + this.display.verticalOffset;
         this.y = 0.5 * this.display.amplitude * this.display.cvs.height
-            * Math.sin(this.id * this.display.frequency) + this.base;
+            * Math.sin(0.05 * this.display.frequency * distance(this.x, this.base, this.display.x1, this.display.y1)) + this.base;
     }
 
     draw = () => {
@@ -73,14 +109,15 @@ class WaveVector {
         this.display.c.moveTo(this.x, this.base);
         this.display.c.lineTo(this.x, this.y);
         this.display.c.closePath();
-        this.display.c.strokeStyle = (this.y <= this.base ? "#000000" : "#454a4d")
+        this.display.c.strokeStyle = (this.y <= this.base ? this.display.waveTopColor : this.display.waveBottomColor);
+        this.display.c.lineWidth = WAVES.WAVES_WIDTH;
         this.display.c.stroke();
         this.update();
     }
 
     update = () => {
         this.y = 0.5 * this.display.amplitude * this.display.cvs.height
-            * Math.sin(this.id * this.display.frequency - this.display.t) + this.base;
+            * Math.sin(0.05 * this.display.frequency * distance(this.x, this.base, this.display.x1, this.display.y1) - this.display.t) + this.base;
     }
 }
 
