@@ -1,45 +1,20 @@
+import { WaveDisplay } from "./shared/waves.js";
+
 const cvs = document.querySelector('canvas');
 const c = cvs.getContext('2d');
+const frequencyInput = document.getElementById("frequencyInput");
+const amplitudeInput = document.getElementById("amplitudeInput");
 
-const offsetX = cvs.offsetLeft;
-const offsetY = cvs.offsetHeight / 2;
+const waveDisplay = new WaveDisplay(cvs, c);
+waveDisplay.load(100);
+waveDisplay.animate();
 
-let t = 0;
-let frequency = 0.05
-let amplitude = 0.5;
-
-class WaveVector {
-    constructor(id) {
-        this.id = id;
-        this.x = offsetX + this.id * 10;
-        this.y = 0.5 * amplitude * cvs.height * Math.sin(this.id * frequency) + offsetY;
-    }
-
-    draw = () => {
-        c.beginPath();
-        c.moveTo(this.x, offsetY);
-        c.lineTo(this.x, this.y);
-        c.closePath();
-        c.stroke();
-        this.update();
-        console.log(this.id);
-    }
-
-    update = () => {
-        this.y = 0.5 * amplitude * cvs.height * Math.sin(this.id * frequency - t) + offsetY;
-    }
+frequencyInput.oninput = () => {
+    document.getElementById("frequencyValue").innerText = frequencyInput.value;
+    waveDisplay.frequency = frequencyInput.value;
 }
 
-const vectorList = [];
-for (let i = 0; i < 100; i++) {
-    vectorList.push(new WaveVector(i));
+amplitudeInput.oninput = () => {
+    document.getElementById("amplitudeInput").innerText = amplitudeInput.value;
+    waveDisplay.amplitude = amplitudeInput.value;
 }
-
-function animate() {
-    requestAnimationFrame(animate);
-    c.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    vectorList.forEach(v => v.draw());
-    t += 0.01;
-}
-
-animate();
