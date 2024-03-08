@@ -37,21 +37,27 @@ function createPointer(pointer) {
     pointers.push(pointer);
 }
 
-document.addEventListener("mousedown", e => {
-    for (let i = 0; i < pointers.length; i++) {
-        // use math check in triangle
-        // lazy to code
-    }
-    dragging = 0;
+["mousedown", "touchstart"].forEach(event => {
+    document.addEventListener(event, e => {
+        for (let i = 0; i < pointers.length; i++) {
+            // use math check in triangle
+            // lazy to code
+        }
+        dragging = 0;
+    });
 });
 
-document.addEventListener("mouseup", e => { dragging = -1; });
+["mouseup", "touchend"].forEach(event => {
+    document.addEventListener(event, e => { dragging = -1; });
+});
 
-document.addEventListener("mousemove", e => {
-    if (dragging === -1) return;
-    const pointer = pointers[dragging];
-    pointer.y = Math.max(Math.min(pointer.y + e.movementY, pointer.maxY), pointer.minY);
-    pointer.onMove();
+["mousemove", "touchmove"].forEach(event => {
+    document.addEventListener(event, e => {
+        if (dragging === -1) return;
+        const pointer = pointers[dragging];
+        pointer.y = Math.max(Math.min(pointer.y + e.movementY, pointer.maxY), pointer.minY);
+        pointer.onMove();
+    });
 });
 
 export { Pointer, createPointer };
