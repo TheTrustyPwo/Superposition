@@ -29,8 +29,8 @@ class InterferenceSimulation extends Simulation {
         this.wave2.setRect(this.wave2.x1, this.wave2.y1, this.pointer.x - 20, this.pointer.y);
         this.wave1.update();
         this.wave2.update();
-        this.wave1.drawWavelength(1);
-        this.wave2.drawWavelength(0);
+        this.wave1.drawWavelength(this.wave1.y1 <= this.wave2.y1);
+        this.wave2.drawWavelength(this.wave1.y1 > this.wave2.y1);
 
         this.pointer.draw();
         this.screen.draw();
