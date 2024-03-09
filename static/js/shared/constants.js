@@ -8,7 +8,12 @@ const WAVES  = {
 };
 
 const POINTERS = {
-    POINTER_DEFAULT_COLOR: "#179e7e"
+    POINTER_COLOR: "#179e7e"
 }
 
-export { WAVES };
+const SCREENS = {
+    SCREEN_COLOR: "#ffffff",
+    SCREEN_WIDTH: 5
+}
+
+export { WAVES, POINTERS, SCREENS };
