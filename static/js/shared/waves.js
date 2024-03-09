@@ -91,7 +91,7 @@ class WaveDisplay {
     }
 
     get wavelength() {
-        return 100 / this.frequency;
+        return 120 / this.frequency;
     }
 }
 
