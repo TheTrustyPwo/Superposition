@@ -20,11 +20,13 @@ class InterferenceSimulation extends Simulation {
 
         this.wave1.setRect(100, 0.3 * cvs.height, this.pointer.x - 20, this.pointer.y);
         this.wave2.setRect(100, 0.7 * cvs.height, this.pointer.x - 20, this.pointer.y);
+
+        this.adjustingSource = 0;
     }
 
     update = () => {
-        this.wave1.setRect(100, 0.3 * this.cvs.height, this.pointer.x - 20, this.pointer.y);
-        this.wave2.setRect(100, 0.7 * this.cvs.height, this.pointer.x - 20, this.pointer.y);
+        this.wave1.setRect(this.wave1.x1, this.wave1.y1, this.pointer.x - 20, this.pointer.y);
+        this.wave2.setRect(this.wave2.x1, this.wave2.y1, this.pointer.x - 20, this.pointer.y);
         this.wave1.update();
         this.wave2.update();
         this.wave1.drawWavelength(1);
@@ -54,15 +56,26 @@ class InterferenceSimulation extends Simulation {
         return 2 * this.pathDifference;
     }
 
-    mouseDown = (event) => {};
+    mouseDown = (event) => {
+        if (this.wave1.source.contains(event.pageX, event.pageY)) this.adjustingSource = 1;
+        else if (this.wave2.source.contains(event.pageX, event.pageY)) this.adjustingSource = 2;
+        else this.adjustingSource = 0;
+    };
 
-    mouseUp = (event) => {};
+    mouseUp = (event) => {
+        this.adjustingSource = 0;
+    };
 
     mouseMove = (event, x, y) => {
-        event.preventDefault();
-        this.pointer.y = Math.max(Math.min(y, this.pointer.maxY), this.pointer.minY);
-        this.pointer.x = Math.max(Math.min(x, this.screen.maxX) + 10, this.screen.minX + 10);
-        this.screen.x = Math.max(Math.min(x, this.screen.maxX), this.screen.minX);
+        if (this.adjustingSource === 0) {
+            this.pointer.y = Math.max(Math.min(y, this.pointer.maxY), this.pointer.minY);
+            this.pointer.x = Math.max(Math.min(x, this.screen.maxX) + 10, this.screen.minX + 10);
+            this.screen.x = Math.max(Math.min(x, this.screen.maxX), this.screen.minX);
+        } else {
+            const wave = (this.adjustingSource === 1 ? this.wave1 : this.wave2);
+            wave.x1 = Math.max(Math.min(x, 0.3 * this.cvs.width), 100);
+            wave.y1 = Math.max(Math.min(y, 0.9 * this.cvs.height), 0.1 * this.cvs.height);
+        }
     }
 }
 

@@ -23,9 +23,9 @@ const animate = () => {
     const ep = 0.01
     pathDifference.innerText = `${simulation.pathDifference.toFixed(2)}`;
     phaseDifference.innerText = `${simulation.phaseDifference.toFixed(2)}`;
-    if (Math.abs(simulation.phaseDifference) < ep || Math.abs(simulation.phaseDifference - 2) < ep) {
+    if (Math.min(Math.abs(simulation.phaseDifference % 2), 2 - Math.abs(simulation.phaseDifference % 2)) < ep) {
         interference.innerText = "Constructive Interference!";
-    } else if (Math.abs(simulation.phaseDifference - 1) < ep) {
+    } else if (Math.min(Math.abs((simulation.phaseDifference + 1) % 2), 2 - Math.abs((simulation.phaseDifference + 1) % 2)) < ep) {
         interference.innerText = "Destructive Interference!";
     } else interference.innerText = "Partial Interference"
 

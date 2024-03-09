@@ -13,14 +13,14 @@ class Simulation {
             // lazy to code
         }
         interacting = 0;
-        simulations[interacting].mouseDown(event);
+        simulations[interacting].mouseDown(e);
     });
 });
 
 ["mouseup", "touchend"].forEach(event => {
     document.addEventListener(event, e => {
         if (interacting === -1) return;
-        simulations[interacting].mouseUp(event)
+        simulations[interacting].mouseUp(e)
         interacting = -1;
     });
 });

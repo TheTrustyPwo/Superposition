@@ -13,6 +13,7 @@ class WaveDisplay {
         this.spacing = 10;
 
         this.vectors = [];
+        this.source = new WaveSource(this);
         this.setRect(0, this.cvs.height / 2, this.cvs.width, this.cvs.height / 2);
 
         this.waveTopColor = WAVES.WAVES_TOP_COLOR;
@@ -21,6 +22,7 @@ class WaveDisplay {
 
     update = () => {
         this.vectors.forEach(v => v.draw());
+        this.source.draw();
         this.t += this.dt;
     }
 
@@ -118,6 +120,41 @@ class WaveVector {
     update = () => {
         this.y = 0.5 * this.display.amplitude * this.display.cvs.height
             * Math.sin(0.05 * this.display.frequency * distance(this.x, this.base, this.display.x1, this.display.y1) - this.display.t) + this.base;
+    }
+}
+
+class WaveSource {
+    constructor(display) {
+        this.display = display;
+        this.radius = 15;
+        this.offset = 6;
+        this.amplitude = 3;
+    }
+
+    update = () => {
+        this.internal = this.offset + this.amplitude * Math.sin(this.display.t);
+    }
+
+    draw = () => {
+        this.display.c.save();
+        this.display.c.beginPath();
+        this.display.c.arc(this.display.x1, this.display.y1, this.radius, 0, 2 * Math.PI, false);
+        this.display.c.fillStyle = this.display.waveTopColor;
+        this.display.c.closePath();
+        this.display.c.fill();
+
+        this.display.c.beginPath();
+        this.display.c.arc(this.display.x1, this.display.y1, this.internal, 0, 2 * Math.PI, false);
+        this.display.c.fillStyle = this.display.waveBottomColor;
+        this.display.c.closePath();
+        this.display.c.fill();
+        this.display.c.restore();
+
+        this.update();
+    }
+
+    contains = (x, y) => {
+        return distance(x, y, this.display.x1, this.display.y1) <= this.radius;
     }
 }
 
