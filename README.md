@@ -25,7 +25,7 @@
   <p align="center">
     This website features an interactive textbook and is an excellent resource for students learning wave superposition, interference and diffraction.
     <br/>
-    <a href="/" target="_blank">View Website (Soon)</a>
+    <a href="https://thetrustypwo.github.io/Superposition/index.html" target="_blank">View Website</a>
     .
     <a href="https://github.com/TheTrustyPwo/Superposition/issues">Report Bug</a>
     ·
@@ -69,7 +69,6 @@ Description Soon :)
 ### Built With
 
 * ![JavaScript](https://img.shields.io/static/v1?style=for-the-badge&message=JavaScript&color=222222&logo=JavaScript&logoColor=F7DF1E&label=)
-* ![Bootstrap](https://img.shields.io/static/v1?style=for-the-badge&message=Bootstrap&color=7952B3&logo=Bootstrap&logoColor=FFFFFF&label=)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -91,6 +90,8 @@ deployment for notes on how to deploy the project.
 ```shell
 git clone https://github.com/TheTrustyPwo/Superposition.git
 ```
+
+2. Open `index.html`
 
 
 <!-- LICENSE -->
