@@ -1,5 +1,5 @@
 import { Simulation } from "./index.js";
-import { WaveDisplay } from "../shared/waves.js";
+import { WaveVectorDisplay } from "../shared/waves.js";
 import { Pointer } from "../shared/pointer.js";
 import { Screen } from "../shared/screen.js";
 
@@ -10,8 +10,8 @@ class InterferenceSimulation extends Simulation {
         this.frequency = frequency;
         this.amplitude = amplitude;
 
-        this.wave1 = new WaveDisplay(cvs, c);
-        this.wave2 = new WaveDisplay(cvs, c);
+        this.wave1 = new WaveVectorDisplay(cvs, c);
+        this.wave2 = new WaveVectorDisplay(cvs, c);
         this.setFrequency(frequency);
         this.setAmplitude(amplitude);
 

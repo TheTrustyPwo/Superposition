@@ -1,15 +1,15 @@
 import { distance } from "../utils/math.js";
 import { WAVES } from "./constants.js";
 
-class WaveDisplay {
+class WaveVectorDisplay {
     constructor (cvs, c) {
         this.cvs = cvs;
         this.c = c;
 
         this.t = 0;
         this.dt = 1 / 15
-        this.frequency = 10;
-        this.amplitude = 0.5;
+        this.frequency = 1.0;
+        this.amplitude = 0.2;
         this.spacing = 10;
 
         this.vectors = [];
@@ -47,7 +47,6 @@ class WaveDisplay {
     }
 
     drawWavelength = (direction) => {
-
         let y1, y2, dist = distance(this.x1, this.y1, this.x2, this.y2);
         if (direction) {
             // On top
@@ -123,6 +122,58 @@ class WaveVector {
     }
 }
 
+class WaveFrontDisplay {
+    constructor(cvs, c) {
+        this.cvs = cvs;
+        this.c = c;
+
+        this.t = 0;
+        this.dt = 1 / 15
+        this.frequency = 1.0;
+
+        this.wavefronts = [];
+        this.source = new WaveSource(this);
+        this.setRect(0, this.cvs.height / 2, this.cvs.width, this.cvs.height / 2);
+
+        this.wavefronts.push(new WaveFront(this, 1));
+    }
+
+    setRect = (x1, y1, x2, y2) => {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+    }
+
+    update = () => {
+        this.wavefronts.forEach(v => v.draw());
+        this.t += this.dt;
+    }
+}
+
+class WaveFront {
+    constructor(display, id) {
+        this.display = display;
+        this.id = id;
+
+        this.x = this.display.x1 + 100 * this.id / this.display.frequency;
+    }
+
+    draw = () => {
+        this.display.c.beginPath();
+        this.display.c.arc(this.display.x1, this.display.y1, this.x - this.display.x1, -Math.PI / 2, Math.PI / 2, false);
+        this.display.c.closePath();
+        this.display.c.strokeStyle = "#ffffff"
+        this.display.c.stroke();
+        console.log(this.display.x1, this.display.y1, this.x - this.display.x1)
+        this.update();
+    }
+
+    update = () => {
+ 
+    }
+}
+
 class WaveSource {
     constructor(display) {
         this.display = display;
@@ -158,4 +209,4 @@ class WaveSource {
     }
 }
 
-export { WaveDisplay, WaveVector };
+export { WaveVectorDisplay, WaveVector, WaveFrontDisplay };
