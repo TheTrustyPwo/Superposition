@@ -7,9 +7,10 @@ class WaveVectorDisplay {
         this.c = c;
 
         this.t = 0;
-        this.dt = 1 / 15
-        this.frequency = 1.0;
+        this.dt = 1 / 60;
+        this.wavelength = 150;
         this.amplitude = 0.2;
+        this.velocity = 60;
         this.spacing = 10;
 
         this.vectors = [];
@@ -89,8 +90,8 @@ class WaveVectorDisplay {
         return distance(this.x1, this.y1, this.x2, this.y2);
     }
 
-    get wavelength() {
-        return 120 / this.frequency;
+    get waveNumber() {
+        return 2 * Math.PI / this.wavelength;
     }
 }
 
@@ -101,8 +102,9 @@ class WaveVector {
 
         this.x = this.display.x1 + this.id * this.display.spacing;
         this.base =  this.display.gradient * this.x + this.display.verticalOffset;
+        const dist =  distance(this.x, this.base, this.display.x1, this.display.y1);
         this.y = 0.5 * this.display.amplitude * this.display.cvs.height
-            * Math.sin(0.05 * this.display.frequency * distance(this.x, this.base, this.display.x1, this.display.y1)) + this.base;
+            * Math.cos(this.display.waveNumber * (dist - this.display.velocity * this.display.t)) + this.base;
     }
 
     draw = () => {
@@ -117,8 +119,9 @@ class WaveVector {
     }
 
     update = () => {
+        const dist =  distance(this.x, this.base, this.display.x1, this.display.y1);
         this.y = 0.5 * this.display.amplitude * this.display.cvs.height
-            * Math.sin(0.05 * this.display.frequency * distance(this.x, this.base, this.display.x1, this.display.y1) - this.display.t) + this.base;
+            * Math.cos(this.display.waveNumber * (dist - this.display.velocity * this.display.t)) + this.base;
     }
 }
 
@@ -183,7 +186,7 @@ class WaveSource {
     }
 
     update = () => {
-        this.internal = this.offset + this.amplitude * Math.sin(this.display.t);
+        this.internal = this.offset + this.amplitude * Math.cos(this.display.waveNumber * this.display.velocity * this.display.t);
     }
 
     draw = () => {

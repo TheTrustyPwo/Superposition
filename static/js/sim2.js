@@ -4,13 +4,13 @@ const fps = 60;
 
 const cvs = document.querySelector('canvas');
 const c = cvs.getContext('2d');
-const frequencyInput = document.getElementById("frequencyInput");
+const wavelengthInput = document.getElementById("wavelengthInput");
 const amplitudeInput = document.getElementById("amplitudeInput");
 const pathDifference = document.getElementById("pathDifference");
 const phaseDifference = document.getElementById("phaseDifference");
 const interference = document.getElementById("interference");
 
-const simulation = new InterferenceSimulation(cvs, c, frequencyInput.value, amplitudeInput.value);
+const simulation = new InterferenceSimulation(cvs, c, wavelengthInput.value, amplitudeInput.value);
 simulation.wave1.waveTopColor = "#e1503c";
 simulation.wave1.waveBottomColor = "#ea887b";
 simulation.wave2.waveTopColor = "#eea71f";
@@ -35,9 +35,9 @@ const animate = () => {
 
 }
 
-frequencyInput.oninput = () => {
-    document.getElementById("frequencyValue").innerText = frequencyInput.value;
-    simulation.setFrequency(frequencyInput.value);
+wavelengthInput.oninput = () => {
+    document.getElementById("wavelengthValue").innerText = wavelengthInput.value;
+    simulation.setWavelength(wavelengthInput.value);
 }
 
 amplitudeInput.oninput = () => {

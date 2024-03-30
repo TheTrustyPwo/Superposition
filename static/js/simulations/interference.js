@@ -5,14 +5,14 @@ import { Screen } from "../shared/screen.js";
 
 // Double Source Interference Simulation
 class InterferenceSimulation extends Simulation {
-    constructor(cvs, c, frequency = 1.0, amplitude = 0.2) {
+    constructor(cvs, c, wavelength = 120, amplitude = 0.2) {
         super(cvs, c);
-        this.frequency = frequency;
+        this.wavelength = wavelength;
         this.amplitude = amplitude;
 
         this.wave1 = new WaveVectorDisplay(cvs, c);
         this.wave2 = new WaveVectorDisplay(cvs, c);
-        this.setFrequency(frequency);
+        this.setWavelength(wavelength);
         this.setAmplitude(amplitude);
 
         this.pointer = new Pointer(cvs, c, cvs.width - 50, cvs.height / 2);
@@ -36,10 +36,10 @@ class InterferenceSimulation extends Simulation {
         this.screen.draw();
     }
 
-    setFrequency = (freq) => {
-        this.frequency = freq;
-        this.wave1.frequency = freq;
-        this.wave2.frequency = freq;
+    setWavelength = (wavelength) => {
+        this.wavelength = wavelength;
+        this.wave1.wavelength = wavelength;
+        this.wave2.wavelength = wavelength;
     }
 
     setAmplitude = (amplitude) => {
