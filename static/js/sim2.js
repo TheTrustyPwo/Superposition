@@ -17,7 +17,7 @@ simulation.wave2.waveTopColor = "#eea71f";
 simulation.wave2.waveBottomColor = "#f4c671";
 
 const animate = () => {
-    c.clearRect(0, 0, cvs.width, cvs.height);
+    c.clearRect(0, 0, simulation.screen.x, cvs.height);
     simulation.update();
 
     const ep = 0.01

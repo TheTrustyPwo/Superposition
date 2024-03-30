@@ -80,6 +80,7 @@ class WaveVectorDisplay {
         this.c.save();
         this.c.font = "30px arial";
         this.c.textAlign = "center";
+        this.c.fillStyle = WAVES.WAVELENGTH_DISPLAY_COLOR;
         this.c.translate(textX, textY);
         this.c.rotate(Math.atan(this.gradient));
         this.c.fillText(`${(dist / this.wavelength).toFixed(2)}λ`, 0, 10);

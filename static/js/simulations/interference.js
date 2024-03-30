@@ -2,6 +2,7 @@ import { Simulation } from "./index.js";
 import { WaveVectorDisplay } from "../shared/waves.js";
 import { Pointer } from "../shared/pointer.js";
 import { Screen } from "../shared/screen.js";
+import { distance } from "../utils/math.js";
 
 // Double Source Interference Simulation
 class InterferenceSimulation extends Simulation {
@@ -22,18 +23,34 @@ class InterferenceSimulation extends Simulation {
         this.wave2.setRect(100, 0.7 * cvs.height, this.pointer.x - 20, this.pointer.y);
 
         this.adjustingSource = 0;
+        this.redraw = true;
     }
 
     update = () => {
+        if (this.redraw) {
+            this.c.clearRect(this.screen.x, 0, this.cvs.width, this.cvs.height);
+            this.pointer.draw();
+            this.screen.draw();
+            this.plotIntensity();
+            this.redraw = false;
+        }
+
         this.wave1.setRect(this.wave1.x1, this.wave1.y1, this.pointer.x - 20, this.pointer.y);
         this.wave2.setRect(this.wave2.x1, this.wave2.y1, this.pointer.x - 20, this.pointer.y);
         this.wave1.update();
         this.wave2.update();
         this.wave1.drawWavelength(this.wave1.y1 <= this.wave2.y1);
         this.wave2.drawWavelength(this.wave1.y1 > this.wave2.y1);
+    }
 
-        this.pointer.draw();
-        this.screen.draw();
+    plotIntensity = () => {
+        for (let y = 0; y <= this.cvs.height; y++) {
+            const r1 = distance(this.wave1.x1, this.wave1.y1, this.screen.x, y);
+            const r2 = distance(this.wave2.x1, this.wave2.y1, this.screen.x, y);
+            const intensity =  50 * (Math.cos(Math.PI / this.wavelength * (r1 - r2))) ** 2;
+            this.c.fillStyle = "#d94444";
+            this.c.fillRect(this.pointer.x + intensity, y, 3, 3);
+        }
     }
 
     setWavelength = (wavelength) => {
@@ -76,6 +93,7 @@ class InterferenceSimulation extends Simulation {
             wave.x1 = Math.max(Math.min(x, 0.3 * this.cvs.width), 100);
             wave.y1 = Math.max(Math.min(y, 0.9 * this.cvs.height), 0.1 * this.cvs.height);
         }
+        this.redraw = true;
     }
 }
 
