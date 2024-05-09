@@ -12,8 +12,14 @@ const POINTERS = {
 }
 
 const SCREENS = {
-    SCREEN_COLOR: "#ffffff",
-    SCREEN_WIDTH: 5
+    COLOR: "#ffffff",
+    WIDTH: 5
 }
 
-export { WAVES, POINTERS, SCREENS };
+const SLITS = {
+    COLOR: "#ffffff",
+    WIDTH: 5
+}
+
+
+export { WAVES, POINTERS, SCREENS, SLITS };
