@@ -6,6 +6,8 @@ const cvs = document.querySelector('canvas');
 const c = cvs.getContext('2d');
 const wavelengthInput = document.getElementById("wavelengthInput");
 const amplitudeInput = document.getElementById("amplitudeInput");
+const lockScreenInput = document.getElementById("lockScreen");
+const lockPointerInput = document.getElementById("lockPointer");
 const pathDifference = document.getElementById("pathDifference");
 const phaseDifference = document.getElementById("phaseDifference");
 const interference = document.getElementById("interference");
@@ -43,6 +45,14 @@ wavelengthInput.oninput = () => {
 amplitudeInput.oninput = () => {
     document.getElementById("amplitudeValue").innerText = amplitudeInput.value;
     simulation.setAmplitude(amplitudeInput.value);
+}
+
+lockScreenInput.oninput = () => {
+    simulation.lockScreen = lockScreenInput.checked;
+}
+
+lockPointerInput.oninput = () => {
+    simulation.lockPointer = lockPointerInput.checked;
 }
 
 animate();

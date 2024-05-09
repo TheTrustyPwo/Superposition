@@ -16,13 +16,15 @@ class InterferenceSimulation extends Simulation {
         this.setWavelength(wavelength);
         this.setAmplitude(amplitude);
 
-        this.pointer = new Pointer(cvs, c, cvs.width - 50, cvs.height / 2);
-        this.screen = new Screen(cvs, c, cvs.width - 60, cvs.height / 2, cvs.height - 50);
+        this.pointer = new Pointer(cvs, c, 0.85 * cvs.width + 10, cvs.height / 2);
+        this.screen = new Screen(cvs, c, 0.85 * cvs.width, cvs.height / 2, cvs.height - 50);
 
         this.wave1.setRect(100, 0.3 * cvs.height, this.pointer.x - 20, this.pointer.y);
         this.wave2.setRect(100, 0.7 * cvs.height, this.pointer.x - 20, this.pointer.y);
 
         this.adjustingSource = 0;
+        this.lockScreen = 1;
+        this.lockPointer = 1;
         this.redraw = true;
     }
 
@@ -44,13 +46,17 @@ class InterferenceSimulation extends Simulation {
     }
 
     plotIntensity = () => {
+        this.c.beginPath();
+        this.c.strokeStyle = "#d94444";
+        this.c.lineWidth = 3;
         for (let y = 0; y <= this.cvs.height; y++) {
             const r1 = distance(this.wave1.x1, this.wave1.y1, this.screen.x, y);
             const r2 = distance(this.wave2.x1, this.wave2.y1, this.screen.x, y);
             const intensity =  50 * (Math.cos(Math.PI / this.wavelength * (r1 - r2))) ** 2;
-            this.c.fillStyle = "#d94444";
-            this.c.fillRect(this.pointer.x + intensity, y, 3, 3);
+            if (y === 0) this.c.moveTo(this.screen.x + 10 + intensity, y);
+            else this.c.lineTo(this.screen.x + 10 + intensity, y);
         }
+        this.c.stroke();
     }
 
     setWavelength = (wavelength) => {
@@ -85,9 +91,13 @@ class InterferenceSimulation extends Simulation {
 
     mouseMove = (event, x, y) => {
         if (this.adjustingSource === 0) {
-            this.pointer.y = Math.max(Math.min(y, this.pointer.maxY), this.pointer.minY);
-            this.pointer.x = Math.max(Math.min(x, this.screen.maxX) + 10, this.screen.minX + 10);
-            this.screen.x = Math.max(Math.min(x, this.screen.maxX), this.screen.minX);
+            if (!this.lockPointer) {
+                this.pointer.y = Math.max(Math.min(y, this.pointer.maxY), this.pointer.minY);
+            }
+            if (!this.lockScreen) {
+                this.screen.x = Math.max(Math.min(x, this.screen.maxX), this.screen.minX);
+                this.pointer.x = Math.max(Math.min(x, this.screen.maxX) + 10, this.screen.minX + 10);
+            }
         } else {
             const wave = (this.adjustingSource === 1 ? this.wave1 : this.wave2);
             wave.x1 = Math.max(Math.min(x, 0.3 * this.cvs.width), 100);
