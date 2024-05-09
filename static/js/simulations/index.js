@@ -9,17 +9,19 @@ class Simulation {
 ["mousedown", "touchstart"].forEach(event => {
     document.addEventListener(event, e => {
         for (let i = 0; i < simulations.length; i++) {
-            // use math check in each simulation canvas
-            // lazy to code
+            const rect = simulations[i].cvs.getBoundingClientRect();
+            if (event.pageX > rect.right || event.pageX < rect.left || event.pageY > rect.bottom || event.pageY < rect.top) continue;
+            interacting = i;
         }
-        interacting = 0;
-        simulations[interacting].mouseDown(e);
+        if (interacting !== -1) simulations[interacting].mouseDown(e);
     });
 });
 
 ["mouseup", "touchend"].forEach(event => {
     document.addEventListener(event, e => {
         if (interacting === -1) return;
+        const rect = simulations[interacting].cvs.getBoundingClientRect();
+        if (event.pageX > rect.right || event.pageX < rect.left || event.pageY > rect.bottom || event.pageY < rect.top) return;
         simulations[interacting].mouseUp(e)
         interacting = -1;
     });
@@ -27,6 +29,8 @@ class Simulation {
 
 document.addEventListener("mousemove", event => {
     if (interacting === -1) return;
+    const rect = simulations[interacting].cvs.getBoundingClientRect();
+    if (event.pageX > rect.right || event.pageX < rect.left || event.pageY > rect.bottom || event.pageY < rect.top) return;
     simulations[interacting].mouseMove(event, event.pageX, event.pageY);
 });
 
