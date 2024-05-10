@@ -7,7 +7,7 @@ const c = cvs.getContext('2d');
 const wavelengthInput = document.getElementById("wavelengthInput");
 const slitWidthInput = document.getElementById("slitWidthInput");
 
-const simulation = new RippleSimulation(cvs, c)
+const simulation = new RippleSimulation(cvs, c, wavelengthInput.value, slitWidthInput.value);
 const animate = () => {
     c.clearRect(0, 0, cvs.width, cvs.height);
     simulation.update();

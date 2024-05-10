@@ -40,7 +40,7 @@ class DoubleSlitSimulation extends Simulation {
         for (let x = this.slit.x; x <= this.screen.x - 10; x += 5) {
             for (let y = 0; y <= this.cvs.height; y += 5) {
                 const theta = Math.atan2(y - this.slit.y, x - this.slit.x);
-                this.c.globalAlpha = Math.min(1 * this.evaluate(theta), 255);
+                this.c.globalAlpha = Math.max(Math.min(1.5 * this.evaluate(theta), 1), 0.15);
                 const dist = distance(this.slit.x, this.slit.y, x, y);
                 this.c.fillStyle = interpolate(this.waveColor1, this.waveColor2, (1 + (Math.sin(dist / this.wavelength - 8 * this.t))) / 2);
                 this.c.fillRect(x, y, 3, 3);
@@ -69,6 +69,11 @@ class DoubleSlitSimulation extends Simulation {
 
     setSlitWidth = (slitWidth) => {
         this.slit.width = slitWidth;
+        this.cache = {};
+    }
+
+    setSlitSeparation = (slitSeparation) => {
+        this.slit.separation = slitSeparation;
         this.cache = {};
     }
 

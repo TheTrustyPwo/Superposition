@@ -5,11 +5,11 @@ import {distance} from "../utils/math.js";
 import {Slit} from "../shared/slit.js";
 
 class RippleSimulation extends Simulation {
-    constructor(cvs, c, wavelength = 20) {
+    constructor(cvs, c, wavelength = 10, slitWidth = 50) {
         super(cvs, c);
         this.wavelength = wavelength;
         this.screen = new Screen(cvs, c, 0.85 * cvs.width, cvs.height / 2, cvs.height - 50);
-        this.slit = new Slit(cvs, c, 0.15 * cvs.width, cvs.height / 2, cvs.height - 50, 50);
+        this.slit = new Slit(cvs, c, 0.15 * cvs.width, cvs.height / 2, cvs.height - 50, slitWidth);
 
         this.waveColor1 = "#ce2b15";
         this.waveColor2 = "#000000";
@@ -39,7 +39,7 @@ class RippleSimulation extends Simulation {
         for (let x = this.slit.x; x <= this.screen.x - 10; x += 5) {
             for (let y = 0; y <= this.cvs.height; y += 5) {
                 const theta = Math.atan2(y - this.slit.y, x - this.slit.x);
-                this.c.globalAlpha = Math.min(10 * this.evaluate(theta), 255);
+                this.c.globalAlpha = Math.max(Math.min(10 * this.evaluate(theta), 1), 0.15);
                 const dist = distance(this.slit.x, this.slit.y, x, y);
                 this.c.fillStyle = interpolate(this.waveColor1, this.waveColor2, (1 + (Math.sin(dist / this.wavelength - 8 * this.t))) / 2);
                 this.c.fillRect(x, y, 3, 3);
