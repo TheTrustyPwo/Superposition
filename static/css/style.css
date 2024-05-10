@@ -10,7 +10,6 @@ body {
 
 header, nav, main, footer {
     width: 100%;
-    max-width: 1200px;
 }
 
 .dropdown {
