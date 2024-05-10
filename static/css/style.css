@@ -1,0 +1,129 @@
+
+
+body {
+    font-family: monospace;
+    line-height: 1.6;
+}
+* {
+    box-sizing: border-box;
+}
+
+header, nav, main, footer {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: ghostwhite;
+    min-width: 120px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 6px 10px;
+    text-decoration: underline;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.background-image {
+    background-image: url('../assets/double_slit.jpg');
+    background-size: cover; /* This property ensures that the background image covers the entire element */
+    background-position: center; /* This property centers the background image */
+    background-repeat: no-repeat;
+    height: 200px;
+}
+
+.bg-text{
+    color: ghostwhite;
+    text-align: center;
+    margin-top: -20px;
+}
+
+nav ul {
+    list-style-type: none;
+    text-align: center;
+}
+
+nav li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav a {
+    text-decoration: none;
+    color: ghostwhite;
+}
+
+main {
+    padding: 20px 0;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+.form {
+    text-decoration: underline;
+    color: white;
+}
+
+footer {
+    text-align: center;
+    margin-top: 10px;
+    padding: 20px;
+    background-color:gainsboro;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Adjust the gap between boxes */
+}
+
+.box img {
+    max-width: 100%;
+    height: auto;
+}
+
+.box h3 {
+    margin-top: 10px;
+    font-size: 13px;
+    padding: 5px;
+}
+
+.box button {
+    margin-bottom: 22px;
+    padding: 8px 40px; /* Add padding to the button */
+    background-color: #7c1a1a; /* Set background color */
+    color: white; /* Set text color */
+    border: none; /* Remove border */
+    cursor: pointer; /* Add cursor pointer */
+    border-radius: 8px; /* Add border radius */
+    font-family: monospace;
+    font-size: 14px;
+}
+
+.box button:hover {
+    background-color: #0056b3; /* Change background color on hover */
+}
+
+.box {
+    margin-top: 1rem;
+    width: 32%; /* Set the width of each box */
+    text-align: center; /* Center-align content within box */
+    background-color: rgba(202, 202, 202, 0.7);
+}
+
