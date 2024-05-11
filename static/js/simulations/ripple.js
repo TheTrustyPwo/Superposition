@@ -1,18 +1,15 @@
 import {Simulation} from "./index.js";
 import {Screen} from "../shared/screen.js";
-import {interpolate} from "../utils/color.js";
+import {interpolate, w2h} from "../utils/color.js";
 import {distance} from "../utils/math.js";
 import {Slit} from "../shared/slit.js";
 
 class RippleSimulation extends Simulation {
-    constructor(cvs, c, wavelength = 10, slitWidth = 50) {
+    constructor(cvs, c, wavelength = 300, slitWidth = 50) {
         super(cvs, c);
         this.wavelength = wavelength;
-        this.screen = new Screen(cvs, c, 0.85 * cvs.width, cvs.height / 2, cvs.height - 50);
-        this.slit = new Slit(cvs, c, 0.15 * cvs.width, cvs.height / 2, cvs.height - 50, slitWidth);
-
-        this.waveColor1 = "#ce2b15";
-        this.waveColor2 = "#000000";
+        this.screen = new Screen(cvs, c, 0.85 * cvs.width, cvs.height / 2, cvs.height - 20);
+        this.slit = new Slit(cvs, c, 0.15 * cvs.width, cvs.height / 2, cvs.height - 20, slitWidth / this.ypx2nm);
 
         this.t = 0;
         this.dt = 1 / 60;
@@ -24,7 +21,8 @@ class RippleSimulation extends Simulation {
         theta = Math.round(theta * 1000) / 1000;
         if (theta in this.cache) return this.cache[theta];
         let sine = Math.sin(theta);
-        let tmp = Math.sin(Math.PI * this.slit.width * sine / this.wavelength) / (Math.PI * this.slit.width * sine / this.wavelength);
+        let a = Math.PI * this.slit.width * this.ypx2nm * sine / this.wavelength;
+        let tmp = Math.sin(a) / a;
         this.cache[theta] = tmp * tmp;
         return this.cache[theta];
     }
@@ -38,10 +36,10 @@ class RippleSimulation extends Simulation {
         this.c.save();
         for (let x = this.slit.x; x <= this.screen.x - 10; x += 5) {
             for (let y = 0; y <= this.cvs.height; y += 5) {
-                const theta = Math.atan2(y - this.slit.y, x - this.slit.x);
+                const theta = Math.atan2((y - this.slit.y) * this.ypx2nm, (x - this.slit.x) * this.xpx2nm);
                 this.c.globalAlpha = Math.max(Math.min(10 * this.evaluate(theta), 1), 0.15);
-                const dist = distance(this.slit.x, this.slit.y, x, y);
-                this.c.fillStyle = interpolate(this.waveColor1, this.waveColor2, (1 + (Math.sin(dist / this.wavelength - 8 * this.t))) / 2);
+                const dist = distance(this.slit.x * this.xpx2nm, this.slit.y * this.ypx2nm, x * this.xpx2nm, y * this.ypx2nm);
+                this.c.fillStyle = interpolate(w2h(this.wavelength), "#000000", (1 + (Math.sin(dist / this.wavelength - 8 * this.t))) / 2);
                 this.c.fillRect(x, y, 3, 3);
             }
         }
@@ -67,7 +65,7 @@ class RippleSimulation extends Simulation {
     }
 
     setSlitWidth = (slitWidth) => {
-        this.slit.width = slitWidth;
+        this.slit.width = slitWidth / this.ypx2nm;
         this.cache = {};
     }
 
@@ -77,6 +75,14 @@ class RippleSimulation extends Simulation {
 
     mouseMove = (event, x, y) => {
         this.screen.x = Math.max(Math.min(x, this.screen.maxX), this.screen.minX);
+    }
+
+    get xpx2nm() {
+        return 20;
+    }
+
+    get ypx2nm() {
+        return 20;
     }
 }
 
