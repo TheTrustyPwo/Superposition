@@ -8,7 +8,7 @@ class Screen {
         this.y = y;
         this.h = h;
 
-        this.minX = 0.5 * cvs.width;
+        this.minX = 0.3 * cvs.width;
         this.maxX = 0.85 * cvs.width;
     }
 

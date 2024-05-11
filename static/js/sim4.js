@@ -9,7 +9,6 @@ const slitWidthInput = document.getElementById("slitWidthInput");
 
 const simulation = new SingleSlitSimulation(cvs, c, wavelengthInput.value, slitWidthInput.value * 1000);
 const animate = () => {
-    c.clearRect(0, 0, cvs.width, cvs.height);
     simulation.update();
 
     setTimeout(() => {

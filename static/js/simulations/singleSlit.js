@@ -13,8 +13,8 @@ class SingleSlitSimulation extends Simulation {
 
         this.t = 0;
         this.dt = 1 / 60;
-
-        this.cache = {}
+        this.cache = {};
+        this.redraw = true;
     }
 
     evaluate = (theta) => {
@@ -29,13 +29,18 @@ class SingleSlitSimulation extends Simulation {
 
     update = () => {
         this.t += this.dt;
-        this.screen.draw();
-        this.slit.draw();
-        this.plotIntensity();
-        this.displayMeasurements();
+
+        if (this.redraw) {
+            this.c.clearRect(0, 0, this.cvs.width, this.cvs.height);
+            this.screen.draw();
+            this.slit.draw();
+            this.plotIntensity();
+            this.redraw = false;
+        } else this.c.clearRect(this.slit.x + 2.5, 0, this.screen.x - this.slit.x - 5, this.cvs.height);
 
         this.c.save();
-        for (let x = 0; x < this.screen.x; x += 5) {
+        this.displayMeasurements();
+        for (let x = 0; x < this.screen.x - 3; x += 5) {
             for (let y = 0; y <= this.cvs.height; y += 5) {
                 this.c.globalAlpha = this.intensityAt(x, y);
                 this.c.fillStyle = this.colorAt(x, y);
@@ -75,11 +80,13 @@ class SingleSlitSimulation extends Simulation {
 
     setWavelength = (wavelength) => {
         this.wavelength = wavelength;
+        this.redraw = true;
         this.cache = {};
     }
 
     setSlitWidth = (slitWidth) => {
         this.slit.width = slitWidth / this.ypx2nm;
+        this.redraw = true;
         this.cache = {};
     }
 
@@ -89,6 +96,7 @@ class SingleSlitSimulation extends Simulation {
 
     mouseMove = (event, x, y) => {
         this.screen.x = Math.max(Math.min(x, this.screen.maxX), this.screen.minX);
+        this.redraw = true;
     }
 
     intensityAt = (x, y) => {
