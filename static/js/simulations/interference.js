@@ -63,12 +63,14 @@ class InterferenceSimulation extends Simulation {
         this.wavelength = wavelength;
         this.wave1.wavelength = wavelength;
         this.wave2.wavelength = wavelength;
+        this.redraw = true;
     }
 
     setAmplitude = (amplitude) => {
         this.amplitude = amplitude;
         this.wave1.amplitude = amplitude;
         this.wave2.amplitude = amplitude;
+        this.redraw = true;
     }
 
     get pathDifference() {
