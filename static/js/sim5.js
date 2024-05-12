@@ -10,7 +10,6 @@ const slitSeparationInput = document.getElementById("slitSeparationInput");
 
 const simulation = new DoubleSlitSimulation(cvs, c)
 const animate = () => {
-    c.clearRect(0, 0, cvs.width, cvs.height);
     simulation.update();
 
     setTimeout(() => {
@@ -25,12 +24,12 @@ wavelengthInput.oninput = () => {
 
 slitWidthInput.oninput = () => {
     document.getElementById("slitWidthValue").innerText = slitWidthInput.value;
-    simulation.setSlitWidth(slitWidthInput.value);
+    simulation.setSlitWidth(slitWidthInput.value * 1000);
 }
 
 slitSeparationInput.oninput = () => {
     document.getElementById("slitSeparationValue").innerText = slitSeparationInput.value;
-    simulation.setSlitSeparation(slitSeparationInput.value);
+    simulation.setSlitSeparation(slitSeparationInput.value * 1000);
 }
 
 

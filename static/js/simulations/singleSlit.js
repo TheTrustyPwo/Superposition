@@ -5,7 +5,7 @@ import {distance} from "../utils/math.js";
 import {Slit} from "../shared/slit.js";
 
 class SingleSlitSimulation extends Simulation {
-    constructor(cvs, c, wavelength = 300, slitWidth = 50) {
+    constructor(cvs, c, wavelength = 500, slitWidth = 2000) {
         super(cvs, c);
         this.wavelength = wavelength;
         this.screen = new Screen(cvs, c, 0.85 * cvs.width, cvs.height / 2, cvs.height - 20);

@@ -7,7 +7,7 @@ const c = cvs.getContext('2d');
 const wavelengthInput = document.getElementById("wavelengthInput");
 const slitWidthInput = document.getElementById("slitWidthInput");
 
-const simulation = new SingleSlitSimulation(cvs, c, wavelengthInput.value, slitWidthInput.value * 1000);
+const simulation = new SingleSlitSimulation(cvs, c);
 const animate = () => {
     simulation.update();
 
