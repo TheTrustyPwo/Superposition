@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="static/assets/nicest_rosette.jpg" >
+  <title>Minimalist Website</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <header>
+    <main class="background-image">
+        <section class ="bg-text">
+          <h1> </h1>
+          <h2> Diffraction and Interference </h2>
+          <p style = "color:#f34343"> . </p>
+          <p style = "color:#681111"> . </p>
+          <p style = "color:#000000"> . </p>
+          <nav>
+            <ul>
+                <a href="superposition.html">Home</a>
+        
+                <li class="dropdown">
+                  <a href="#">Introduction</a>
+                  <div class="dropdown-content">
+                    <a href="intro1.html">What are waves?</a>
+                    <a href="intro2.html">How are waves?</a>
+                    <a href="intro3.html">Key Formulae and Recap</a>
+                  </div>
+                </li>
+                <li class="dropdown">
+                <a href="#">Diffraction</a>
+                <div class="dropdown-content">
+                  <a href="diff1.html">History + Application</a>
+                  <a href="diff2.html">Key Formulae and Recap</a>
+                </div>
+              </li>
+            <li class="dropdown">
+              <a href="#">Interference</a>
+              <div class="dropdown-content">
+                <a href="inf1.html">History</a>
+                <a href="inf2.html">Applications</a>
+                <a href="inf3.html">Differences from Diffraction</a>
+                <a href="#">Key Formulae and Recap</a>
+              </div>
+            </li>
+            <li class="dropdown">
+              <a href="">Practice</a>
+              <div class="dropdown-content">
+                <a href="#">Service 1</a>
+                <a href="#">Service 2</a>
+                <a href="#">Service 3</a>
+              </div>
+              <li class="form">
+                  <a href="#">Feedback</a>
+                </li>
+            </li>
+          </ul>
+        </nav>
+        </section>
+      </main>
+  </header>
+  <section class="content">
+    <title>Key Formula and Recap</title>
+    <h1>Principle of Superposition and Interference</h1>
+    <p>The Principle of Superposition states that when two or more waves of the same kind overlap, the resultant displacement at any point at any instant is given by the vector sum of the individual displacements that each individual wave would cause at that point at that instant.</p>
+    <p>$$ y_{\text{resultant}} = y_1 + y_2 + y_3 + \ldots + y_N $$</p>
+    <p>where \( y_{\text{resultant}} \) is the displacement of the resultant wave and \( y_1, y_2, y_3, \ldots, y_N \) are the individual displacements of the waves at the point of consideration.</p>
+    
+    <h2>Interference</h2>
+    <p>Interference is the superposing of overlapping of two or more waves to give a resultant wave whose displacement is given by the Principle of Superposition.</p>
+
+    <h3>Constructive Interference</h3>
+    <p>Constructive interference occurs at a point when two waves meet in phase at that point. The resultant amplitude of the oscillation at that point is therefore a maximum. Phase difference between the two waves at that point \( = 0, 2\pi, 4\pi \ldots \)</p>
+    <p>Resultant amplitude \( A_R = A_1 + A_2 \)</p>
+
+    <h3>Destructive Interference</h3>
+    <p>Destructive interference occurs at a point when two waves meet in antiphase (phase difference of 180 degrees). The resultant amplitude of the oscillation at that point is therefore a minimum. Phase difference between the two waves at that point \( = \pi, 3\pi, 5\pi \ldots \)</p>
+    <p>Resultant amplitude \( A_R = A_1 - A_2 \)</p>
+
+    <h2>Path Difference</h2>
+    <p>Path difference (\( \delta \)) is the difference in the optical path lengths traveled by two waves from their respective sources to a specific point where interference is observed. It directly affects the phase relationship between the waves at that point.</p>
+    <p>Given two coherent sources \( S_1 \) and \( S_2 \), and a point of observation \( P \), the path difference \( \delta \) is expressed as:</p>
+    <p>$$ \delta = |S_1P - S_2P| $$</p>
+
+    <h2>Phase Difference</h2>
+    <p>Phase difference (\( \Delta \phi \)) between two waves at a point is the difference in their respective phases at that point. Mathematically, it's given by:</p>
+    <p>$$ \Delta \phi = \frac{2\pi}{\lambda} \cdot \delta $$</p>
+    <p>where \( \lambda \) is the wavelength of the waves and \( \delta \) is the path difference between the two waves.</p>
+
+    <h2>Constructive Interference</h2>
+    <p>Constructive interference occurs when the waves are in phase at the point of consideration. This happens under the following conditions: If \( \delta = m \cdot \lambda \) (where \( m \) is an integer), then the waves arrive at the point in phase, reinforcing each other. This leads to constructive interference and results in a maximum amplitude at that point.</p>
+
+    <h2>Destructive Interference</h2>
+    <p>Destructive interference occurs when the waves are out of phase at the point of consideration. This occurs under the following condition: If \( \delta = (m + \frac{1}{2}) \cdot \lambda \) (where \( m \) is an integer), then the waves arrive out of phase, leading to cancellation of amplitudes. This results in destructive interference and a minimum amplitude (or even complete cancellation) at that point.</p>
+
+    <h2>Order of Maxima and Minima</h2>
+    <p>The order of maxima (bright fringes) and minima (dark fringes) in interference patterns depends on the path difference \( \delta \):</p>
+    <ul>
+        <li><strong>Constructive Interference (Maxima)</strong>: Occurs at points where the path difference \( \delta \) corresponds to integer multiples of the wavelength \( \lambda \), i.e., \( \delta = m \cdot \lambda \).</li>
+        <li><strong>Destructive Interference (Minima)</strong>: Occurs at points where the path difference \( \delta \) corresponds to half-integer multiples of the wavelength \( \lambda \), i.e., \( \delta = (m + \frac{1}{2}) \cdot \lambda \).</li>
+    </ul>
+
+    <p>\( \phi = \pi \)</p>
+    <p>\( \lambda = \frac{2\pi}{k} \)</p>
+    <p>\( \delta = r_2 - r_1 \)</p>
+
+    <p>$$ r_2^2 = r^2 + \left(\frac{d}{2}\right)^2 - 2r\left(\frac{d}{2}\right)\cos\left(\frac{\pi}{2} - \theta\right) = r^2 + \left(\frac{d}{2}\right)^2 + dr\sin\theta $$</p>
+    <p>$$ r_1^2 = r^2 + \left(\frac{d}{2}\right)^2 - 2r\left(\frac{d}{2}\right)\cos\left(\frac{\pi}{2} + \theta\right) = r^2 + \left(\frac{d}{2}\right)^2 - dr\sin\theta $$</p>
+    <p>$$ (r_2 - r_1)(r_2 + r_1) = 2dr\sin\theta $$</p>
+    <p>$$ \delta = r_2 - r_1 \approx d\sin\theta $$</p>
+
+    <p>$$ d\sin\theta = m\lambda, \quad m = 0, \pm1, \pm2, \pm3, \ldots \text{ (constructive interference)} $$</p>
+    <p>$$ d\sin\theta = \left(m + \frac{1}{2}\right)\lambda, \quad m = 0, \pm1, \pm2, \pm3, \ldots \text{ (destructive interference)} $$</p>
+
+    <p>$$ \sin\theta \approx \tan\theta = \frac{y}{L} $$</p>
+    <p>$$ y_b = m\frac{L\lambda}{d} $$</p>
+    <p>$$ y_d = \left(m + \frac{1}{2}\right)\frac{L\lambda}{d} $$</p>
+
+
+    <a href="#"><button>Game is underconstruction!</button></a>
+  </section>
+  <footer>
+    <p>&copy; 2024 nice diffraction site.</p>
+  </footer>
+</body>
+</html>
