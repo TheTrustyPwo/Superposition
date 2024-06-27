@@ -19,17 +19,17 @@ const animate = () => {
 
 wavelengthInput.oninput = () => {
     document.getElementById("wavelengthValue").innerText = wavelengthInput.value;
-    simulation.setWavelength(wavelengthInput.value);
+    simulation.setWavelength(wavelengthInput.value / 1_000_000_000);
 }
 
 slitWidthInput.oninput = () => {
     document.getElementById("slitWidthValue").innerText = slitWidthInput.value;
-    simulation.setSlitWidth(slitWidthInput.value * 1000);
+    simulation.setSlitWidth(slitWidthInput.value / 1_000_000);
 }
 
 slitSeparationInput.oninput = () => {
     document.getElementById("slitSeparationValue").innerText = slitSeparationInput.value;
-    simulation.setSlitSeparation(slitSeparationInput.value * 1000);
+    simulation.setSlitSeparation(slitSeparationInput.value / 1_000_000);
 }
 
 

@@ -20,6 +20,7 @@ function interpolate(color1, color2, factor = 0.5) {
 }
 
 function w2h(wavelength) {
+    wavelength *= 1_000_000_000;
     let red, green, blue, factor;
     if (wavelength >= 380 && wavelength < 440) {
         red   = -(wavelength - 440) / (440 - 380);
