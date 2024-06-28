@@ -23,4 +23,27 @@ class Screen {
     }
 }
 
-export { Screen };
+class HorizontalScreen {
+    constructor(cvs, c, x, y, w) {
+        this.cvs = cvs;
+        this.c = c;
+        this.x = x;
+        this.y = y;
+        this.w = w;
+
+        this.minY = 0.25 * cvs.height;
+        this.maxY = 0.85 * cvs.height;
+    }
+
+    draw = () => {
+        this.c.beginPath();
+        this.c.strokeStyle = SCREENS.COLOR;
+        this.c.lineWidth = SCREENS.WIDTH;
+        this.c.moveTo(this.x - this.w / 2, this.y);
+        this.c.lineTo(this.x + this.w / 2, this.y);
+        this.c.closePath();
+        this.c.stroke();
+    }
+}
+
+export { Screen, HorizontalScreen };
