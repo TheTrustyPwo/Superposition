@@ -5,7 +5,7 @@ import {distance} from "../utils/math.js";
 import {DoubleSlit, NSlit, Slit} from "../shared/slit.js";
 
 class NSlitSimulation extends Simulation {
-    constructor(cvs, c, wavelength = 500 / 1_000_000_000 , slitWidth = 500 / 1_000_000, slitSeparation = 50 / 1_000_000, slits = 3) {
+    constructor(cvs, c, wavelength = 500 / 1_000_000_000 , slitWidth = 5 / 1_000_000, slitSeparation = 5 / 1_000_000, slits = 3) {
         super(cvs, c);
         this.wavelength = wavelength;
         this.screen = new HorizontalScreen(cvs, c, cvs.width / 2, 0.25 * cvs.height, cvs.width - 50);
@@ -18,13 +18,14 @@ class NSlitSimulation extends Simulation {
     }
 
     evaluate = (theta) => {
-        theta = Math.round(theta * 1_000_000) / 1_000_000;
+        if (theta === 0) return 1;
+        theta = Math.round(theta * 1_000_0) / 1_000_0;
         if (theta in this.cache) return this.cache[theta];
         let sine = Math.sin(theta);
         let beta = Math.PI * this.slit.width * this.xpx2m * sine / this.wavelength;
         let alpha = Math.PI * (this.slit.width + this.slit.separation) * this.xpx2m * sine / this.wavelength;
-        let tmp = Math.sin(beta) / beta * Math.sin(this.slit.slits * alpha) / Math.sin(alpha);
-        this.cache[theta] = tmp * tmp / this.slit.slits / this.slit.slits;
+        let tmp = Math.sin(beta) / beta * Math.sin(this.slit.slits * alpha) / Math.sin(alpha) / this.slit.slits
+        this.cache[theta] = tmp * tmp;
         return this.cache[theta];
     }
 
@@ -128,7 +129,7 @@ class NSlitSimulation extends Simulation {
     }
 
     get xpx2m() {
-        return 2 / 1_000_00;
+        return 5 / 1_000_0;
     }
 
     get ypx2m() {
