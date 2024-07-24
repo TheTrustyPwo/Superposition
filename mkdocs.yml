@@ -2,6 +2,7 @@ site_name: Superposition
 docs_dir: src
 site_dir: public
 use_directory_urls: false
+site_url: https://thetrustypwo.github.io/Superposition
 theme:
   name: material
   # custom_dir: src/overrides
