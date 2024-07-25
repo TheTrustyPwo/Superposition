@@ -1,27 +1,44 @@
 function h2r(hex) {
-    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? [
-        parseInt(result[1], 16),
-        parseInt(result[2], 16),
-        parseInt(result[3], 16)
-    ] : null;
+    hex = hex.replace(/^#/, '');
+
+    // Parse the hex string into its red, green, and blue components
+    let bigint = parseInt(hex, 16);
+    let r = (bigint >> 16) & 255;
+    let g = (bigint >> 8) & 255;
+    let b = bigint & 255;
+
+    return [r, g, b];
 }
 
-function r2h(rgb) {
-    return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
+function i2h(value) {
+    return "#" + ((1 << 24) + value).toString(16).slice(1);
 }
 
-function interpolate(color1, color2, factor = 0.5) {
-    color1 = h2r(color1); color2 = h2r(color2);
-    let result = color1.slice();
-    for (let i = 0; i < 3; i++)
-        result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
-    return r2h(result);
+function rgbToInt(r, g, b) {
+    return (r << 16) + (g << 8) + b;
+}
+
+function intToRgb(value) {
+    const r = (value >> 16) & 0xFF;
+    const g = (value >> 8) & 0xFF;
+    const b = value & 0xFF;
+    return [r, g, b];
+}
+
+function interpolate(color1, color2, t) {
+    const [r1, g1, b1] = intToRgb(color1);
+    const [r2, g2, b2] = intToRgb(color2);
+
+    const r = Math.round(r1 + (r2 - r1) * t);
+    const g = Math.round(g1 + (g2 - g1) * t);
+    const b = Math.round(b1 + (b2 - b1) * t);
+
+    return `rgb(${r}, ${g}, ${b})`;
 }
 
 function w2h(wavelength) {
     wavelength *= 1_000_000_000;
-    let red, green, blue, factor;
+    let red, green, blue;
     if (wavelength >= 380 && wavelength < 440) {
         red   = -(wavelength - 440) / (440 - 380);
         green = 0.0;
@@ -52,11 +69,8 @@ function w2h(wavelength) {
         blue  = 0.0;
     }
 
-    const gamma = 0.80;
-    const R = Math.round(red > 0 ? 255 * Math.pow(red, gamma) : 0);
-    const G = Math.round(green > 0 ? 255 * Math.pow(green, gamma) : 0);
-    const B = Math.round(blue > 0 ? 255 * Math.pow(blue, gamma) : 0);
-    return r2h([R, G, B]);
+    const R = Math.round(255 * red), G= Math.round(255 * green), B = Math.round(255 * blue);
+    return rgbToInt(R, G, B);
 }
 
-export { h2r, r2h, interpolate, w2h };
+export { i2h, intToRgb, rgbToInt, interpolate, w2h };
