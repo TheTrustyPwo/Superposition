@@ -6,38 +6,49 @@ class Simulation {
     }
 }
 
+["resize", "orientationchange"].forEach(event => {
+    window.addEventListener(event, e => {
+        for (let i = 0; i < simulations.length; i++) {
+            simulations[i].resize();
+        }
+    });
+});
+
 ["mousedown", "touchstart"].forEach(event => {
-    document.addEventListener(event, e => {
+    window.addEventListener(event, e => {
         for (let i = 0; i < simulations.length; i++) {
             const rect = simulations[i].cvs.getBoundingClientRect();
-            if (event.pageX > rect.right || event.pageX < rect.left || event.pageY > rect.bottom || event.pageY < rect.top) continue;
+            if (e.clientX > rect.right || e.clientX < rect.left || e.clientY > rect.bottom || e.clientY < rect.top) continue;
             interacting = i;
+            simulations[interacting].mouseDown(e, e.clientX - rect.left, e.clientY - rect.top);
         }
-        if (interacting !== -1) simulations[interacting].mouseDown(e);
     });
 });
 
 ["mouseup", "touchend"].forEach(event => {
-    document.addEventListener(event, e => {
+    window.addEventListener(event, e => {
         if (interacting === -1) return;
         const rect = simulations[interacting].cvs.getBoundingClientRect();
-        if (event.pageX > rect.right || event.pageX < rect.left || event.pageY > rect.bottom || event.pageY < rect.top) return;
+        if (e.clientX > rect.right || e.clientX < rect.left || e.clientY > rect.bottom || e.clientY < rect.top) return;
         simulations[interacting].mouseUp(e)
         interacting = -1;
     });
 });
 
-document.addEventListener("mousemove", event => {
+window.addEventListener("mousemove", e => {
     if (interacting === -1) return;
     const rect = simulations[interacting].cvs.getBoundingClientRect();
-    if (event.pageX > rect.right || event.pageX < rect.left || event.pageY > rect.bottom || event.pageY < rect.top) return;
-    simulations[interacting].mouseMove(event, event.pageX, event.pageY);
+    if (e.clientX > rect.right || e.clientX < rect.left || e.clientY > rect.bottom || e.clientY < rect.top) return;
+    simulations[interacting].mouseMove(e, e.clientX - rect.left, e.clientY - rect.top);
 });
 
-document.addEventListener("touchmove", event => {
+window.addEventListener("touchmove", e => {
     if (interacting === -1) return;
-    event.preventDefault();
-    simulations[interacting].mouseMove(event, event.targetTouches[0].pageX, event.targetTouches[0].pageY);
+    e.preventDefault();
+    const rect = simulations[interacting].cvs.getBoundingClientRect();
+    if (e.targetTouches[0].clientX > rect.right || e.targetTouches[0].clientX < rect.left
+        || e.targetTouches[0].clientY > rect.bottom || e.targetTouches[0].clientY < rect.top) return;
+    simulations[interacting].mouseMove(e, e.targetTouches[0].clientX - rect.left, e.targetTouches[0].clientY - rect.top);
 });
 
 const simulations = [];

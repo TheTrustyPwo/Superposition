@@ -16,15 +16,22 @@ class InterferenceSimulation extends Simulation {
         this.setWavelength(wavelength);
         this.setAmplitude(amplitude);
 
-        this.pointer = new Pointer(cvs, c, 0.85 * cvs.width + 10, cvs.height / 2);
-        this.screen = new Screen(cvs, c, 0.85 * cvs.width, cvs.height / 2, cvs.height - 50);
-
-        this.wave1.setRect(100, 0.3 * cvs.height, this.pointer.x - 20, this.pointer.y);
-        this.wave2.setRect(100, 0.7 * cvs.height, this.pointer.x - 20, this.pointer.y);
+        this.resize();
 
         this.adjustingSource = 0;
         this.lockScreen = 1;
         this.lockPointer = 1;
+        this.redraw = true;
+    }
+
+    resize = () => {
+        this.cvs.width = document.querySelector(".md-content").clientWidth;
+        this.cvs.height = this.cvs.width / 2;
+        this.pointer = new Pointer(this.cvs, this.c, 0.85 * this.cvs.width + 10, this.cvs.height / 2);
+        this.screen = new Screen(this.cvs, this.c, 0.85 * this.cvs.width, this.cvs.height / 2, this.cvs.height * 0.9);
+
+        this.wave1.setRect(0.1 * this.cvs.width, 0.3 * this.cvs.height, this.pointer.x - 15, this.pointer.y);
+        this.wave2.setRect(0.1 * this.cvs.width, 0.7 * this.cvs.height, this.pointer.x - 15, this.pointer.y);
         this.redraw = true;
     }
 
@@ -37,8 +44,8 @@ class InterferenceSimulation extends Simulation {
             this.redraw = false;
         }
 
-        this.wave1.setRect(this.wave1.x1, this.wave1.y1, this.pointer.x - 20, this.pointer.y);
-        this.wave2.setRect(this.wave2.x1, this.wave2.y1, this.pointer.x - 20, this.pointer.y);
+        this.wave1.setRect(this.wave1.x1, this.wave1.y1, this.pointer.x - 15, this.pointer.y);
+        this.wave2.setRect(this.wave2.x1, this.wave2.y1, this.pointer.x - 15, this.pointer.y);
         this.wave1.update();
         this.wave2.update();
         this.wave1.drawWavelength(this.wave1.y1 <= this.wave2.y1);
@@ -81,9 +88,9 @@ class InterferenceSimulation extends Simulation {
         return 2 * this.pathDifference;
     }
 
-    mouseDown = (event) => {
-        if (this.wave1.source.contains(event.pageX, event.pageY)) this.adjustingSource = 1;
-        else if (this.wave2.source.contains(event.pageX, event.pageY)) this.adjustingSource = 2;
+    mouseDown = (event, x, y) => {
+        if (this.wave1.source.contains(x, y)) this.adjustingSource = 1;
+        else if (this.wave2.source.contains(x, y)) this.adjustingSource = 2;
         else this.adjustingSource = 0;
     };
 
@@ -102,7 +109,7 @@ class InterferenceSimulation extends Simulation {
             }
         } else {
             const wave = (this.adjustingSource === 1 ? this.wave1 : this.wave2);
-            wave.x1 = Math.max(Math.min(x, 0.3 * this.cvs.width), 100);
+            wave.x1 = Math.max(Math.min(x, 0.3 * this.cvs.width), 0.1 * this.cvs.width);
             wave.y1 = Math.max(Math.min(y, 0.9 * this.cvs.height), 0.1 * this.cvs.height);
         }
         this.redraw = true;

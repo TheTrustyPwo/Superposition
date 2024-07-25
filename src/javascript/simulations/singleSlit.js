@@ -1,6 +1,6 @@
 import {Simulation} from "./index.js";
 import {Screen} from "../shared/screen.js";
-import {interpolate, w2h} from "../utils/color.js";
+import {interpolate, w2h, i2h} from "../utils/color.js";
 import {distance} from "../utils/math.js";
 import {Slit} from "../shared/slit.js";
 
@@ -8,17 +8,25 @@ class SingleSlitSimulation extends Simulation {
     constructor(cvs, c, wavelength = 500 / 1_000_000_000, slitWidth = 500 / 1_000_000) {
         super(cvs, c);
         this.wavelength = wavelength;
-        this.screen = new Screen(cvs, c, 0.85 * cvs.width, cvs.height / 2, cvs.height - 20);
-        this.slit = new Slit(cvs, c, 0.15 * cvs.width, cvs.height / 2, cvs.height - 20, slitWidth / this.ypx2m);
+        this.slitWidth = slitWidth;
+        this.color = w2h(this.wavelength);
 
         this.t = 0;
         this.dt = 1 / 60;
-        this.cache = {};
+        this.resize();
+    }
+
+    resize = () => {
+        this.cvs.width = document.querySelector(".md-content").clientWidth;
+        this.cvs.height = this.cvs.width / 2;
+        this.screen = new Screen(this.cvs, this.c, 0.85 * this.cvs.width, this.cvs.height / 2, this.cvs.height * 0.95);
+        this.slit = new Slit(this.cvs, this.c, 0.1 * this.cvs.width, this.cvs.height / 2, this.cvs.height * 0.95, this.slitWidth / this.ypx2m);
         this.redraw = true;
+        this.cache = {};
     }
 
     evaluate = (theta) => {
-        theta = Math.round(theta * 1_000_000) / 1_000_000;
+        theta = Math.round(theta * 1_000_00) / 1_000_00;
         if (theta in this.cache) return this.cache[theta];
         let sine = Math.sin(theta);
         let a = Math.PI * this.slit.width * this.ypx2m * sine / this.wavelength;
@@ -53,10 +61,10 @@ class SingleSlitSimulation extends Simulation {
     plotIntensity = () => {
         this.c.beginPath();
         this.c.lineWidth = 3;
-        this.c.strokeStyle = this.color;
+        this.c.strokeStyle = i2h(this.color);
         for (let y = 0; y <= this.cvs.height; y++) {
             const theta = Math.atan2((y - this.slit.y) * this.ypx2m, (this.screen.x - this.slit.x) * this.xpx2m);
-            const intensity = this.evaluate(theta) * 100;
+            const intensity = this.evaluate(theta) * this.cvs.width / 10;
             if (y === 0) this.c.moveTo(this.screen.x + 5 + intensity, y);
             else this.c.lineTo(this.screen.x + 5 + intensity, y);
         }
@@ -81,11 +89,13 @@ class SingleSlitSimulation extends Simulation {
 
     setWavelength = (wavelength) => {
         this.wavelength = wavelength;
+        this.color = w2h(this.wavelength);
         this.redraw = true;
         this.cache = {};
     }
 
     setSlitWidth = (slitWidth) => {
+        this.slitWidth = slitWidth;
         this.slit.width = slitWidth / this.ypx2m;
         this.redraw = true;
         this.cache = {};
@@ -98,6 +108,7 @@ class SingleSlitSimulation extends Simulation {
     mouseMove = (event, x, y) => {
         this.screen.x = Math.max(Math.min(x, this.screen.maxX), this.screen.minX);
         this.redraw = true;
+        this.cache = {};
     }
 
     intensityAt = (x, y) => {
@@ -110,7 +121,7 @@ class SingleSlitSimulation extends Simulation {
         const dist = (x < this.slit.x ? x : distance(this.slit.x, this.slit.y, x , y));
         const v = 2 * dist / (this.wavelength * 50000000) - 10 * this.t;
         const factor = (1 + Math.cos(v)) / 2;
-        return interpolate("#000000", this.color, factor);
+        return interpolate(0, this.color, factor);
     }
 
     get xpx2m() {
@@ -119,10 +130,6 @@ class SingleSlitSimulation extends Simulation {
 
     get ypx2m() {
         return 1 / 1_000_00;
-    }
-
-    get color() {
-        return w2h(this.wavelength);
     }
 }
 

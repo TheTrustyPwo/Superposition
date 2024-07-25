@@ -1,6 +1,6 @@
 import {Simulation} from "./index.js";
 import {Screen, HorizontalScreen} from "../shared/screen.js";
-import {interpolate, w2h} from "../utils/color.js";
+import {i2h, interpolate, w2h} from "../utils/color.js";
 import {distance} from "../utils/math.js";
 import {DoubleSlit, NSlit, Slit} from "../shared/slit.js";
 
@@ -8,13 +8,24 @@ class NSlitSimulation extends Simulation {
     constructor(cvs, c, wavelength = 500 / 1_000_000_000 , slitWidth = 5 / 1_000_000, slitSeparation = 5 / 1_000_000, slits = 3) {
         super(cvs, c);
         this.wavelength = wavelength;
-        this.screen = new HorizontalScreen(cvs, c, cvs.width / 2, 0.25 * cvs.height, cvs.width - 50);
-        this.slit = new NSlit(cvs, c, cvs.width / 2, 0.9 * cvs.height, cvs.width - 50, slitWidth / this.xpx2m, slitSeparation / this.xpx2m, slits);
+        this.slitWidth = slitWidth;
+        this.slitSeparation = slitSeparation;
+        this.slits = slits;
+        this.color = w2h(this.wavelength);
 
         this.t = 0;
         this.dt = 1 / 60;
-        this.cache = {};
+        this.resize();
+    }
+
+    resize = () => {
+        this.cvs.width = document.querySelector(".md-content").clientWidth;
+        this.cvs.height = this.cvs.width / 2;
+        this.screen = new HorizontalScreen(this.cvs, this.c, this.cvs.width / 2, 0.25 * this.cvs.height, this.cvs.width * 0.95);
+        this.slit = new NSlit(this.cvs, this.c, this.cvs.width / 2, 0.9 * this.cvs.height, this.cvs.width * 0.95,
+            this.slitWidth / this.xpx2m, this.slitSeparation / this.xpx2m, this.slits);
         this.redraw = true;
+        this.cache = {};
     }
 
     evaluate = (theta) => {
@@ -56,10 +67,10 @@ class NSlitSimulation extends Simulation {
     plotIntensity = () => {
         this.c.beginPath();
         this.c.lineWidth = 3;
-        this.c.strokeStyle = this.color;
+        this.c.strokeStyle = i2h(this.color);
         for (let x = 0; x <= this.cvs.width; x++) {
             const theta = Math.atan2((x - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
-            const intensity =  this.evaluate(theta) * 100;
+            const intensity =  this.evaluate(theta) * this.cvs.height / 5;
             if (x === 0) this.c.moveTo(x, this.screen.y - 5 - intensity);
             else this.c.lineTo(x, this.screen.y - 5 - intensity);
         }
@@ -84,23 +95,27 @@ class NSlitSimulation extends Simulation {
 
     setWavelength = (wavelength) => {
         this.wavelength = wavelength;
+        this.color = w2h(wavelength);
         this.redraw = true;
         this.cache = {};
     }
 
     setSlitWidth = (slitWidth) => {
+        this.slitWidth = slitWidth;
         this.slit.width = slitWidth / this.xpx2m;
         this.redraw = true;
         this.cache = {};
     }
 
     setSlitSeparation = (slitSeparation) => {
+        this.slitSeparation = slitSeparation;
         this.slit.separation = slitSeparation / this.xpx2m;
         this.redraw = true;
         this.cache = {};
     }
 
     setSlits = (slits) => {
+        this.slits = slits;
         this.slit.slits = slits;
         this.redraw = true;
         this.cache = {};
@@ -116,7 +131,7 @@ class NSlitSimulation extends Simulation {
         const dist = (y > this.slit.y ? this.cvs.height - y : distance(this.slit.x, this.slit.y, x, y));
         const v = 2 * dist / (this.wavelength * 50000000) - 10 * this.t;
         const factor = (1 + Math.cos(v)) / 2;
-        return interpolate("#000000", this.color, factor);
+        return interpolate(0, this.color, factor);
     }
 
     mouseDown = (event) => {};
@@ -126,6 +141,7 @@ class NSlitSimulation extends Simulation {
     mouseMove = (event, x, y) => {
         this.screen.y = Math.max(Math.min(y, this.screen.maxY), this.screen.minY);
         this.redraw = true;
+        this.cache = {};
     }
 
     get xpx2m() {
@@ -134,10 +150,6 @@ class NSlitSimulation extends Simulation {
 
     get ypx2m() {
         return 2 / (this.slit.y - this.screen.minY);
-    }
-
-    get color() {
-        return w2h(this.wavelength);
     }
 }
 

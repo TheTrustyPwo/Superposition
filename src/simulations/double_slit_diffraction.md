@@ -1,4 +1,4 @@
-<canvas width="1000px" height="500px"></canvas>
+<canvas></canvas>
 
 <div class="slitWidth">
     <input type="range" min="200" max="1000" step="100" value="500" class="slider" id="slitWidthInput">
