@@ -65,12 +65,6 @@ plugins:
   - git-revision-date-localized:
       enable_creation_date: true
       enabled: !ENV [MKDOCS_ENABLE_GIT_REVISION_DATE, False]
-  - git-authors
-  - git-committers:
-      repository: TheTrustyPwo/Superposition
-      docs_path: src/
-      token: !ENV MKDOCS_GIT_COMMITTERS_APIKEY
-      enabled: !ENV [MKDOCS_ENABLE_GIT_COMMITTERS, False]
   - macros
 
 nav:
