@@ -69,6 +69,8 @@ plugins:
 
 nav:
   - Home: index.md
+  - Introduction:
+      - Introduction: text/introduction/main.md
   - Interference:
       - Interference: text/interference/main.md
   - Diffraction:
