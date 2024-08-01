@@ -78,3 +78,5 @@ nav:
       - Single Slit Diffraction: simulations/single_slit_diffraction.md
       - Double Slit Diffraction: simulations/double_slit_diffraction.md
       - N Slit Diffraction: simulations/n_slit_diffraction.md
+  - Game:
+      - Under Construction: text/game/main.md

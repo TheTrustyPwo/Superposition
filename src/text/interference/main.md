@@ -55,7 +55,7 @@ Interference shares many similarities with diffraction. But if so what makes it 
 2. **Diffraction**
     - Single-Slit Diffraction:
         - Minima: 
-            1. $a\sin\theta = m\lambda, \quad m = \pm1, \pm2, \pm3, \dots \quad$
+            1. $b\sin\theta = m\lambda, \quad m = \pm1, \pm2, \pm3, \dots \quad$
             2. Width of Central Maximum: $W = \frac{2L\lambda}{a}$
 
 - Diffraction Grating:
@@ -71,7 +71,6 @@ Interference shares many similarities with diffraction. But if so what makes it 
 
 
 ## Theory and Formulae:
-[enrichment maybe whack trigo derivation?]
 
 The <b>Principle of Superposition</b> states that when <b>TWO OR MORE</b> waves of the same kind overlap, the resultant displacement at any point at any instant is given by the <b>vector sum</b> of the <b>individual</b> displacements that each individual wave would cause at that point at that instant.
 
@@ -86,6 +85,7 @@ Given two coherent sources $S_1$ and $S_2$, and a point of observation $P$, the 
 
 $$ \delta = |S_1P - S_2P| $$
 
+**SIMULATION**
 <canvas></canvas>
 
 <div class="frequency">
@@ -118,6 +118,7 @@ $$ \Delta \phi = \frac{2\pi}{\lambda} \cdot \delta $$
 
 where $\lambda$ is the wavelength of the waves and $\delta$ is the path difference between the two waves.
 
+**SIMULATION**
 <canvas></canvas>
 
 <div class="frequency">
@@ -172,6 +173,23 @@ $\delta = m \cdot \lambda$.
 - **Destructive Interference (Minima)**: Occurs at points where the path difference $\delta$ corresponds to half-integer multiples of the wavelength $\lambda$, <br>
 $\delta = (m + \frac{1}{2}) \cdot \lambda$.
 
+**SIMULATION**
+<canvas></canvas>
+
+<div class="slitWidth">
+    <input type="range" min="200" max="1000" step="100" value="500" class="slider" id="slitWidthInput">
+    Slit Width: <span id="slitWidthValue">500</span> μm
+</div>
+<div class="slitSeparation">
+    <input type="range" min="200" max="1000" step="100" value="500" class="slider" id="slitSeparationInput">
+    Slit Separation: <span id="slitSeparationValue">500</span> μm
+</div>
+<div class="wavelength">
+    <input type="range" min="380" max="780" step="10" value="500" class="slider" id="wavelengthInput">
+    Wavelength: <span id="wavelengthValue">500</span> nm
+</div>
+
+<script type="module" src="../javascript/sim5.js"></script>
 
 ## Key Formulae Summary:
 1. Wavelength <br>
@@ -219,3 +237,16 @@ $y_b = m\frac{L\lambda}{d}$
 
 11. Finding the distance to the dark spots <br>
 $y_d = \left(m + \frac{1}{2}\right)\frac{L\lambda}{d}$
+
+
+## Enrichment:
+
+### Double-Slit Interference Intensity
+The interference pattern produced by two slits is given by:
+
+$$I(\theta) = I_0 \cos^2\left(\frac{\pi d \sin(\theta)}{\lambda}\right)$$
+where \(d\) is the distance between the slits.
+
+
+### How did we derive 3 and 4?
+Under Construction
