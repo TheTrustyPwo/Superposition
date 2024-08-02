@@ -56,7 +56,7 @@ where:
 The central maximum is the brightest point and occurs at \(\theta = 0\). The positions of secondary maxima (less bright than the central maximum) are not as straightforward to calculate analytically. However, they occur between the minima and can be found using more detailed analysis or approximation methods.
 
 **SIMULATION**
-<canvas></canvas>
+<canvas id="singleSlit"></canvas>
 
 <div class="slitWidth">
     <input type="range" min="200" max="1000" step="100" value="500" class="slider" id="slitWidthInput">
@@ -88,7 +88,7 @@ where:
  - $\lambda$ is the wavelength of light.
 
 **SIMULATION**
-<canvas></canvas>
+<canvas id="nSlit"></canvas>
 
 <div class="slits">
     <input type="range" min="1" max="100" step="1" value="3" class="slider" id="slitsInput">

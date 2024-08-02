@@ -2,7 +2,7 @@ import { DoubleSlitSimulation } from "./simulations/doubleSlit.js"
 
 const fps = 60;
 
-const cvs = document.querySelector('canvas');
+const cvs = document.getElementById('doubleSlit');
 const c = cvs.getContext('2d');
 const wavelengthInput = document.getElementById("wavelengthInput");
 const slitWidthInput = document.getElementById("slitWidthInput");

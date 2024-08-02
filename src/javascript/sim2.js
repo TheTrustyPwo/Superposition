@@ -2,7 +2,7 @@ import { InterferenceSimulation } from "./simulations/interference.js";
 
 const fps = 60;
 
-const cvs = document.querySelector('canvas');
+const cvs = document.getElementById('twoSourceInf');
 const c = cvs.getContext('2d');
 const wavelengthInput = document.getElementById("wavelengthInput");
 const amplitudeInput = document.getElementById("amplitudeInput");

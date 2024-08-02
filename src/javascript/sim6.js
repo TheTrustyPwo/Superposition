@@ -2,7 +2,7 @@ import { NSlitSimulation } from "./simulations/nSlit.js"
 
 const fps = 60;
 
-const cvs = document.querySelector('canvas');
+const cvs = document.getElementById('nSlit');
 const c = cvs.getContext('2d');
 const slitsInput = document.getElementById("slitsInput");
 const wavelengthInput = document.getElementById("wavelengthInput");

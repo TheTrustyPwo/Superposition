@@ -1,4 +1,4 @@
-<canvas></canvas>
+<canvas id="twoSourceInf"></canvas>
 
 <div class="frequency">
     <input type="range" min="50" max="200" step="10" value="120" class="slider" id="wavelengthInput">

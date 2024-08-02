@@ -1,4 +1,4 @@
-<canvas></canvas>
+<canvas id="nSlit"></canvas>
 
 <div class="slits">
     <input type="range" min="1" max="100" step="1" value="3" class="slider" id="slitsInput">
