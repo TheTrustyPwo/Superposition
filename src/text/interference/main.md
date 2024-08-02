@@ -108,7 +108,7 @@ Phase Difference Δϕ = <span id="phaseDifference">0</span>π
 <br>
 <span id="interference">Constructive Interference!</span>
 
-<script type="module" src="../javascript/sim2.js"></script>
+<script type="module" src="../../javascript/sim2.js"></script>
 
 
 ### Phase Difference
@@ -141,7 +141,7 @@ Phase Difference Δϕ = <span id="phaseDifference">0</span>π
 <br>
 <span id="interference">Constructive Interference!</span>
 
-<script type="module" src="../javascript/sim2.js"></script>
+<script type="module" src="../../javascript/sim2.js"></script>
 
 ### Constructive Interference
 <b>Constructive interference</b> occurs when the waves that meet are in phase at the point of consideration. 
@@ -189,7 +189,7 @@ $\delta = (m + \frac{1}{2}) \cdot \lambda$.
     Wavelength: <span id="wavelengthValue">500</span> nm
 </div>
 
-<script type="module" src="../javascript/sim5.js"></script>
+<script type="module" src="../../javascript/sim5.js"></script>
 
 ## Key Formulae Summary:
 1. Wavelength <br>

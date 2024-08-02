@@ -67,7 +67,7 @@ The central maximum is the brightest point and occurs at \(\theta = 0\). The pos
     Wavelength: <span id="wavelengthValue">500</span> nm
 </div>
 
-<script type="module" src="../javascript/sim4.js"></script>
+<script type="module" src="../../javascript/sim4.js"></script>
 
 
 ### Diffraction Grating
@@ -107,7 +107,7 @@ where:
     Wavelength: <span id="wavelengthValue">500</span> nm
 </div>
 
-<script type="module" src="../javascript/sim6.js"></script>
+<script type="module" src="../../javascript/sim6.js"></script>
 
 
 ### Resolving Power and Rayleigh's Criterion
