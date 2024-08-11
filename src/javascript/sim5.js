@@ -4,9 +4,9 @@ const fps = 60;
 
 const cvs = document.getElementById('doubleSlit');
 const c = cvs.getContext('2d');
-const wavelengthInput = document.getElementById("wavelengthInput");
-const slitWidthInput = document.getElementById("slitWidthInput");
-const slitSeparationInput = document.getElementById("slitSeparationInput");
+const wavelengthInput = document.getElementById("wavelengthInput_DS");
+const slitWidthInput = document.getElementById("slitWidthInput_DS");
+const slitSeparationInput = document.getElementById("slitSeparationInput_DS");
 
 const simulation = new DoubleSlitSimulation(cvs, c)
 const animate = () => {
@@ -18,17 +18,17 @@ const animate = () => {
 }
 
 wavelengthInput.oninput = () => {
-    document.getElementById("wavelengthValue").innerText = wavelengthInput.value;
+    document.getElementById("wavelengthValue_DS").innerText = wavelengthInput.value;
     simulation.setWavelength(wavelengthInput.value / 1_000_000_000);
 }
 
 slitWidthInput.oninput = () => {
-    document.getElementById("slitWidthValue").innerText = slitWidthInput.value;
+    document.getElementById("slitWidthValue_DS").innerText = slitWidthInput.value;
     simulation.setSlitWidth(slitWidthInput.value / 1_000_000);
 }
 
 slitSeparationInput.oninput = () => {
-    document.getElementById("slitSeparationValue").innerText = slitSeparationInput.value;
+    document.getElementById("slitSeparationValue_DS").innerText = slitSeparationInput.value;
     simulation.setSlitSeparation(slitSeparationInput.value / 1_000_000);
 }
 

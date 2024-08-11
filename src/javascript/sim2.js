@@ -4,13 +4,13 @@ const fps = 60;
 
 const cvs = document.getElementById('twoSourceInf');
 const c = cvs.getContext('2d');
-const wavelengthInput = document.getElementById("wavelengthInput");
-const amplitudeInput = document.getElementById("amplitudeInput");
+const wavelengthInput = document.getElementById("wavelengthInput_2SF");
+const amplitudeInput = document.getElementById("amplitudeInput_2SF");
 const lockScreenInput = document.getElementById("lockScreen");
 const lockPointerInput = document.getElementById("lockPointer");
-const pathDifference = document.getElementById("pathDifference");
-const phaseDifference = document.getElementById("phaseDifference");
-const interference = document.getElementById("interference");
+const pathDifference = document.getElementById("pathDifference_2SF");
+const phaseDifference = document.getElementById("phaseDifference_2SF");
+const interference = document.getElementById("interference_2SF");
 
 const simulation = new InterferenceSimulation(cvs, c, wavelengthInput.value, amplitudeInput.value);
 simulation.wave1.waveTopColor = "#e1503c";
@@ -38,12 +38,12 @@ const animate = () => {
 }
 
 wavelengthInput.oninput = () => {
-    document.getElementById("wavelengthValue").innerText = wavelengthInput.value;
+    document.getElementById("wavelengthValue_2SF").innerText = wavelengthInput.value;
     simulation.setWavelength(wavelengthInput.value);
 }
 
 amplitudeInput.oninput = () => {
-    document.getElementById("amplitudeValue").innerText = amplitudeInput.value;
+    document.getElementById("amplitudeValue_2SF").innerText = amplitudeInput.value;
     simulation.setAmplitude(amplitudeInput.value);
 }
 
