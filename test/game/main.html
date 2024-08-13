@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz Game</h1>
+        <div id="question-container">
+            <p id="question"></p>
+            <div class="options">
+                <div class="option-container">
+                    <img class="option-image" src="" alt="Option 1 Image">
+                    <button class="option" onclick="checkAnswer(1)"></button>
+                </div>
+                <div class="option-container">
+                    <img class="option-image" src="" alt="Option 2 Image">
+                    <button class="option" onclick="checkAnswer(2)"></button>
+                </div>
+            </div>
+            <div class="options">
+                <div class="option-container">
+                    <img class="option-image" src="" alt="Option 3 Image">
+                    <button class="option" onclick="checkAnswer(3)"></button>
+                </div>
+                <div class="option-container">
+                    <img class="option-image" src="" alt="Option 4 Image">
+                    <button class="option" onclick="checkAnswer(4)"></button>
+                </div>
+            </div>
+        </div>
+        <p id="explanation" class="hidden"></p>
+        <p id="score">Score: 0</p>
+        <button id="next-button" class="hidden" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="bgm" src="path/to/your/music.mp3" autoplay loop></audio>
+
+    <script src="question_bank.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
