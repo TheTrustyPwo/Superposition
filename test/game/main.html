@@ -9,56 +9,65 @@
 </head>
 <body>
     <div class="quiz-container">
-        <h1>Quiz Game</h1>
-        <div id="score-combo">
-            <p id="score">Score: 0</p>
-            <p id="combo">Combo: 0</p>
-        </div>
         <div id="question-container">
-            <p id="question"></p>
+            <h2 id="question"></h2>
             <div class="options">
                 <div class="option-container">
-                    <img class="option-image" src="" alt="Option 1 Image">
+                    <img class="option-image" src="assets/images/1.jpeg" alt="Option 1 Image">
                     <button class="option" onclick="checkAnswer(0)"></button>
                 </div>
                 <div class="option-container">
-                    <img class="option-image" src="" alt="Option 2 Image">
+                    <img class="option-image" src="assets/images/2.jpeg" alt="Option 2 Image">
                     <button class="option" onclick="checkAnswer(1)"></button>
                 </div>
             </div>
             <div class="options">
                 <div class="option-container">
-                    <img class="option-image" src="" alt="Option 3 Image">
+                    <img class="option-image" src="assets/images/3.jpeg" alt="Option 3 Image">
                     <button class="option" onclick="checkAnswer(2)"></button>
                 </div>
                 <div class="option-container">
-                    <img class="option-image" src="" alt="Option 4 Image">
+                    <img class="option-image" src="assets/images/4.jpeg" alt="Option 4 Image">
                     <button class="option" onclick="checkAnswer(3)"></button>
                 </div>
             </div>
         </div>
         <div id="timer-container">
             <div id="timer-top-row">
-                <i id="timer-icon" class="fa fa-clock-o"></i>
+                <i id="timer-icon" class="fa fa-clock-o" style="font-size:24px"></i>
                 <div id="timer-bar-wrapper">
                     <div id="timer-bg"></div> <!-- Background for elapsed time -->
                     <div id="timer-bar"></div> <!-- Foreground for remaining time -->
                 </div>
             </div>
-            <p id="time-left">60s</p>
+            <p id="time-left">Time left: 60s</p>
         </div>
-        
-        
-        
+        <div id="score-combo">
+            <div id="score">Score: 0</div>
+            <div id="combo">Combo: 0</div>
+        </div>
+        <div id="progress-container">
+            <div id="progress-bar-wrapper">
+                <div id="progress-bar"></div>
+                <i class="fa fa-trophy" style="font-size:24px"></i>
+                <div id="quarter-markers">
+                    <div id="marker1" class="quarter-marker"></div>
+                    <div id="marker2" class="quarter-marker"></div>
+                    <div id="marker3" class="quarter-marker"></div>
+                </div>
+                <div id="star-markers">
+                    <div id="star1" class="star-marker">☆</div>
+                    <div id="star2" class="star-marker">☆</div>
+                    <div id="star3" class="star-marker">☆</div>
+                </div>
+            </div>
+        </div>
         
         <p id="explanation" class="hidden"></p>
         <button id="next-button" class="hidden" onclick="nextQuestion()">Next Question</button>
     </div>
-
-    <!-- Background Music -->
-    <audio id="bgm" src="path/to/your/music.mp3" autoplay loop></audio>
-
-    <script src="question_bank.js"></script>
+    <audio id="bgm" src="assets/audio/bgm.mpeg" autoplay loop></audio>
+    <audio id="bgm_end" src="assets/audio/end_bgm.mp3"></audio>
     <script src="game.js"></script>
 </body>
 </html>

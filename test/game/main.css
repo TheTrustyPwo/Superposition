@@ -1,15 +1,36 @@
-.quiz-container {
-    max-width: 600px;
-    margin: auto;
-    text-align: center;
-    font-family: Arial, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    font-family: 'Raleway', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
 }
+
+.quiz-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 800px;
+    text-align: center;
+}
+
 
 #score-combo {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+    justify-content: center; /* Center items horizontally */
+    margin: 5px 0px 10px 0px;
     font-size: 18px;
+    width: 100%; /* Ensure it takes up full width */
+}
+#score-combo > div {
+    margin: 0 20px; /* Add some space between score and combo */
 }
 
 #timer-container {
@@ -27,11 +48,11 @@
 }
 
 #timer-icon {
-    font-size: 36px;
-    margin-right: 20px; 
+    margin-right: 10px; 
 }
 
 #timer-bar-wrapper {
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -45,7 +66,7 @@
     background-color: #e0e0e0; 
     border-radius: 5px;
     width: 100%;
-    position: absolute; 
+    position: relative; 
     top: 0;
     left: 0;
     z-index: 1;
@@ -67,6 +88,7 @@
     font-size: 18px;
     font-weight: bold;
     margin-top: 5px; 
+    margin-bottom: 2px;
     text-align: center; 
     width: 100%; 
     max-width: 600px; 
@@ -75,7 +97,8 @@
 
 .options {
     display: flex;
-    justify-content: space-around;
+    flex-wrap: wrap; /* Allow wrapping to multiple lines if needed */
+    justify-content: center; /* Ensure proper spacing */
     margin: 10px 0;
 }
 
@@ -83,28 +106,126 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 40%; /* Adjust as needed to fit within your layout */
+    box-sizing: border-box; /* Include padding and border in width */
+    margin: 0 1%; /* Add margin for spacing between options */
+    border:solid;
+
 }
 
 .option-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
+    width: 100%; /* Make image take full width of container */
+    height: 140px; /* Fixed height for images */
+    object-fit: cover; /* Ensure image covers the area without distortion */
     margin-bottom: 10px;
 }
 
 .option {
-    padding: 10px 20px;
+    width: 100%; /* Make the option button take the full width of its container */
+    height: 40px; /* Fixed height for buttons */
+    padding: 10px;
     font-size: 16px;
     background-color: #e0e0e0;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .option:hover {
     background-color: #d0d0d0;
 }
+
+#progress-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    position: relative;
+}
+
+#progress-bar-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: #e0e0e0;
+    height: 30px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#progress-bar {
+    background-color: #4caf50;
+    height: 100%;
+    width: 0;
+    transition: width 0.5s;
+}
+
+#star-markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+    padding: 0 5px;
+}
+
+.star-marker {
+    font-size: 24px;
+    color: gold;
+    position: relative;
+}
+
+#quarter-markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+}
+
+.quarter-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0.5px;
+    background-color: rgba(125, 125, 125, 0.43);
+}
+
+#marker1 {
+    left: 25%;
+}
+
+#marker2 {
+    left: 50%;
+}
+
+#marker3 {
+    left: 75%;
+}
+
+
+#star1, #star2, #star3 {
+    position: absolute;
+}
+
+#star1 {
+    left: calc(500/2000 * 100% - 1/55 * 100%);
+}
+
+#star2 {
+    left: calc(1000/2000 * 100% - 1/45 * 100%);
+}
+
+#star3 {
+    left: calc(1500/2000 * 100% - 1/40 * 100%);
+}
+
+
 
 .hidden {
     display: none;

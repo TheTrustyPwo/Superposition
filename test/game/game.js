@@ -3,40 +3,89 @@ let combo = 0;
 let currentQuestionIndex = 0;
 let timeLeft = 60; // 60 seconds for the quiz
 let timer;
-let shuffledQuestions;
+let questions;
 let timeout;
+let maxCombo = 0;
 
-function shuffleQuestions() {
-    shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+const bgmElement = document.getElementById('bgm');
+const bgmEndElement = document.getElementById('bgm_end');
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Randomize the order of options
-function shuffleOptions(options, images) {
-    const shuffled = options.map((option, index) => ({ option, image: images[index] }))
-        .sort(() => Math.random() - 0.5);
-    return [shuffled.map(item => item.option), shuffled.map(item => item.image)];
+function generateRandomInterferenceQuestion() {
+    const patterns = ['constructive interference', 'destructive interference'];
+
+    const correctPattern = patterns[getRandomInt(0, 1)];
+    const incorrectPatterns = patterns.filter(p => p !== correctPattern);
+    const additionalIncorrectPatterns = [
+        'partial interference', 'no interference'
+    ].filter(p => !patterns.includes(p) && p !== correctPattern).slice(0, 2);
+
+    const options = [correctPattern, ...incorrectPatterns, ...additionalIncorrectPatterns];
+    for (let i = options.length - 1; i > 0; i--) {
+        const j = getRandomInt(0, i);
+        [options[i], options[j]] = [options[j], options[i]];
+    }
+
+    return {
+        question: `Which option represents ${correctPattern}?`,
+        options: options,
+        correctAnswer: correctPattern,
+        explanation: `The correct answer is ${correctPattern} because...`
+    };
 }
+
+function generateRandomDiffractionQuestion() {
+    const types = ['single-slit diffraction', 'double-slit diffraction', 'diffraction grating'];
+
+    const correctType = types[getRandomInt(0, 2)];
+    const incorrectTypes = types.filter(t => t !== correctType);
+    const additionalIncorrectTypes = [
+        'multi-slit diffraction', 'Fresnel diffraction'
+    ].filter(t => !types.includes(t) && t !== correctType).slice(0, 1);
+
+    const options = [correctType, ...incorrectTypes, ...additionalIncorrectTypes];
+    for (let i = options.length - 1; i > 0; i--) {
+        const j = getRandomInt(0, i);
+        [options[i], options[j]] = [options[j], options[i]];
+    }
+
+    return {
+        question: `Which type of diffraction is described by ${correctType}?`,
+        options: options,
+        correctAnswer: correctType,
+        explanation: `The correct answer is ${correctType} because...`
+    };
+}
+
+// Function to generate a set of random questions
+function generateRandomQuestions(numQuestions) {
+    const questions = [];
+    for (let i = 0; i < numQuestions; i++) {
+        if (getRandomInt(0, 1) === 0) {
+            questions.push(generateRandomInterferenceQuestion());
+        } else {
+            questions.push(generateRandomDiffractionQuestion());
+        }
+    }
+    return questions;
+}
+
+
 
 function loadQuestion() {
     const questionElement = document.getElementById('question');
-    const optionContainers = document.querySelectorAll('.option-container');
     const optionsElements = document.querySelectorAll('.option');
 
-    const currentQuestion = shuffledQuestions[currentQuestionIndex];
+    const currentQuestion = questions[currentQuestionIndex];
     questionElement.textContent = currentQuestion.question;
-    
-    let [shuffledOptions, shuffledImages] = shuffleOptions(currentQuestion.options, currentQuestion.images);
 
-    optionsElements.forEach((option, index) => {
-        option.textContent = shuffledOptions[index];
-        option.style.backgroundColor = '#e0e0e0';
-        option.disabled = false;
-    });
-
-    optionContainers.forEach((container, index) => {
-        const imgElement = container.querySelector('.option-image');
-        imgElement.src = shuffledImages[index];
-        imgElement.alt = `Option ${index + 1} Image`;
+    currentQuestion.options.forEach((option, index) => {
+        optionsElements[index].textContent = option;
+        optionsElements[index].style.backgroundColor = '#e0e0e0';
+        optionsElements[index].disabled = false;
     });
 
     document.getElementById('explanation').classList.add('hidden');
@@ -46,29 +95,26 @@ function loadQuestion() {
 function checkAnswer(selectedOptionIndex) {
     const options = document.querySelectorAll('.option');
     const explanation = document.getElementById('explanation');
-    const currentQuestion = shuffledQuestions[currentQuestionIndex];
-    
-    // Get the selected option text
+    const currentQuestion = questions[currentQuestionIndex];
+
     const selectedOptionText = options[selectedOptionIndex].textContent.trim();
 
-    // Check if the selected option text matches the correct answer
     if (selectedOptionText === currentQuestion.correctAnswer) {
         options[selectedOptionIndex].style.backgroundColor = 'green';
         combo += 1;
+        maxCombo = Math.max(maxCombo, combo); // Update maxCombo if current combo is greater
         score += 100 + (100 * 25 * (combo - 1)) / 100;
         explanation.classList.add('hidden');
-        timeout = setTimeout(nextQuestion, 1000); // Automatically go to next question after 1 second
+        timeout = setTimeout(nextQuestion, 1000);
     } else {
         let correctOptionIndex = -1;
 
-        // Find the correct option index
         options.forEach((option, index) => {
             if (option.textContent.trim() === currentQuestion.correctAnswer) {
                 correctOptionIndex = index;
             }
         });
 
-        // Highlight the correct and selected options
         options.forEach((option, index) => {
             if (index === correctOptionIndex) {
                 option.style.backgroundColor = 'green';
@@ -86,16 +132,47 @@ function checkAnswer(selectedOptionIndex) {
     document.getElementById('score').textContent = `Score: ${Math.floor(score)}`;
     document.getElementById('combo').textContent = `Combo: ${combo}`;
 
-    // Disable all options after one is selected
+    updateProgressBar(); // Update the progress bar
     options.forEach(option => option.disabled = true);
+}
+
+function updateProgressBar() {
+    const progressBar = document.getElementById('progress-bar');
+    const star1 = document.getElementById('star1');
+    const star2 = document.getElementById('star2');
+    const star3 = document.getElementById('star3');
+    
+    const progress = Math.min(score / 2000, 1) * 100;
+    progressBar.style.width = `${progress}%`;
+
+    if (score >= 500) {
+        star1.textContent = '★';
+        document.getElementById('marker1').classList.add('hidden');
+    } else {
+        star1.textContent = '☆';
+    }
+
+    if (score >= 1000) {
+        star2.textContent = '★';
+        document.getElementById('marker2').classList.add('hidden');
+    } else {
+        star2.textContent = '☆';
+    }
+
+    if (score >= 1500) {
+        star3.textContent = '★';
+        document.getElementById('marker3').classList.add('hidden');
+    } else {
+        star3.textContent = '☆';
+    }
 }
 
 
 
 function nextQuestion() {
-    clearTimeout(timeout); // Clear timeout if user clicks next button
+    clearTimeout(timeout);
     currentQuestionIndex += 1;
-    if (currentQuestionIndex < shuffledQuestions.length) {
+    if (currentQuestionIndex < questions.length) {
         loadQuestion();
     } else {
         endQuiz();
@@ -106,15 +183,14 @@ function startTimer() {
     const timerBar = document.getElementById('timer-bar');
     const timerBg = document.getElementById('timer-bg');
     const timeLeftElement = document.getElementById('time-left');
-    timerBar.style.width = '100%'; // Initialize with full width
-    timerBg.style.width = '100%'; // Initialize background as full width
+    timerBar.style.width = '100%';
+    timerBg.style.width = '100%';
 
     timer = setInterval(() => {
         timeLeft -= 1;
         const widthPercentage = (timeLeft / 60) * 100;
         timerBar.style.width = `${widthPercentage}%`;
-        // Grey background is fixed in place
-        timeLeftElement.textContent = `${timeLeft}s`;
+        timeLeftElement.textContent = `Time left: ${timeLeft}s`;
 
         if (timeLeft <= 0) {
             clearInterval(timer);
@@ -124,36 +200,46 @@ function startTimer() {
 }
 
 
-
 function endQuiz() {
     clearInterval(timer);
 
     let starRating = '';
     if (score < 500) {
-        starRating = '★☆☆';
+        starRating = '☆☆☆';
     } else if (score <= 1000) {
+        starRating = '★☆☆';
+    } else if (score <= 1500) {
         starRating = '★★☆';
     } else {
         starRating = '★★★';
     }
 
+    const maxCombo = Math.max(combo, 0);
+
     document.getElementById('question-container').innerHTML = `
         <p>Your final score is ${Math.floor(score)}.</p>
+        <p>Your maximum combo was ${maxCombo}.</p>
         <div class="star-rating">${starRating}</div>
         <button id="restart-button" onclick="restartQuiz()">Restart Quiz</button>
     `;
     document.getElementById('next-button').classList.add('hidden');
-    document.getElementById('explanation').classList.add('hidden')
+    document.getElementById('explanation').classList.add('hidden');
+
+    bgmElement.pause();
+    bgmElement.currentTime = 0; // Reset to start
+
+    // Play ending BGM and make sure it doesn't loop
+    bgmEndElement.loop = false;
+    bgmEndElement.play();
 }
 
+
+
 function restartQuiz() {
-    // Refresh the page to reset the quiz
     location.reload();
 }
 
-
-
-// Initialize the first question and start the timer
-shuffleQuestions();
+// Initialize the quiz
+questions = generateRandomQuestions(10);
 loadQuestion();
 startTimer();
