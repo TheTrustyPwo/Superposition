@@ -5,6 +5,74 @@
     font-family: Arial, sans-serif;
 }
 
+#score-combo {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+#timer-container {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    width: 100%;
+}
+
+#timer-top-row {
+    display: flex;
+    align-items: center; 
+    width: 100%; 
+    max-width: 600px;
+}
+
+#timer-icon {
+    font-size: 36px;
+    margin-right: 20px; 
+}
+
+#timer-bar-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    position: relative; 
+    width: 100%; 
+    max-width: 500px;
+}
+
+#timer-bg {
+    height: 20px;
+    background-color: #e0e0e0; 
+    border-radius: 5px;
+    width: 100%;
+    position: absolute; 
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+#timer-bar {
+    height: 20px;
+    background-color: #4caf50; 
+    border-radius: 5px;
+    width: 100%; 
+    position: absolute; 
+    top: 0;
+    left: 0;
+    z-index: 2; 
+    transition: width 1.0s linear; 
+}
+
+#time-left {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 5px; 
+    text-align: center; 
+    width: 100%; 
+    max-width: 600px; 
+}
+
+
 .options {
     display: flex;
     justify-content: space-around;
@@ -18,7 +86,7 @@
 }
 
 .option-image {
-    width: 100px; /* Adjust the size as needed */
+    width: 100px;
     height: 100px;
     object-fit: cover;
     margin-bottom: 10px;
@@ -40,4 +108,21 @@
 
 .hidden {
     display: none;
+}
+
+.star-rating {
+    font-size: 30px;
+    color: gold;
+    margin-top: 20px;
+}
+
+#restart-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }

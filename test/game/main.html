@@ -4,36 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
     <div class="quiz-container">
         <h1>Quiz Game</h1>
+        <div id="score-combo">
+            <p id="score">Score: 0</p>
+            <p id="combo">Combo: 0</p>
+        </div>
         <div id="question-container">
             <p id="question"></p>
             <div class="options">
                 <div class="option-container">
                     <img class="option-image" src="" alt="Option 1 Image">
-                    <button class="option" onclick="checkAnswer(1)"></button>
+                    <button class="option" onclick="checkAnswer(0)"></button>
                 </div>
                 <div class="option-container">
                     <img class="option-image" src="" alt="Option 2 Image">
-                    <button class="option" onclick="checkAnswer(2)"></button>
+                    <button class="option" onclick="checkAnswer(1)"></button>
                 </div>
             </div>
             <div class="options">
                 <div class="option-container">
                     <img class="option-image" src="" alt="Option 3 Image">
-                    <button class="option" onclick="checkAnswer(3)"></button>
+                    <button class="option" onclick="checkAnswer(2)"></button>
                 </div>
                 <div class="option-container">
                     <img class="option-image" src="" alt="Option 4 Image">
-                    <button class="option" onclick="checkAnswer(4)"></button>
+                    <button class="option" onclick="checkAnswer(3)"></button>
                 </div>
             </div>
         </div>
+        <div id="timer-container">
+            <div id="timer-top-row">
+                <i id="timer-icon" class="fa fa-clock-o"></i>
+                <div id="timer-bar-wrapper">
+                    <div id="timer-bg"></div> <!-- Background for elapsed time -->
+                    <div id="timer-bar"></div> <!-- Foreground for remaining time -->
+                </div>
+            </div>
+            <p id="time-left">60s</p>
+        </div>
+        
+        
+        
+        
         <p id="explanation" class="hidden"></p>
-        <p id="score">Score: 0</p>
         <button id="next-button" class="hidden" onclick="nextQuestion()">Next Question</button>
     </div>
 
