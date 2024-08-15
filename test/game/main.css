@@ -231,19 +231,73 @@ body {
     display: none;
 }
 
-.star-rating {
-    font-size: 30px;
+#star-rating {
+    font-size: 50px;
     color: gold;
     margin-top: 20px;
 }
 
+.quiz-container {
+    position: relative;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+/* Add this to main.css */
+
+/* Ensure the quiz container has relative positioning */
+.quiz-container {
+    position: relative;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Style for the wrong questions review box inline with other elements */
+#wrong-questions-container {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    margin-top: 20px; /* Space above the review box */
+}
+
+#wrong-question-number {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+#wrong-question-text,
+#wrong-question-choice,
+#show-right-answer,
+#wrong-question-explanation {
+    margin-bottom: 10px;
+}
+
+/* Specific button styling */
+#prev-wrong-button,
+#next-wrong-button,
+#next-button,
 #restart-button {
-    margin-top: 20px;
     padding: 10px 20px;
+    margin: 5px;
     font-size: 16px;
-    background-color: #007bff;
-    color: white;
+    cursor: pointer;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
+    background-color: #007bff;
+    color: white;
 }
+
+button:hover {
+    background-color: #0056b3;
+}
+

@@ -5,6 +5,7 @@ let timeLeft = 60; // 60 seconds for the quiz
 let timer;
 let questions;
 let timeout;
+let wrongQuestions = []; // Track wrong questions
 let maxCombo = 0;
 
 const bgmElement = document.getElementById('bgm');
@@ -74,13 +75,14 @@ function generateRandomQuestions(numQuestions) {
 }
 
 
-
 function loadQuestion() {
     const questionElement = document.getElementById('question');
     const optionsElements = document.querySelectorAll('.option');
+    const questionNumberElement = document.getElementById('question-number'); // Added
 
     const currentQuestion = questions[currentQuestionIndex];
     questionElement.textContent = currentQuestion.question;
+    questionNumberElement.textContent = `Question ${currentQuestionIndex + 1}`; // Added
 
     currentQuestion.options.forEach((option, index) => {
         optionsElements[index].textContent = option;
@@ -127,6 +129,15 @@ function checkAnswer(selectedOptionIndex) {
         explanation.textContent = currentQuestion.explanation;
         explanation.classList.remove('hidden');
         document.getElementById('next-button').classList.remove('hidden');
+
+        // Add to wrongQuestions
+        wrongQuestions.push({
+            questionNumber: currentQuestionIndex + 1,
+            question: currentQuestion.question,
+            correctAnswer: currentQuestion.correctAnswer,
+            selectedAnswer: selectedOptionText,
+            explanation: currentQuestion.explanation
+        });
     }
 
     document.getElementById('score').textContent = `Score: ${Math.floor(score)}`;
@@ -135,6 +146,7 @@ function checkAnswer(selectedOptionIndex) {
     updateProgressBar(); // Update the progress bar
     options.forEach(option => option.disabled = true);
 }
+
 
 function updateProgressBar() {
     const progressBar = document.getElementById('progress-bar');
@@ -168,7 +180,6 @@ function updateProgressBar() {
 }
 
 
-
 function nextQuestion() {
     clearTimeout(timeout);
     currentQuestionIndex += 1;
@@ -199,9 +210,11 @@ function startTimer() {
     }, 1000);
 }
 
-
 function endQuiz() {
     clearInterval(timer);
+
+    // Hide the timer container
+    document.getElementById('timer-container').style.display = 'none';
 
     let starRating = '';
     if (score < 500) {
@@ -214,16 +227,29 @@ function endQuiz() {
         starRating = '★★★';
     }
 
-    const maxCombo = Math.max(combo, 0);
+    document.getElementById('question-container').innerHTML = 
+        `<h2>Final Score: ${Math.floor(score)}</h2>
+         <h2>Max Combo: ${maxCombo}</h2>`;
 
-    document.getElementById('question-container').innerHTML = `
-        <p>Your final score is ${Math.floor(score)}.</p>
-        <p>Your maximum combo was ${maxCombo}.</p>
-        <div class="star-rating">${starRating}</div>
-        <button id="restart-button" onclick="restartQuiz()">Restart Quiz</button>
-    `;
+    document.getElementById('star-rating').classList.remove('hidden');
+    document.getElementById('star-rating').innerHTML = `${starRating}`;
+         
+
     document.getElementById('next-button').classList.add('hidden');
     document.getElementById('explanation').classList.add('hidden');
+    document.getElementById('score').classList.add('hidden');
+    document.getElementById('combo').classList.add('hidden');
+
+    // Show restart button at the end
+    document.getElementById('restart-button').classList.remove('hidden');
+
+    if (wrongQuestions.length > 0) {
+        document.getElementById('wrong-questions-container').classList.remove('hidden');
+        showWrongQuestion(0);
+    } else {
+        document.getElementById('no-wrong').classList.remove('hidden')
+        document.getElementById('no-wrong').innerHTML = `<h3>Congratulations! You made no errors!</h3>`
+    };
 
     bgmElement.pause();
     bgmElement.currentTime = 0; // Reset to start
@@ -234,6 +260,33 @@ function endQuiz() {
 }
 
 
+let wrongQuestionIndex = 0;
+
+function showWrongQuestion(index) {
+    const wrongQuestion = wrongQuestions[index];
+    document.getElementById('wrong-question-number').textContent = `Question ${wrongQuestion.questionNumber}`;
+    document.getElementById('wrong-question-text').textContent = wrongQuestion.question;
+    document.getElementById('wrong-question-explanation').textContent = `Explanation: ${wrongQuestion.explanation}`;
+    document.getElementById('wrong-question-choice').textContent = `Your Choice: ${wrongQuestion.selectedAnswer}`;
+    document.getElementById('show-right-answer').textContent = `Right Answer: ${wrongQuestion.correctAnswer}`
+
+    document.getElementById('prev-wrong-button').style.display = index === 0 ? 'none' : 'inline-block';
+    document.getElementById('next-wrong-button').style.display = index === wrongQuestions.length - 1 ? 'none' : 'inline-block';
+}
+
+function showPreviousWrongQuestion() {
+    if (wrongQuestionIndex > 0) {
+        wrongQuestionIndex--;
+        showWrongQuestion(wrongQuestionIndex);
+    }
+}
+
+function showNextWrongQuestion() {
+    if (wrongQuestionIndex < wrongQuestions.length - 1) {
+        wrongQuestionIndex++;
+        showWrongQuestion(wrongQuestionIndex);
+    }
+}
 
 function restartQuiz() {
     location.reload();
