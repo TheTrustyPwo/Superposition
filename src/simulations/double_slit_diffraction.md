@@ -12,5 +12,9 @@
     <input type="range" min="380" max="780" step="10" value="500" class="slider" id="wavelengthInput_DS">
     Wavelength: <span id="wavelengthValue_DS">500</span> nm
 </div>
+<div class="envelope">
+    <input type="checkbox" id="envelopeInput_DS" checked="checked">
+    <label for="envelopeInput_DS">Toggle Envelope</label>
+</div>
 
 <script type="module" src="../javascript/sim5.js"></script>

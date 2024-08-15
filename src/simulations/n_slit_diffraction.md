@@ -16,5 +16,9 @@
     <input type="range" min="380" max="780" step="10" value="500" class="slider" id="wavelengthInput_nSlit">
     Wavelength: <span id="wavelengthValue_nSlit">500</span> nm
 </div>
+<div class="envelope">
+    <input type="checkbox" id="envelopeInput_nSlit" checked="checked">
+    <label for="envelopeInput_nSlit">Toggle Envelope</label>
+</div>
 
 <script type="module" src="../javascript/sim6.js"></script>

@@ -10,6 +10,7 @@ class DoubleSlitSimulation extends Simulation {
         this.wavelength = wavelength;
         this.slitWidth = slitWidth;
         this.slitSeparation = slitSeparation;
+        this.envelope = 1;
         this.color = w2h(this.wavelength);
 
         this.t = 0;
@@ -25,17 +26,28 @@ class DoubleSlitSimulation extends Simulation {
             this.slitWidth / this.ypx2m, this.slitSeparation / this.ypx2m);
         this.redraw = true;
         this.cache = {};
+        this.cacheEnvelope = {};
     }
 
     evaluate = (theta) => {
         theta = Math.round(theta * 1_000_000) / 1_000_000;
         if (theta in this.cache) return this.cache[theta];
         const sine = Math.sin(theta);
-        const cs = Math.cos(Math.PI * this.slit.separation * this.ypx2m * sine / this.wavelength);
+        const cs = Math.cos(Math.PI * (this.slit.separation + this.slit.width) * this.ypx2m * sine / this.wavelength);
         const a = Math.PI * this.slit.width * this.ypx2m * sine / this.wavelength
         const tmp = Math.sin(a) / a;
         this.cache[theta] = cs * cs * tmp * tmp;
         return this.cache[theta];
+    }
+
+    evaluateEnvelope = (theta) => {
+        theta = Math.round(theta * 1_000_00) / 1_000_00;
+        if (theta in this.cacheEnvelope) return this.cacheEnvelope[theta];
+        let sine = Math.sin(theta);
+        let a = Math.PI * this.slit.width * this.ypx2m * sine / this.wavelength;
+        let tmp = Math.sin(a) / a;
+        this.cacheEnvelope[theta] = tmp * tmp;
+        return this.cacheEnvelope[theta];
     }
 
     update = () => {
@@ -46,6 +58,7 @@ class DoubleSlitSimulation extends Simulation {
             this.screen.draw();
             this.slit.draw();
             this.plotIntensity();
+            if (this.envelope) this.plotEnvelope();
             this.redraw = false;
         } else this.c.clearRect(this.slit.x + 2.5, 0, this.screen.x - this.slit.x - 5, this.cvs.height);
 
@@ -75,11 +88,25 @@ class DoubleSlitSimulation extends Simulation {
         this.c.stroke();
     }
 
+    plotEnvelope = () => {
+        this.c.beginPath();
+        this.c.lineWidth = 1;
+        this.c.strokeStyle = "#FFFFFF";
+        for (let y = 0; y <= this.cvs.height; y++) {
+            const theta = Math.atan2((y - this.slit.y) * this.ypx2m, (this.screen.x - this.slit.x) * this.xpx2m);
+            const intensity =  this.evaluateEnvelope(theta) * this.cvs.width / 10;
+            if (y === 0) this.c.moveTo(this.screen.x + 5 + intensity, y);
+            else this.c.lineTo(this.screen.x + 5 + intensity, y);
+        }
+        this.c.stroke();
+    }
+
     displayMeasurements = () => {
         this.c.save();
         this.c.beginPath();
         this.c.moveTo(this.slit.x, this.cvs.height * 0.9);
         this.c.lineTo(this.screen.x, this.cvs.height * 0.9);
+        this.c.lineWidth = 3;
         this.c.strokeStyle = "#179e7e";
         this.c.stroke();
         this.c.translate((this.slit.x + this.screen.x) / 2, this.cvs.height * 0.9 - 18);
@@ -96,6 +123,7 @@ class DoubleSlitSimulation extends Simulation {
         this.color = w2h(wavelength);
         this.redraw = true;
         this.cache = {};
+        this.cacheEnvelope = {};
     }
 
     setSlitWidth = (slitWidth) => {
@@ -103,6 +131,7 @@ class DoubleSlitSimulation extends Simulation {
         this.slit.width = slitWidth / this.ypx2m;
         this.redraw = true;
         this.cache = {};
+        this.cacheEnvelope = {};
     }
 
     setSlitSeparation = (slitSeparation) => {
@@ -110,6 +139,12 @@ class DoubleSlitSimulation extends Simulation {
         this.slit.separation = slitSeparation / this.ypx2m;
         this.redraw = true;
         this.cache = {};
+        this.cacheEnvelope = {};
+    }
+
+    setEnvelope = (envelope) => {
+        this.envelope = envelope;
+        this.redraw = true;
     }
 
     intensityAt = (x, y) => {

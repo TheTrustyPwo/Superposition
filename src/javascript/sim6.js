@@ -8,6 +8,7 @@ const slitsInput = document.getElementById("slitsInput_nSlit");
 const wavelengthInput = document.getElementById("wavelengthInput_nSlit");
 const slitWidthInput = document.getElementById("slitWidthInput_nSlit");
 const slitSeparationInput = document.getElementById("slitSeparationInput_nSlit");
+const envelopeInput = document.getElementById("envelopeInput_nSlit");
 
 const simulation = new NSlitSimulation(cvs, c)
 const animate = () => {
@@ -36,6 +37,10 @@ slitSeparationInput.oninput = () => {
 slitsInput.oninput = () => {
     document.getElementById("slitsValue_nSlit").innerText = slitsInput.value;
     simulation.setSlits(slitsInput.value);
+}
+
+envelopeInput.oninput = () => {
+    simulation.setEnvelope(envelopeInput.checked);
 }
 
 
