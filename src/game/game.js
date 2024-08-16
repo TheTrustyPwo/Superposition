@@ -1,12 +1,13 @@
 let score = 0;
 let combo = 0;
 let currentQuestionIndex = 0;
-let timeLeft = 60; // 60 seconds for the quiz
+let timeLeft = 60;
 let timer;
 let questions;
 let timeout;
-let wrongQuestions = []; // Track wrong questions
+let wrongQuestions = []
 let maxCombo = 0;
+let wrongQuestionIndex = 0;
 
 const bgmElement = document.getElementById('bgm');
 const bgmEndElement = document.getElementById('bgm_end');
@@ -73,7 +74,6 @@ function generateRandomQuestions(numQuestions) {
     }
     return questions;
 }
-
 
 function loadQuestion() {
     const questionElement = document.getElementById('question');
@@ -147,7 +147,6 @@ function checkAnswer(selectedOptionIndex) {
     options.forEach(option => option.disabled = true);
 }
 
-
 function updateProgressBar() {
     const progressBar = document.getElementById('progress-bar');
     const star1 = document.getElementById('star1');
@@ -178,7 +177,6 @@ function updateProgressBar() {
         star3.textContent = '☆';
     }
 }
-
 
 function nextQuestion() {
     clearTimeout(timeout);
@@ -242,6 +240,7 @@ function endQuiz() {
 
     // Show restart button at the end
     document.getElementById('restart-button').classList.remove('hidden');
+    document.getElementById('return-button').classList.remove('hidden');
 
     if (wrongQuestions.length > 0) {
         document.getElementById('wrong-questions-container').classList.remove('hidden');
@@ -258,9 +257,6 @@ function endQuiz() {
     bgmEndElement.loop = false;
     bgmEndElement.play();
 }
-
-
-let wrongQuestionIndex = 0;
 
 function showWrongQuestion(index) {
     const wrongQuestion = wrongQuestions[index];

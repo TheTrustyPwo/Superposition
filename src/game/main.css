@@ -286,7 +286,8 @@ body {
 #prev-wrong-button,
 #next-wrong-button,
 #next-button,
-#restart-button {
+#restart-button,
+#return-button {
     padding: 10px 20px;
     margin: 5px;
     font-size: 16px;
