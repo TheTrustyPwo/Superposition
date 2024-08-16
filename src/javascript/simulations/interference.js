@@ -25,8 +25,7 @@ class InterferenceSimulation extends Simulation {
     }
 
     resize = () => {
-        this.cvs.width = document.querySelector(".md-content").clientWidth;
-        this.cvs.height = this.cvs.width / 2;
+        super.resize();
         this.pointer = new Pointer(this.cvs, this.c, 0.85 * this.cvs.width + 10, this.cvs.height / 2);
         this.screen = new Screen(this.cvs, this.c, 0.85 * this.cvs.width, this.cvs.height / 2, this.cvs.height * 0.9);
 

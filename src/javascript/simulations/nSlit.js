@@ -1,8 +1,8 @@
 import {Simulation} from "./index.js";
-import {Screen, HorizontalScreen} from "../shared/screen.js";
+import {HorizontalScreen} from "../shared/screen.js";
 import {i2h, interpolate, w2h} from "../utils/color.js";
 import {distance} from "../utils/math.js";
-import {DoubleSlit, NSlit, Slit} from "../shared/slit.js";
+import {NSlit} from "../shared/slit.js";
 
 class NSlitSimulation extends Simulation {
     constructor(cvs, c, wavelength = 500 / 1_000_000_000 , slitWidth = 5 / 1_000_000, slitSeparation = 5 / 1_000_000, slits = 3) {
@@ -20,8 +20,7 @@ class NSlitSimulation extends Simulation {
     }
 
     resize = () => {
-        this.cvs.width = document.querySelector(".md-content").clientWidth;
-        this.cvs.height = this.cvs.width / 2;
+        super.resize();
         this.screen = new HorizontalScreen(this.cvs, this.c, this.cvs.width / 2, 0.25 * this.cvs.height, this.cvs.width * 0.95);
         this.slit = new NSlit(this.cvs, this.c, this.cvs.width / 2, 0.9 * this.cvs.height, this.cvs.width * 0.95,
             this.slitWidth / this.xpx2m, this.slitSeparation / this.xpx2m, this.slits);
@@ -170,9 +169,9 @@ class NSlitSimulation extends Simulation {
         return interpolate(0, this.color, factor);
     }
 
-    mouseDown = (event) => {};
+    mouseDown = () => {};
 
-    mouseUp = (event) => {};
+    mouseUp = () => {};
 
     mouseMove = (event, x, y) => {
         this.screen.y = Math.max(Math.min(y, this.screen.maxY), this.screen.minY);

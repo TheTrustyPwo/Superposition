@@ -13,7 +13,7 @@ class Simulation {
             if (event.pageX > rect.right || event.pageX < rect.left || event.pageY > rect.bottom || event.pageY < rect.top) continue;
             interacting = i;
         }
-        if (interacting !== -1) simulations[interacting].mouseDown(e);
+        if (interacting !== -1) simulations[interacting].mouseDown();
     });
 });
 
@@ -22,7 +22,7 @@ class Simulation {
         if (interacting === -1) return;
         const rect = simulations[interacting].cvs.getBoundingClientRect();
         if (event.pageX > rect.right || event.pageX < rect.left || event.pageY > rect.bottom || event.pageY < rect.top) return;
-        simulations[interacting].mouseUp(e)
+        simulations[interacting].mouseUp()
         interacting = -1;
     });
 });

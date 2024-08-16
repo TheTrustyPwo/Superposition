@@ -4,6 +4,12 @@ class Simulation {
         this.c = c;
         simulations.push(this);
     }
+
+    resize() {
+        const clientWidth = document.querySelector(".md-content").clientWidth;
+        this.cvs.width = Math.min(1000, clientWidth * 2);
+        this.cvs.height = this.cvs.width / 2;
+    }
 }
 
 ["resize", "orientationchange"].forEach(event => {
@@ -20,7 +26,7 @@ class Simulation {
             const rect = simulations[i].cvs.getBoundingClientRect();
             if (e.clientX > rect.right || e.clientX < rect.left || e.clientY > rect.bottom || e.clientY < rect.top) continue;
             interacting = i;
-            simulations[interacting].mouseDown(e, e.clientX - rect.left, e.clientY - rect.top);
+            simulations[interacting].mouseDown(e.clientX - rect.left, e.clientY - rect.top);
         }
     });
 });
@@ -30,7 +36,7 @@ class Simulation {
         if (interacting === -1) return;
         const rect = simulations[interacting].cvs.getBoundingClientRect();
         if (e.clientX > rect.right || e.clientX < rect.left || e.clientY > rect.bottom || e.clientY < rect.top) return;
-        simulations[interacting].mouseUp(e)
+        simulations[interacting].mouseUp()
         interacting = -1;
     });
 });

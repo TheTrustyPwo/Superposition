@@ -17,8 +17,7 @@ class SingleSlitSimulation extends Simulation {
     }
 
     resize = () => {
-        this.cvs.width = document.querySelector(".md-content").clientWidth;
-        this.cvs.height = this.cvs.width / 2;
+        super.resize();
         this.screen = new Screen(this.cvs, this.c, 0.85 * this.cvs.width, this.cvs.height / 2, this.cvs.height * 0.95);
         this.slit = new Slit(this.cvs, this.c, 0.1 * this.cvs.width, this.cvs.height / 2, this.cvs.height * 0.95, this.slitWidth / this.ypx2m);
         this.redraw = true;
