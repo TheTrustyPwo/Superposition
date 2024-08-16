@@ -77,3 +77,5 @@ nav:
       - N Slit Diffraction: simulations/n_slit_diffraction.md
   - Game:
       - Game: text/game/main.md
+  - Feedback:
+      - Feedback: text/feedback/main.md
