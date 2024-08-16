@@ -138,15 +138,15 @@ Here is a summary of the key formulae related to diffraction:
 
 - **Single-Slit Diffraction Minima:**
 
-  $$a \sin(\theta) = m \lambda$$
+$$ a \sin(\theta) = m \lambda $$
 
 - **Diffraction Grating Equation:**
 
-  $$d \sin(\theta) = m \lambda$$
+$$ d \sin(\theta) = m \lambda $$
 
 - **Rayleigh's Criterion:**
 
-  $$\theta_{\text{min}} \approx \frac{\lambda}{b}$$
+$$ \theta_{\text{min}} \approx \frac{\lambda}{b} $$
 
 ## Enrichment
 

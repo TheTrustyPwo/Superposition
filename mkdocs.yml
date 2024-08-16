@@ -60,11 +60,6 @@ plugins:
       hooks:
         on_env: "hooks:on_env"
   - search
-#  - literate-nav:
-#      nav_file: navigation.md
-  - git-revision-date-localized:
-      enable_creation_date: true
-      enabled: !ENV [MKDOCS_ENABLE_GIT_REVISION_DATE, False]
   - macros
 
 nav:
@@ -81,4 +76,4 @@ nav:
       - Double Slit Diffraction: simulations/double_slit_diffraction.md
       - N Slit Diffraction: simulations/n_slit_diffraction.md
   - Game:
-      - Under Construction: text/game/main.md
+      - Game: text/game/main.md
