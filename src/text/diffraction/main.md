@@ -91,7 +91,7 @@ where:
 <canvas id="nSlit"></canvas>
 
 <div class="slits">
-    <input type="range" min="1" max="100" step="1" value="3" class="slider" id="slitsInput_nSlit">
+    <input type="range" min="1" max="50" step="1" value="3" class="slider" id="slitsInput_nSlit">
     Slits: <span id="slitsValue_nSlit">3</span>
 </div>
 <div class="slitWidth">
