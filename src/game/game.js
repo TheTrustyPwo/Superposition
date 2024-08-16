@@ -219,9 +219,9 @@ function endQuiz() {
     let starRating = '';
     if (score < 500) {
         starRating = '☆☆☆';
-    } else if (score <= 1000) {
+    } else if (score < 1000) {
         starRating = '★☆☆';
-    } else if (score <= 1500) {
+    } else if (score < 1500) {
         starRating = '★★☆';
     } else {
         starRating = '★★★';
