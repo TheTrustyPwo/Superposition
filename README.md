@@ -68,6 +68,7 @@ Description Soon :)
 
 ### Built With
 
+* ![Python](https://img.shields.io/static/v1?style=for-the-badge&message=Python&color=3776AB&logo=Python&logoColor=FFFFFF&label=)
 * ![JavaScript](https://img.shields.io/static/v1?style=for-the-badge&message=JavaScript&color=222222&logo=JavaScript&logoColor=F7DF1E&label=)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -91,7 +92,15 @@ deployment for notes on how to deploy the project.
 git clone https://github.com/TheTrustyPwo/Superposition.git
 ```
 
-2. Open `index.html`
+2. Install mkdocs.
+```shell
+pip install mkdocs mkdocs-material mkdocs-simple-hooks mkdocs-macros-plugin
+```
+
+3. Host locally.
+```shell
+python -m mkdocs serve
+```
 
 
 <!-- LICENSE -->
