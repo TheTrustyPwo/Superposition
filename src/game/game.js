@@ -63,7 +63,7 @@ function pathDiffConst() {
 
     const correctOpt = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
     const wrongOpt1 = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const wrongOpt2 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
+    const wrongOpt2 = `Destructive Interference, Phase Difference Δϕ = ${pathDiff}π`
     const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
 
     const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
@@ -84,14 +84,14 @@ function pathDiffConst() {
 
 function pathDiffDest() {
     const p1 = getRandomInt(2, 10)
-    const p2 = p1 + 0.5 * getRandomInt(1, 5)
+    const p2 = p1 + 0.5
 
     const pathDiff = p2 - p1
     const phaseDiff = pathDiff * 2
 
     const wrongOpt1  = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
     const correctOpt = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const wrongOpt2 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
+    const wrongOpt2 = `Destructive Interference, Phase Difference Δϕ = ${pathDiff}π`
     const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
 
     const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
