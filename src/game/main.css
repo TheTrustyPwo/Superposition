@@ -11,6 +11,7 @@ body {
     align-items: center;
     height: 100vh;
     background-color: #f0f0f0;
+    overflow: hidden;
 }
 
 .quiz-container {
@@ -25,8 +26,11 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 800px;
+    max-height: 90vh; /* Restrict height */
     text-align: center;
+    overflow-y: auto; /* Enable scrolling within the container */
 }
+
 
 .hidden {
     display: none;
@@ -34,22 +38,23 @@ body {
 
 
 /* For the MCQ and Options */
+
 .options {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     margin: 10px 0;
+    width: 100%; 
 }
 
 .option-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 300px; /* Adjust as needed to fit within your layout */
-    box-sizing: border-box; /* Include padding and border in width */
-    margin: 0 20px; /* Add margin for spacing between options */
+    width: 300px; 
+    box-sizing: border-box; 
+    margin: 5px 20px;
     border:solid;
-
 }
 
 .option-image {
