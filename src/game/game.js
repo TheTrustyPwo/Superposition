@@ -1,3 +1,4 @@
+
 let score = 0;
 let combo = 0;
 let currentQuestionIndex = 0;
@@ -16,61 +17,165 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function generateRandomInterferenceQuestion() {
-    const patterns = ['constructive interference', 'destructive interference'];
+function lightColor() {
+    let wavelengths = [415, 473, 533, 585, 605, 685];
+    let possibleColors = ['Violet', 'Blue', 'Green', 'Yellow', 'Orange', 'Red']
+    let randNum = getRandomInt(0, 5);
+    
+    const wavelength = wavelengths[randNum]
+    const correctColor = possibleColors[randNum]
 
-    const correctPattern = patterns[getRandomInt(0, 1)];
-    const incorrectPatterns = patterns.filter(p => p !== correctPattern);
-    const additionalIncorrectPatterns = [
-        'partial interference', 'no interference'
-    ].filter(p => !patterns.includes(p) && p !== correctPattern).slice(0, 2);
+    const shuffledColors = possibleColors.sort(() => 0.5 - Math.random());
+    
+    // Remove the correctColor from the shuffled array and take the first 3 colors
+    const incorrectColors = shuffledColors.filter(color => color !== correctColor).slice(0, 3);
 
-    const options = [correctPattern, ...incorrectPatterns, ...additionalIncorrectPatterns];
+    
+    const options = [correctColor, ...incorrectColors];
     for (let i = options.length - 1; i > 0; i--) {
         const j = getRandomInt(0, i);
         [options[i], options[j]] = [options[j], options[i]];
     }
 
     return {
-        question: `Which option represents ${correctPattern}?`,
+        question: `Whhat color is a light of wavelength ${wavelength}nm?`,
         options: options,
-        correctAnswer: correctPattern,
-        explanation: `The correct answer is ${correctPattern} because...`
+        correctAnswer: correctColor,
+        explanation: `The correct answer is ${correctColor} because it has a wavelength of ${wavelength}nm!`,
+        ShowImage: true
     };
 }
 
-function generateRandomDiffractionQuestion() {
-    const types = ['single-slit diffraction', 'double-slit diffraction', 'diffraction grating'];
+function displayConstInf(){
 
-    const correctType = types[getRandomInt(0, 2)];
-    const incorrectTypes = types.filter(t => t !== correctType);
-    const additionalIncorrectTypes = [
-        'multi-slit diffraction', 'Fresnel diffraction'
-    ].filter(t => !types.includes(t) && t !== correctType).slice(0, 1);
+}
 
-    const options = [correctType, ...incorrectTypes, ...additionalIncorrectTypes];
+function displayDestInf() {
+
+}
+
+function pathDiffConst() {
+    const p1 = getRandomInt(2, 10)
+    const p2 = p1 + 1 * getRandomInt(1, 5)
+
+    const pathDiff = p2 - p1
+    const phaseDiff = pathDiff * 2
+
+    const correctOpt = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
+    const wrongOpt1 = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
+    const wrongOpt2 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
+    const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
+
+    const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
     for (let i = options.length - 1; i > 0; i--) {
         const j = getRandomInt(0, i);
         [options[i], options[j]] = [options[j], options[i]];
     }
 
     return {
-        question: `Which type of diffraction is described by ${correctType}?`,
+        question: `If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
         options: options,
-        correctAnswer: correctType,
-        explanation: `The correct answer is ${correctType} because...`
+        correctAnswer: correctOpt,
+        explanation: 
+        `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
+         ShowImage: false
     };
+}
+
+function pathDiffDest() {
+    const p1 = getRandomInt(2, 10)
+    const p2 = p1 + 0.5 * getRandomInt(1, 5)
+
+    const pathDiff = p2 - p1
+    const phaseDiff = pathDiff * 2
+
+    const wrongOpt1  = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
+    const correctOpt = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
+    const wrongOpt2 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
+    const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
+
+    const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
+    for (let i = options.length - 1; i > 0; i--) {
+        const j = getRandomInt(0, i);
+        [options[i], options[j]] = [options[j], options[i]];
+    }
+
+    return {
+        question: `If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
+        ShowImage: false
+    };
+
+}
+
+function possDestPhaseDiff() {
+    const correctOpt = `π, 3π, 5π, ...`
+    const wrongOpt1 = `2π, 4π, 6π, ...`
+    const wrongOpt2 = `0, 2π, 4π, ...`
+    const wrongOpt3 = `±π, ±3π, ±5π, ...`
+
+    const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
+    for (let i = options.length - 1; i > 0; i--) {
+        const j = getRandomInt(0, i);
+        [options[i], options[j]] = [options[j], options[i]];
+    }
+
+    return {
+        question: `Which of the below lists the possible phase difference for destructive interference?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `For desctructive interference, phase difference is always a positive odd number!`,
+        ShowImage: false
+    };
+}
+
+function possConstPhaseDiff() {
+    const correctOpt = `0, 2π, 4π, ..`
+    const wrongOpt1 = `2π, 4π, 6π, ...`
+    const wrongOpt2 = `π, 3π, 5π, ...`
+    const wrongOpt3 = `±π, ±3π, ±5π, ...`
+
+    const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
+    for (let i = options.length - 1; i > 0; i--) {
+        const j = getRandomInt(0, i);
+        [options[i], options[j]] = [options[j], options[i]];
+    }
+
+    return {
+        question: `Which of the below lists the possible phase difference for constructive interference?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `For constructive interference, phase difference is always zero or a postive even number!`,
+        ShowImage: false
+    };
+}
+
+function GenQuestion() {
+    randomQuestion = getRandomInt(0, 4)
+    if (randomQuestion === 0) {
+        return lightColor();
+    } else if (randomQuestion === 1) {
+        return pathDiffConst()
+    } else if (randomQuestion === 2) {
+        return pathDiffDest()
+    } else if (randomQuestion === 3) {
+        return possConstPhaseDiff()
+    } else {
+        return possDestPhaseDiff()
+    }
+
 }
 
 // Function to generate a set of random questions
 function generateRandomQuestions(numQuestions) {
     const questions = [];
     for (let i = 0; i < numQuestions; i++) {
-        if (getRandomInt(0, 1) === 0) {
-            questions.push(generateRandomInterferenceQuestion());
-        } else {
-            questions.push(generateRandomDiffractionQuestion());
-        }
+        questions.push(GenQuestion())
     }
     return questions;
 }
@@ -81,6 +186,17 @@ function loadQuestion() {
     const questionNumberElement = document.getElementById('question-number'); // Added
 
     const currentQuestion = questions[currentQuestionIndex];
+    if (currentQuestion.ShowImage == false) {
+        document.getElementById('optImg1').classList.add('hidden');
+        document.getElementById('optImg2').classList.add('hidden');
+        document.getElementById('optImg3').classList.add('hidden');
+        document.getElementById('optImg4').classList.add('hidden');
+    } else {
+        document.getElementById('optImg1').classList.remove('hidden');
+        document.getElementById('optImg2').classList.remove('hidden');
+        document.getElementById('optImg3').classList.remove('hidden');
+        document.getElementById('optImg4').classList.remove('hidden');
+    }
     questionElement.textContent = currentQuestion.question;
     questionNumberElement.textContent = `Question ${currentQuestionIndex + 1}`; // Added
 
