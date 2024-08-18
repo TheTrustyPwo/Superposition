@@ -230,7 +230,7 @@ function decreaseWaveLength() {
     const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
 
     return {
-        question: `If you decrease the slit width, what happens to the intensity profile? ?`,
+        question: `If you decrease the wavelength, what happens to the intensity profile? ?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
@@ -256,7 +256,7 @@ function increaseSlitSeparation() {
     const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
 
     return {
-        question: `If you decrease the slit width, what happens to the intensity profile? ?`,
+        question: `If you increase the slit separation, what happens to the intensity profile? ?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
@@ -282,7 +282,7 @@ function decreaseSlitSeparation() {
     const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
 
     return {
-        question: `If you decrease the slit width, what happens to the intensity profile? ?`,
+        question: `If you decrease the slit separation, what happens to the intensity profile? ?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
