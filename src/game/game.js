@@ -573,6 +573,6 @@ function restartQuiz() {
 }
 
 // Initialize the quiz
-questions = generateRandomQuestions(10);
+questions = generateRandomQuestions(70);
 loadQuestion();
 startTimer();
