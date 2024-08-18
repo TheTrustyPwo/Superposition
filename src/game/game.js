@@ -17,6 +17,15 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function shuffleOptions(options) {
+    for (let i = options.length - 1; i > 0; i--) {
+        const j = getRandomInt(0, i);
+        [options[i], options[j]] = [options[j], options[i]];
+    }
+    return options
+}
+
+// Generating question bank
 function lightColor() {
     let wavelengths = [415, 473, 533, 585, 605, 685];
     let possibleColors = ['Violet', 'Blue', 'Green', 'Yellow', 'Orange', 'Red']
@@ -29,29 +38,15 @@ function lightColor() {
     
     // Remove the correctColor from the shuffled array and take the first 3 colors
     const incorrectColors = shuffledColors.filter(color => color !== correctColor).slice(0, 3);
-
-    
-    const options = [correctColor, ...incorrectColors];
-    for (let i = options.length - 1; i > 0; i--) {
-        const j = getRandomInt(0, i);
-        [options[i], options[j]] = [options[j], options[i]];
-    }
+    const options = shuffleOptions([correctColor, ...incorrectColors]);
 
     return {
         question: `Whhat color is a light of wavelength ${wavelength}nm?`,
         options: options,
         correctAnswer: correctColor,
         explanation: `The correct answer is ${correctColor} because it has a wavelength of ${wavelength}nm!`,
-        ShowImage: true
+        ShowImage: false
     };
-}
-
-function displayConstInf(){
-
-}
-
-function displayDestInf() {
-
 }
 
 function pathDiffConst() {
@@ -66,11 +61,7 @@ function pathDiffConst() {
     const wrongOpt2 = `Destructive Interference, Phase Difference Δϕ = ${pathDiff}π`
     const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
 
-    const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
-    for (let i = options.length - 1; i > 0; i--) {
-        const j = getRandomInt(0, i);
-        [options[i], options[j]] = [options[j], options[i]];
-    }
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
 
     return {
         question: `If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
@@ -84,7 +75,7 @@ function pathDiffConst() {
 
 function pathDiffDest() {
     const p1 = getRandomInt(2, 10)
-    const p2 = p1 + 0.5
+    const p2 = p1 + 0.5 + getRandomInt(1, 5)
 
     const pathDiff = p2 - p1
     const phaseDiff = pathDiff * 2
@@ -94,11 +85,7 @@ function pathDiffDest() {
     const wrongOpt2 = `Destructive Interference, Phase Difference Δϕ = ${pathDiff}π`
     const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
 
-    const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
-    for (let i = options.length - 1; i > 0; i--) {
-        const j = getRandomInt(0, i);
-        [options[i], options[j]] = [options[j], options[i]];
-    }
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
 
     return {
         question: `If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
@@ -117,11 +104,7 @@ function possDestPhaseDiff() {
     const wrongOpt2 = `0, 2π, 4π, ...`
     const wrongOpt3 = `±π, ±3π, ±5π, ...`
 
-    const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
-    for (let i = options.length - 1; i > 0; i--) {
-        const j = getRandomInt(0, i);
-        [options[i], options[j]] = [options[j], options[i]];
-    }
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
 
     return {
         question: `Which of the below lists the possible phase difference for destructive interference?`,
@@ -155,8 +138,186 @@ function possConstPhaseDiff() {
     };
 }
 
+function increaseSlitWidth() {
+    const correctOpt = `Only the spacing between maxima points decreases`
+    const wrongOpt1 = `Only the spacing between maxima points increases`
+    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
+    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
+    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
+    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
+    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+
+    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+
+    return {
+        question: `If you increase the slit width, what happens to the intensity profile? ?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `${correctOpt} because intensity is always constant and distance decreases!`,
+        ShowImage: false
+    };
+}
+
+function decreaseSlitWidth() {
+    const correctOpt = `Only the spacing between maxima points increases`
+    const wrongOpt1 = `Only the spacing between maxima points decreases`
+    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
+    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
+    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
+    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
+    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+
+    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+
+    return {
+        question: `If you decrease the slit width, what happens to the intensity profile? ?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `${correctOpt} because intensity is always constant and distance increases!`,
+        ShowImage: false
+    };
+}
+
+function increaseWaveLength() {
+    const correctOpt = `Only the spacing between maxima points increases`
+    const wrongOpt1 = `Only the spacing between maxima points decreases`
+    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
+    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
+    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
+    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
+    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+
+    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+
+    return {
+        question: `If you increase the wavelength, what happens to the intensity profile? ?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `${correctOpt} because intensity is always constant and distance increases!`,
+        ShowImage: false
+    };
+
+}
+
+function decreaseWaveLength() {
+    const correctOpt = `Only the spacing between maxima points decreases`
+    const wrongOpt1 = `Only the spacing between maxima points increases`
+    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
+    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
+    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
+    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
+    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+
+    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+
+    return {
+        question: `If you decrease the slit width, what happens to the intensity profile? ?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        ` ${correctOpt} because intensity is always constant and spacing decreases!`,
+        ShowImage: false
+    };
+
+}
+
+function increaseSlitSeparation() {
+    const correctOpt = `Only the spacing between maxima points decreases`
+    const wrongOpt1 = `Only the spacing between maxima points increases`
+    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
+    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
+    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
+    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
+    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+
+    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+
+    return {
+        question: `If you decrease the slit width, what happens to the intensity profile? ?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `${correctOpt} because intensity is always constant and distance decreases!`,
+        ShowImage: false
+    };
+
+}
+
+function decreaseSlitSeparation() {
+    const correctOpt = `Only the spacing between maxima points increases`
+    const wrongOpt1 = `Only the spacing between maxima points decreases`
+    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
+    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
+    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
+    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
+    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+
+    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+
+    return {
+        question: `If you decrease the slit width, what happens to the intensity profile? ?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `${correctOpt} because intensity is always constant and distance increases!`,
+        ShowImage: false
+    };
+
+}
+
+function changeSlitSeparation(){
+    if (getRandomInt(0, 1) === 1) {
+        return increaseSlitSeparation()
+    } else {
+        return decreaseSlitSeparation()
+    }
+}
+
+function changeWaveLength(){
+    if (getRandomInt(0, 1) === 1) {
+        return decreaseWaveLength()
+    } else {
+        return increaseWaveLength()
+    }
+}
+
+function changeSlitWidth(){
+    if (getRandomInt(0, 1) === 1) {
+        return increaseSlitWidth()
+    } else {
+        return decreaseSlitWidth()
+    }
+}
+
 function GenQuestion() {
-    randomQuestion = getRandomInt(0, 4)
+    randomQuestion = getRandomInt(0, 7)
     if (randomQuestion === 0) {
         return lightColor();
     } else if (randomQuestion === 1) {
@@ -165,9 +326,16 @@ function GenQuestion() {
         return pathDiffDest()
     } else if (randomQuestion === 3) {
         return possConstPhaseDiff()
-    } else {
+    } else if (randomQuestion === 4){
         return possDestPhaseDiff()
+    } else if (randomQuestion === 5) {
+        return changeSlitSeparation()
+    } else if (randomQuestion === 6) {
+        return changeSlitWidth()
+    } else if (randomQuestion === 7) {
+        return changeWaveLength()
     }
+
 
 }
 
