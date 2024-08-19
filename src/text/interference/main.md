@@ -226,7 +226,7 @@ $y_d = \left(m + \frac{1}{2}\right)\frac{L\lambda}{d}$
 ### Double-Slit Interference Intensity
 The interference pattern produced by two slits is given by:
 
-$$I(\theta) = I_0 \cos^2\left(\frac{\pi d \sin(\theta)}{\lambda}\right)$$
+$$ I(\theta) = I_0 \cos^2\left(\frac{\pi d \sin(\theta)}{\lambda}\right) $$
 where \(d\) is the distance between the slits.
 
 
