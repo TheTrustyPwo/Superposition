@@ -5,7 +5,7 @@ import {distance} from "../utils/math.js";
 import {DoubleSlit} from "../shared/slit.js";
 
 class DoubleSlitSimulation extends Simulation {
-    constructor(cvs, c, wavelength = 500 / 1_000_000_000 , slitWidth = 500 / 1_000_000, slitSeparation = 500 / 1_000_000) {
+    constructor(cvs, c, wavelength = 500 / 1_000_000_000 , slitWidth = 300 / 1_000_000, slitSeparation = 800 / 1_000_000) {
         super(cvs, c);
         this.wavelength = wavelength;
         this.slitWidth = slitWidth;
@@ -22,7 +22,7 @@ class DoubleSlitSimulation extends Simulation {
         super.resize();
         this.screen = new Screen(this.cvs, this.c, 0.85 * this.cvs.width, this.cvs.height / 2, this.cvs.height * 0.95);
         this.slit = new DoubleSlit(this.cvs, this.c, 0.1 * this.cvs.width, this.cvs.height / 2, this.cvs.height * 0.95,
-            this.slitWidth / this.ypx2m, this.slitSeparation / this.ypx2m);
+            this.slitWidth / this.ypx2m, (this.slitSeparation - this.slitWidth) / this.ypx2m);
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};
@@ -32,7 +32,7 @@ class DoubleSlitSimulation extends Simulation {
         theta = Math.round(theta * 1_000_000) / 1_000_000;
         if (theta in this.cache) return this.cache[theta];
         const sine = Math.sin(theta);
-        const cs = Math.cos(Math.PI * (this.slit.separation + this.slit.width) * this.ypx2m * sine / this.wavelength);
+        const cs = Math.cos(Math.PI * (this.slit.separation) * this.ypx2m * sine / this.wavelength);
         const a = Math.PI * this.slit.width * this.ypx2m * sine / this.wavelength
         const tmp = Math.sin(a) / a;
         this.cache[theta] = cs * cs * tmp * tmp;
@@ -127,7 +127,8 @@ class DoubleSlitSimulation extends Simulation {
 
     setSlitWidth = (slitWidth) => {
         this.slitWidth = slitWidth;
-        this.slit.width = slitWidth / this.ypx2m;
+        this.slit.width = this.slitWidth / this.ypx2m;
+        this.slit.separation = (this.slitSeparation - this.slitWidth) / this.ypx2m;
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};
@@ -135,7 +136,7 @@ class DoubleSlitSimulation extends Simulation {
 
     setSlitSeparation = (slitSeparation) => {
         this.slitSeparation = slitSeparation;
-        this.slit.separation = this.slitSeparation / this.ypx2m;
+        this.slit.separation = (this.slitSeparation - this.slitWidth) / this.ypx2m;
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};

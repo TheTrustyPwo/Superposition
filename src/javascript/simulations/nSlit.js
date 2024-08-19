@@ -5,7 +5,7 @@ import {distance} from "../utils/math.js";
 import {NSlit} from "../shared/slit.js";
 
 class NSlitSimulation extends Simulation {
-    constructor(cvs, c, wavelength = 500 / 1_000_000_000 , slitWidth = 5 / 1_000_000, slitSeparation = 5 / 1_000_000, slits = 3) {
+    constructor(cvs, c, wavelength = 500 / 1_000_000_000 , slitWidth = 3 / 1_000_000, slitSeparation = 8 / 1_000_000, slits = 3) {
         super(cvs, c);
         this.wavelength = wavelength;
         this.slitWidth = slitWidth;
@@ -23,7 +23,7 @@ class NSlitSimulation extends Simulation {
         super.resize();
         this.screen = new HorizontalScreen(this.cvs, this.c, this.cvs.width / 2, 0.25 * this.cvs.height, this.cvs.width * 0.95);
         this.slit = new NSlit(this.cvs, this.c, this.cvs.width / 2, 0.9 * this.cvs.height, this.cvs.width * 0.95,
-            this.slitWidth / this.xpx2m, this.slitSeparation / this.xpx2m, this.slits);
+            this.slitWidth / this.xpx2m, (this.slitSeparation - this.slitWidth) / this.xpx2m, this.slits);
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};
@@ -35,7 +35,7 @@ class NSlitSimulation extends Simulation {
         if (theta in this.cache) return this.cache[theta];
         let sine = Math.sin(theta);
         let beta = Math.PI * this.slit.width * this.xpx2m * sine / this.wavelength;
-        let alpha = Math.PI * (this.slit.width + this.slit.separation) * this.xpx2m * sine / this.wavelength;
+        let alpha = Math.PI * (this.slit.separation) * this.xpx2m * sine / this.wavelength;
         let tmp = Math.sin(beta) / beta * Math.sin(this.slit.slits * alpha) / Math.sin(alpha) / this.slit.slits
         this.cache[theta] = tmp * tmp;
         return this.cache[theta];
@@ -130,6 +130,7 @@ class NSlitSimulation extends Simulation {
     setSlitWidth = (slitWidth) => {
         this.slitWidth = slitWidth;
         this.slit.width = slitWidth / this.xpx2m;
+        this.slit.separation = (this.slitSeparation - this.slitWidth) / this.xpx2m;
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};
@@ -137,7 +138,7 @@ class NSlitSimulation extends Simulation {
 
     setSlitSeparation = (slitSeparation) => {
         this.slitSeparation = slitSeparation;
-        this.slit.separation = slitSeparation / this.xpx2m;
+        this.slit.separation = (this.slitSeparation - this.slitWidth) / this.xpx2m;
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};
