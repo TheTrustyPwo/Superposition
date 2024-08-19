@@ -30,6 +30,9 @@ slitWidthInput.oninput = () => {
 }
 
 slitSeparationInput.oninput = () => {
+    if (slitSeparationInput.value / 1_000_000 < simulation.slitWidth) {
+        slitSeparationInput.value = simulation.slitWidth * 1_000_000;
+    }
     document.getElementById("slitSeparationValue_nSlit").innerText = slitSeparationInput.value;
     simulation.setSlitSeparation(slitSeparationInput.value / 1_000_000);
 }

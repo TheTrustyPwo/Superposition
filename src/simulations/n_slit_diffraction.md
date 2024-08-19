@@ -1,3 +1,7 @@
+Maxima Condition: $d \sin(\theta) = n \lambda$
+
+Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\lfloor \frac{d}{b} \right\rfloor + 1$
+
 <canvas id="nSlit"></canvas>
 
 <div class="slits">
@@ -6,19 +10,21 @@
 </div>
 <div class="slitWidth">
     <input type="range" min="1" max="10" step="1" value="5" class="slider" id="slitWidthInput_nSlit">
-    Slit Width: <span id="slitWidthValue_nSlit">5</span> μm
+    Slit Width (b): <span id="slitWidthValue_nSlit">5</span> μm
 </div>
 <div class="slitSeparation">
     <input type="range" min="1" max="10" step="1" value="5" class="slider" id="slitSeparationInput_nSlit">
-    Slit Separation: <span id="slitSeparationValue_nSlit">5</span> μm
+    Slit Separation (d): <span id="slitSeparationValue_nSlit">5</span> μm
 </div>
 <div class="wavelength">
-    <input type="range" min="380" max="780" step="10" value="500" class="slider" id="wavelengthInput_nSlit">
-    Wavelength: <span id="wavelengthValue_nSlit">500</span> nm
+    <input type="range" min="400" max="700" step="10" value="500" class="slider" id="wavelengthInput_nSlit">
+    Wavelength (λ): <span id="wavelengthValue_nSlit">500</span> nm
 </div>
 <div class="envelope">
     <input type="checkbox" id="envelopeInput_nSlit" checked="checked">
     <label for="envelopeInput_nSlit">Toggle Envelope</label>
 </div>
+
+Note: Slit Separation must be >= Slit Width.
 
 <script type="module" src="../javascript/sim6.js"></script>

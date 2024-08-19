@@ -135,7 +135,7 @@ class DoubleSlitSimulation extends Simulation {
 
     setSlitSeparation = (slitSeparation) => {
         this.slitSeparation = slitSeparation;
-        this.slit.separation = slitSeparation / this.ypx2m;
+        this.slit.separation = this.slitSeparation / this.ypx2m;
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};
