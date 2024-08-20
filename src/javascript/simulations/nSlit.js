@@ -34,8 +34,8 @@ class NSlitSimulation extends Simulation {
         theta = Math.round(theta * 1_000_0) / 1_000_0;
         if (theta in this.cache) return this.cache[theta];
         let sine = Math.sin(theta);
-        let beta = Math.PI * this.slit.width * this.xpx2m * sine / this.wavelength;
-        let alpha = Math.PI * (this.slit.separation) * this.xpx2m * sine / this.wavelength;
+        let beta = Math.PI * this.slitWidth * sine / this.wavelength;
+        let alpha = Math.PI * this.slitSeparation * sine / this.wavelength;
         let tmp = Math.sin(beta) / beta * Math.sin(this.slit.slits * alpha) / Math.sin(alpha) / this.slit.slits
         this.cache[theta] = tmp * tmp;
         return this.cache[theta];

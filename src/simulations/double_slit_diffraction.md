@@ -1,6 +1,6 @@
 Maxima Condition: $d \sin(\theta) = n \lambda$
 
-Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\lfloor \frac{d}{b} \right\rfloor - 1$
+Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\lfloor \frac{d}{b} \right\rfloor + 1$
 
 <canvas id="doubleSlit"></canvas>
 

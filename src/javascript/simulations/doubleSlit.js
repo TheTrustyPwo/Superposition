@@ -32,8 +32,8 @@ class DoubleSlitSimulation extends Simulation {
         theta = Math.round(theta * 1_000_000) / 1_000_000;
         if (theta in this.cache) return this.cache[theta];
         const sine = Math.sin(theta);
-        const cs = Math.cos(Math.PI * (this.slit.separation) * this.ypx2m * sine / this.wavelength);
-        const a = Math.PI * this.slit.width * this.ypx2m * sine / this.wavelength
+        const cs = Math.cos(Math.PI * (this.slitSeparation) * sine / this.wavelength);
+        const a = Math.PI * this.slitWidth * sine / this.wavelength
         const tmp = Math.sin(a) / a;
         this.cache[theta] = cs * cs * tmp * tmp;
         return this.cache[theta];
