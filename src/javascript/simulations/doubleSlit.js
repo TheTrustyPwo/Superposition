@@ -165,7 +165,9 @@ class DoubleSlitSimulation extends Simulation {
     mouseUp = (event) => {};
 
     mouseMove = (event, x, y) => {
+        const prevX = this.screen.x;
         this.screen.x = Math.max(Math.min(x, this.screen.maxX), this.screen.minX);
+        if (prevX === this.screen.x) return;
         this.redraw = true;
         this.cache = {};
     }

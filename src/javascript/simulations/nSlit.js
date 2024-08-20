@@ -175,7 +175,9 @@ class NSlitSimulation extends Simulation {
     mouseUp = () => {};
 
     mouseMove = (event, x, y) => {
+        const prevY = this.screen.y;
         this.screen.y = Math.max(Math.min(y, this.screen.maxY), this.screen.minY);
+        if (prevY === this.screen.y) return;
         this.redraw = true;
         this.cache = {};
     }
