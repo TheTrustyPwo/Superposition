@@ -139,11 +139,11 @@ function possConstPhaseDiff() {
 }
 
 function increaseSlitWidth() {
-    const correctOpt = `Only the spacing between maxima points decreases`
+    const correctOpt =  `The intensity increases while the spacing between maxima points decreases`
     const wrongOpt1 = `Only the spacing between maxima points increases`
     const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
     const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
-    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
+    const wrongOpt4 = `Only the spacing between maxima points decreases`
     const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
 
     
@@ -164,12 +164,12 @@ function increaseSlitWidth() {
 }
 
 function decreaseSlitWidth() {
-    const correctOpt = `Only the spacing between maxima points increases`
+    const correctOpt = `The intensity decreases while the spacing between maxima points increases`
     const wrongOpt1 = `Only the spacing between maxima points decreases`
     const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
     const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
     const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
-    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+    const wrongOpt5 = `Only the spacing between maxima points increases`
 
     
     const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
@@ -317,7 +317,7 @@ function changeSlitWidth(){
 }
 
 function GenQuestion() {
-    randomQuestion = getRandomInt(0, 7)
+    const randomQuestion = getRandomInt(0, 6)
     if (randomQuestion === 0) {
         return lightColor();
     } else if (randomQuestion === 1) {
@@ -332,7 +332,7 @@ function GenQuestion() {
         return changeSlitSeparation()
     } else if (randomQuestion === 6) {
         return changeSlitWidth()
-    } else if (randomQuestion === 7) {
+    } else if (randomQuestion === 6) {
         return changeWaveLength()
     }
 
