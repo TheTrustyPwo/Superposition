@@ -28,7 +28,7 @@ slitWidthInput.oninput = () => {
     simulation.setSlitWidth(slitWidthInput.value / 1_000_000);
 }
 
-slitSeparationInput.oninput = () => {
+slitSeparationInput.onchange = (e) => {
     document.getElementById("slitSeparationValue_DS").innerText = slitSeparationInput.value;
     simulation.setSlitSeparation(slitSeparationInput.value / 1_000_000);
 }

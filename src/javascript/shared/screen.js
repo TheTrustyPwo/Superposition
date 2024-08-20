@@ -32,7 +32,7 @@ class HorizontalScreen {
         this.w = w;
 
         this.minY = 0.25 * cvs.height;
-        this.maxY = 0.85 * cvs.height;
+        this.maxY = 0.70 * cvs.height;
     }
 
     draw = () => {
