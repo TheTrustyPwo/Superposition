@@ -412,7 +412,6 @@ function checkAnswer(selectedOptionIndex) {
         combo = 0;
         explanation.textContent = currentQuestion.explanation;
         explanation.classList.remove('hidden');
-        document.getElementById('next-button').classList.remove('hidden');
 
         // Add to wrongQuestions
         wrongQuestions.push({
@@ -422,6 +421,7 @@ function checkAnswer(selectedOptionIndex) {
             selectedAnswer: selectedOptionText,
             explanation: currentQuestion.explanation
         });
+        timeout = setTimeout(nextQuestion, 1000);
     }
 
     document.getElementById('score').textContent = `Score: ${Math.floor(score)}`;
