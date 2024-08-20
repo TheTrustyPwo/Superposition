@@ -40,6 +40,8 @@
 ## About The Project
 
 This website features an interactive textbook and is an excellent resource for students learning wave superposition, interference and diffraction.
+It is currently still a work in progress, so there may be errors or bugs in the resources. However, the simulations have been tested to display
+accurate results.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
