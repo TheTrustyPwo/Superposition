@@ -11,4 +11,6 @@ Minima Condition: $b \sin(\theta) = m \lambda$
     Wavelength (λ): <span id="wavelengthValue_SS">500</span> nm
 </div>
 
+Note: Intensity profile is normalized to the maximum intensity.
+
 <script type="module" src="../javascript/sim4.js"></script>

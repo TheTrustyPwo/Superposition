@@ -23,4 +23,6 @@ Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\l
     <label for="envelopeInput_DS">Toggle Envelope</label>
 </div>
 
+Note: Intensity profile is normalized to the maximum intensity.
+
 <script type="module" src="../javascript/sim5.js"></script>
