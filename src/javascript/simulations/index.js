@@ -55,19 +55,22 @@ window.addEventListener("mousemove", e => {
     if (interacting === -1) return;
     const rect = simulations[interacting].cvs.getBoundingClientRect();
     if (e.clientX > rect.right || e.clientX < rect.left || e.clientY > rect.bottom || e.clientY < rect.top) return;
+    if (e.cancelable) e.preventDefault();
     const scale = simulations[interacting].scale;
     simulations[interacting].mouseMove(e, scale * (e.clientX - rect.left), scale * (e.clientY - rect.top));
-});
+}, { passive: false });
 
 window.addEventListener("touchmove", e => {
     if (interacting === -1) return;
-    e.preventDefault();
     const rect = simulations[interacting].cvs.getBoundingClientRect();
     if (e.targetTouches[0].clientX > rect.right || e.targetTouches[0].clientX < rect.left
-        || e.targetTouches[0].clientY > rect.bottom || e.targetTouches[0].clientY < rect.top) return;
+        || e.targetTouches[0].clientY > rect.bottom || e.targetTouches[0].clientY < rect.top) {
+        return;
+    }
+    if (e.cancelable) e.preventDefault();
     const scale = simulations[interacting].scale;
     simulations[interacting].mouseMove(e, scale * (e.targetTouches[0].clientX - rect.left), scale * (e.targetTouches[0].clientY - rect.top));
-});
+}, { passive: false });
 
 const simulations = [];
 let interacting = -1;
