@@ -152,19 +152,19 @@ $\delta = m \cdot \lambda$.
 $\delta = (m + \frac{1}{2}) \cdot \lambda$.
 
 **SIMULATION**
-<canvas id = "doubleSlit"></canvas>
+<canvas id="doubleSlit"></canvas>
 
 <div class="slitWidth">
-    <input type="range" min="200" max="1000" step="100" value="500" class="slider" id="slitWidthInput_DS">
-    Slit Width: <span id="slitWidthValue_DS">500</span> μm
+    <input type="range" min="100" max="500" step="100" value="300" class="slider" id="slitWidthInput_DS">
+    Slit Width (b): <span id="slitWidthValue_DS">300</span> μm
 </div>
 <div class="slitSeparation">
-    <input type="range" min="200" max="1000" step="100" value="500" class="slider" id="slitSeparationInput_DS">
-    Slit Separation: <span id="slitSeparationValue_DS">500</span> μm
+    <input type="range" min="600" max="1500" step="100" value="800" class="slider" id="slitSeparationInput_DS">
+    Slit Separation (d): <span id="slitSeparationValue_DS">800</span> μm
 </div>
 <div class="wavelength">
-    <input type="range" min="380" max="780" step="10" value="500" class="slider" id="wavelengthInput_DS">
-    Wavelength: <span id="wavelengthValue_DS">500</span> nm
+    <input type="range" min="400" max="700" step="10" value="500" class="slider" id="wavelengthInput_DS">
+    Wavelength (λ): <span id="wavelengthValue_DS">500</span> nm
 </div>
 <div class="envelope">
     <input type="checkbox" id="envelopeInput_DS" checked="checked">
@@ -226,7 +226,10 @@ $y_d = \left(m + \frac{1}{2}\right)\frac{L\lambda}{d}$
 ### Double-Slit Interference Intensity
 The interference pattern produced by two slits is given by:
 
-$$ I(\theta) = I_0 \cos^2\left(\frac{\pi d \sin(\theta)}{\lambda}\right) $$
+$$
+I(\theta) = I_0 \cos^2\left(\frac{\pi d \sin(\theta)}{\lambda}\right)
+$$
+
 where \(d\) is the distance between the slits.
 
 

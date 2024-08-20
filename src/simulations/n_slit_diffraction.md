@@ -1,3 +1,5 @@
+Diffraction Envelope Minima Condition: $b \sin(\theta) = m \lambda$
+
 Maxima Condition: $d \sin(\theta) = n \lambda$
 
 Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\lfloor \frac{d}{b} \right\rfloor + 1$
