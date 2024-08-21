@@ -79,3 +79,8 @@ nav:
       - Game: text/game/main.md
   - Feedback:
       - Feedback: text/feedback/main.md
+
+extra:
+  analytics:
+    provider: google
+    property: G-Y4JZ49R0JE
