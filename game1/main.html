@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question-container">
+            <h2 id="question-number"></h2><h2 id="question"></h2>
+            <div class="options">
+                <div class="option-container">
+                    <img class="option-image" src="assets/images/1.jpeg" alt="Option 1 Image" id="optImg1">
+                    <button class="option" onclick="checkAnswer(0)"></button>
+                </div>
+                <div class="option-container">
+                    <img class="option-image" src="assets/images/2.jpeg" alt="Option 2 Image" id="optImg2">
+                    <button class="option" onclick="checkAnswer(1)"></button>
+                </div>
+            </div>
+            <div class="options">
+                <div class="option-container">
+                    <img class="option-image" src="assets/images/3.jpeg" alt="Option 3 Image" id="optImg3">
+                    <button class="option" onclick="checkAnswer(2)"></button>
+                </div>
+                <div class="option-container">
+                    <img class="option-image" src="assets/images/4.jpeg" alt="Option 4 Image" id="optImg4">
+                    <button class="option" onclick="checkAnswer(3)"></button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="wrong-questions-container" class="hidden">
+            <h3>Wrong Answers Review</h3>
+            <div id="wrong-question-box">
+                <b><p id="wrong-question-number"></p></b>
+                <b><p id="wrong-question-text"></p></b>
+                <p id="wrong-question-choice"></p>
+                <p id="show-right-answer"></p>
+                <p id="wrong-question-explanation"></p>
+
+                <button id="prev-wrong-button" onclick="showPreviousWrongQuestion()">Back</button>
+                <button id="next-wrong-button" onclick="showNextWrongQuestion()">Next</button>
+            </div>
+        </div>
+        
+        <div id="no-wrong" class="hidden"></div>
+
+        
+        <p id="explanation" class="hidden"></p>
+        <button id="next-button" class="hidden" onclick="nextQuestion()">Next Question</button>
+
+        <div>
+            <button id="restart-button" class="hidden" onclick="restartQuiz()">Restart Quiz</button>
+            <a href="https://thetrustypwo.github.io/Superposition/">
+                <button id="return-button" class="hidden">Return to Notebook</button>
+            </a>
+        </div>
+
+    </div>
+    <audio id="bgm" src="assets/audio/bgm.mpeg" autoplay loop></audio>
+    <audio id="bgm_end" src="assets/audio/end_bgm.mp3"></audio>
+    <script src="questions.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
