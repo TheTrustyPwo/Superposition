@@ -227,12 +227,12 @@ function SS_increaseSlitWidth() {
 }
 
 function SS_decreaseSlitWidth() {
-    const correctOpt = `The intensity decreases while the spacing between maxima points increases`
-    const wrongOpt1 = `Only the spacing between maxima points decreases doens't change`
-    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
-    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
-    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
-    const wrongOpt5 = `Only the spacing between maxima points increases`
+    const wrongOpt1 = `Angle θ increases while the width of the width of Central Maxima decreases`
+    const correctOpt = `Angle θ decreases while the width of the width of Central Maxima increases`
+    const wrongOpt2  = `Angle θ increases while the width of the width of Central Maxima remains the same`
+    const wrongOpt3 = `Angle θ decreases while the width of the width of Central Maxima remains the same`
+    const wrongOpt4 = `Angle θ remains the same while the width of the width of Central Maxima increases`
+    const wrongOpt5 = `Angle θ remains the smae while the width of the width of Central Maxima decreases`
 
     
     const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
@@ -270,7 +270,7 @@ function SS_increaseWaveLength() {
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        `${correctOpt} because wavelength is directly proportional to θ and directly unproportional to width of central maxima!`,
+        `${correctOpt} because wavelength is directly proportional to θ and inversely proportional to width of central maxima!`,
     };
 
 }
@@ -295,7 +295,7 @@ function SS_decreaseWaveLength() {
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        `${correctOpt} because wavelength is directly proportional to θ and directly unproportional to width of central maxima!`,
+        `${correctOpt} because wavelength is directly proportional to θ and inversely proportional to width of central maxima!`,
     };
 
 }
@@ -407,15 +407,93 @@ function DS_decreaseSlitSeparation() {
 
 
 //MULTIPLE SLIT (DIFFRACTION GRATING)
-function MS_increaseGrating(){}
+function MS_increaseGrating(){
+    const correctOpt = `The width of the intensity peaks decreases, while the intensity remains the same`
+    const wrongOpt1 = `The width of the intensity peaks decreases, while the intensity decreases`
+    const wrongOpt2  = `The width of the intensity peaks decreases, while the intensity increases`
+    const wrongOpt3 = `The width of the intensity peaks increases, while the intensity remains the same`
+    const wrongOpt4 = `The width of the intensity peaks increases, while the intensity decreases`
+    const wrongOpt5 = `The width of the intensity peaks increases, while the intensity increases`
 
-function MS_decreaseGrating(){}
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
+    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
 
-function MS_increaseWavelength(){}
 
-function MS_decreaseWavelength(){}
+    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
 
-function MS_SSEnvelope(){}
+    return {
+        question: `For a diffraction grating, if you increase the number of gratings, what happens to the intensity profile?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `${correctOpt} because intensity is always constant and width of the peaks are inversly proportional to number of grating!`,
+    };
+
+
+}
+
+function MS_decreaseGrating(){
+    const wrongOpt3 = `The width of the intensity peaks decreases, while the intensity remains the same`
+    const wrongOpt1 = `The width of the intensity peaks decreases, while the intensity decreases`
+    const wrongOpt2  = `The width of the intensity peaks decreases, while the intensity increases`
+    const correctOpt = `The width of the intensity peaks increases, while the intensity remains the same`
+    const wrongOpt4 = `The width of the intensity peaks increases, while the intensity decreases`
+    const wrongOpt5 = `The width of the intensity peaks increases, while the intensity increases`
+
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
+    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+
+    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+
+    return {
+        question: `For a diffraction grating, if you decrease the number of gratings, what happens to the intensity profile?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `${correctOpt} because intensity is always constant and width of the peaks are inversly proportional to number of grating!`,
+    };
+
+}
+
+function MS_increaseWavelength(){
+    const correctOpt = `Angle θ increases and the fringe separation increases`
+    const wrongOpt1 = `Angle θ increases while the fringe separation decreases`
+    const wrongOpt2  = `Angle θ decreases while the fringe separation increases`
+    const wrongOpt3 = `Angle θ decreases while the fringe separation decreases`
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3]
+    const options = shuffleOptions([correctOpt, ...wrongOpts])
+
+    return {
+        question: `For a diffraction grating, if you increase the wavelength, what happens to the intensity profile?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `${correctOpt} because wavelength is directly proportional to angle θ and fringe separation!`,
+    };
+}
+
+function MS_decreaseWavelength(){
+    const wrongOpt1 = `Angle θ increases and the fringe separation increases`
+    const wrongOpt3 = `Angle θ increases while the fringe separation decreases`
+    const wrongOpt2  = `Angle θ decreases while the fringe separation increases`
+    const correctOpt = `Angle θ decreases while the fringe separation decreases`
+    
+    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3]
+    const options = shuffleOptions([correctOpt, ...wrongOpts])
+
+    return {
+        question: `For a diffraction grating, if you decrease the wavelength, what happens to the intensity profile?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `${correctOpt} because wavelength is directly proportional to angle θ and fringe separation!`,
+    };
+}
+
 
 
 
@@ -498,7 +576,7 @@ function MS_changeWavelength_Questions(){
 
 //GENERATING QUESTIONS
 function GenQuestion() {
-    randomQuestion = getRandomInt(0, 6)
+    randomQuestion = getRandomInt(0, 8)
     if (randomQuestion === 0) {
         return lightColor();
 
@@ -520,17 +598,12 @@ function GenQuestion() {
     } else if (randomQuestion === 6) {
         return SS_changeWavelength_Questions();
 
-    } 
-    // else if (randomQuestion === 7) {
-    //     return MS_changeGrating_Questions();
+    } else if (randomQuestion === 7) {
+        return MS_changeGrating_Questions();
 
-    // } 
-    // else if (randomQuestion === 8) {
-    //     return MS_changeWavelength_Questions();
-    // } else {
-    //     return MS_SSEnvelope();
-    // }
-
+    } else {
+         return MS_changeWavelength_Questions();
+    }
 
 }
 
