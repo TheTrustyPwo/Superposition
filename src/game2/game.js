@@ -212,7 +212,7 @@ function showWrongQuestion(index) {
     const wrongQuestion = wrongQuestions[index];
     document.getElementById('wrong-question-number').textContent = `Question ${wrongQuestion.questionNumber}`;
     document.getElementById('wrong-question-text').textContent = wrongQuestion.question;
-    document.getElementById('wrong-question-explanation').textContent = `Explanation: ${wrongQuestion.explanation}`;
+    // document.getElementById('wrong-question-explanation').textContent = `Explanation: ${wrongQuestion.explanation}`;
     document.getElementById('wrong-question-choice').textContent = `Your Choice: ${wrongQuestion.selectedAnswer}`;
     document.getElementById('show-right-answer').textContent = `Right Answer: ${wrongQuestion.correctAnswer}`
 

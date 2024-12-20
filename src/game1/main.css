@@ -56,7 +56,13 @@ body {
     margin: 5px 20px;
     border:solid;
     text-align: center;
+    background-color: #e0e0e0;
 }
+
+.option-container:hover {
+    background-color: #d0d0d0;
+}
+
 
 .option-image {
     width: 100%;
@@ -69,11 +75,9 @@ body {
     width: 100%;
     padding: 10px;
     font-size: 16px;
-    background-color: #e0e0e0;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
     box-sizing: border-box;
     word-wrap: break-word;
     white-space: normal; 
@@ -82,9 +86,7 @@ body {
     min-height: 40px;
 }
 
-.option:hover {
-    background-color: #d0d0d0;
-}
+
 
 
 /* For displaying of score and combo */

@@ -33,287 +33,267 @@ function lightColor() {
     };
 }
 
-
 // TWO SOURCE INTERFERENCE
-function pathDiffConst_inPhase() {
-    const p1 = getRandomInt(2, 10)
-    const p2 = p1 + 1 * getRandomInt(1, 5)
+function pathDiffQuestions() {
+    const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase, 1 if it is in phase
+    const isDest = getRandomInt(0, 1); //0 if it is constructive, 1 if it is destructive
 
-    const pathDiff = p2 - p1
-    const phaseDiff = pathDiff * 2
+    var whatPhase;
+    if (isInPhase == 1) {
+        whatPhase = "in phase";
 
-    const correctOpt = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const wrongOpt1 = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const wrongOpt2 = `Destructive Interference, Phase Difference Δϕ = ${pathDiff}π`
-    const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
+    } else {
+        whatPhase = "in antiphase";
 
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
-
-    return {
-        question: `Two sources emit coherent Sound waves in phase. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
-    };
-}
-
-function pathDiffConst_inAntiphase() {
-    const p1 = getRandomInt(2, 10)
-    const p2 = p1 + 1 * getRandomInt(1, 5)
-
-    const pathDiff = p2 - p1
-    const phaseDiff = pathDiff * 2
-
-    const wrongOpt1 = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const correctOpt = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const wrongOpt2 = `Destructive Interference, Phase Difference Δϕ = ${pathDiff}π`
-    const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
-
-    return {
-        question: `Two sources emit coherent sound waves in antiphase. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
-    };
-}
-
-function pathDiffDest_inPhase() {
-    const p1 = getRandomInt(2, 10)
-    const p2 = p1 + 0.5 + getRandomInt(1, 5)
-
-    const pathDiff = p2 - p1
-    const phaseDiff = pathDiff * 2
-
-    const wrongOpt1  = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const correctOpt = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const wrongOpt2 = `Destructive Interference, Phase Difference Δϕ = ${pathDiff}π`
-    const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
-
-    return {
-        question: `Two sources emit coherent sound waves in phase. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
-    };
-
-}
-
-function pathDiffDest_inAntiphase() {
-    const p1 = getRandomInt(2, 10)
-    const p2 = p1 + 1 * getRandomInt(1, 5)
-
-    const pathDiff = p2 - p1
-    const phaseDiff = pathDiff * 2
-
-    const correctOpt = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const wrongOpt1 = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`
-    const wrongOpt2 = `Destructive Interference, Phase Difference Δϕ = ${pathDiff}π`
-    const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
-
-    return {
-        question: `Two sources emit coherent Sound waves in antiphase. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
-    };
-}
-
-function possDestPhaseDiff_inPhase() {
-    const correctOpt = `π, 3π, 5π, ...`
-    const wrongOpt1 = `2π, 4π, 6π, ...`
-    const wrongOpt2 = `0, π, 2π, ...`
-    const wrongOpt3 = `π/2, 3π/2, 5π/2, ...`
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
-
-    return {
-        question: `Which of the below lists the possible phase difference for destructive interference of two sound waves in phase?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `For desctructive interference, phase difference is always a positive odd number!`,
-    };
-}
-
-function possDestPhaseDiff_inAntiphase() {
-    const correctOpt = `0, 2π, 4π, ...`
-    const wrongOpt1 = `π, 3π, 5π, ...`
-    const wrongOpt2 = `0, π, 2π, ...`
-    const wrongOpt3 = `π/2, 3π/2, 5π/2, ...`
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
-
-    return {
-        question: `Which of the below lists the possible phase difference for destructive interference of two sound waves in antiphase?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `For desctructive interference, phase difference is always a positive odd number!`,
-    };
-}
-
-function possConstPhaseDiff_inPhase() {
-    const correctOpt = `0, 2π, 4π, ...`
-    const wrongOpt1 = `π, 3π, 5π, ...`
-    const wrongOpt2 = `0, π, 2π, ...`
-    const wrongOpt3 = `π/2, 3π/2, 5π/2, ...`
-
-    const options = [correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]
-    for (let i = options.length - 1; i > 0; i--) {
-        const j = getRandomInt(0, i);
-        [options[i], options[j]] = [options[j], options[i]];
     }
 
+    var p1;
+    var p2;
+    if ((isInPhase == 1 && isDest == 0) || (isInPhase == 0 && isDest == 1)) { //inphase const or antiphase dest
+        p1 = getRandomInt(2, 10);
+        p2 = p1 + 1 * getRandomInt(1, 5);
+
+    } else {
+        p1 = getRandomInt(2, 10);
+        p2 = p1 + 0.5 + getRandomInt(1, 5);
+
+    };
+
+    const pathDiff = p2 - p1;
+    const phaseDiff = pathDiff * 2;
+
+    var correctOpt;
+    var wrongOpt1;
+
+    if ((isInPhase == 1 && isDest == 0) || (isInPhase == 0 && isDest == 0)) { //inphase const or antiphase const
+        correctOpt = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`;
+        wrongOpt1 = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`;
+
+    } else {
+        correctOpt = `Destructive Interference, Phase Difference Δϕ = ${phaseDiff}π`;
+        wrongOpt1 = `Constructive Interference, Phase Difference Δϕ = ${phaseDiff}π`;
+
+    };
+
+    const wrongOpt2 = `Destructive Interference, Phase Difference Δϕ = ${pathDiff}π`;
+    const wrongOpt3 = `Constructive Interference, Phase Difference Δϕ = ${pathDiff}π`;
+
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
+
     return {
-        question: `Which of the below lists the possible phase difference for constructive interference of two sound waves in phase?`,
+        question: `Two sources emit coherent Sound waves ${whatPhase}. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        `For constructive interference, phase difference is always zero or a postive even number!`,
+        `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
     };
-}
 
-function possConstPhaseDiff_inAntiphase() {
-    const correctOpt = `π, 3π, 5π, ...`
-    const wrongOpt1 = `2π, 4π, 6π, ...`
+};
+
+function possPhaseDiffQuestions() {
+    const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase, 1 if it is in phase
+    const isDest = getRandomInt(0, 1); //0 if it is constructive, 1 if it is destructive
+
+    var whatPhase;
+
+    if (isInPhase == 1) {
+        whatPhase = "in phase";
+
+    } else {
+        whatPhase = "in antiphase";
+
+    };
+
+    var whatType;
+    
+    if (isDest == 1) {
+        whatType = "destructive";
+
+    } else {
+        whatType = "constructive";
+
+    }
+
+    var correctOpt;
+    var wrongOpt1
+
+    if ((isInPhase == 1 && isDest == 0) || (isInPhase == 0 && isDest == 1)) { //inphase const or antiphase dest
+        correctOpt = `0, 2π, 4π, ...`;
+        wrongOpt1 = `π, 3π, 5π, ...`;
+
+    } else {
+        correctOpt = `π, 3π, 5π, ...`;
+        wrongOpt1 = `2π, 4π, 6π, ...`;
+
+    };
+
     const wrongOpt2 = `0, π, 2π, ...`
     const wrongOpt3 = `π/2, 3π/2, 5π/2, ...`
 
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
 
     return {
-        question: `Which of the below lists the possible phase difference for constructive interference of two sound waves in antiphase?`,
+        question: `Which of the below lists the possible phase difference for ${whatType} interference of two sound waves ${whatPhase}?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        `For desctructive interference, phase difference is always a positive odd number!`,
+        ``, // Can add in the future
     };
-}
+
+};
 
 
 //SINGLE SLIT EXPERIMENTS
-function SS_increaseSlitWidth() {
-    const correctOpt = `The intensity increases while the spacing between maxima points doesn't change`
-    const wrongOpt1 = `Only the spacing between maxima points increases`
-    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
-    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
-    const wrongOpt4 = `Only the spacing between maxima points decreases`
-    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+function SS_changeSlitWidthQuestions() {
+    const isInc = getRandomInt(0, 1);
 
+    var whatChanged;
+    var correctOpt;
+
+    if (isInc == 1) {
+        whatChanged = "bigger";
+        correctOpt = "The intensity decreases while the fringe separation doesn’t change";
+
+
+    } else {
+        whatChanged = "smaller";
+        correctOpt = "The intensity increases while the fringe separation doesn’t change";
     
+    
+    };
+
+    const wrongOpt1 = 'The fringe separation decreases'
+    const wrongOpt2 = 'Both the intensity and the fringe separation increases'
+    const wrongOpt3 = 'Both the intensity and the fringe separation decreases'
+    const wrongOpt4 = 'The fringe separation increases'
+    const wrongOpt5 = 'The intensity decreases while the fringe separation increases'
+
+
     const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
     const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
-
 
     const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
 
     return {
-        question: `For a single slit experiment, if you increase the slit width, what happens to the intensity profile?`,
+        question: `Consider a single slit experiment, when the slit width of the slit is ${whatChanged}, which of the following changes takes place in the intensity profile?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        `${correctOpt} because intensity is always constant and distance decreases!`,
+        ``,
     };
-}
 
-function SS_decreaseSlitWidth() {
-    const wrongOpt1 = `Angle θ increases while the width of the width of Central Maxima decreases`
-    const correctOpt = `Angle θ decreases while the width of the width of Central Maxima increases`
-    const wrongOpt2  = `Angle θ increases while the width of the width of Central Maxima remains the same`
-    const wrongOpt3 = `Angle θ decreases while the width of the width of Central Maxima remains the same`
-    const wrongOpt4 = `Angle θ remains the same while the width of the width of Central Maxima increases`
-    const wrongOpt5 = `Angle θ remains the smae while the width of the width of Central Maxima decreases`
+};
 
-    
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+function SS_changeWaveLengthQuestions() {
+    const isWidth = getRandomInt(0, 1); //angle of first maxima if 0, width of central maxima if 1
+    const isIncrease = getRandomInt(0, 1); //Increase Wavelength if 1 else 0
+
+    const wrongOpt3 = `I am not sure :(`;
+
+    var wavelengthChange;
+    var whatHappen;
+    var correctOpt;
+    var wrongOpt1;
+    var wrongOpt2;
+
+    if (isWidth == 1) {
+        whatHappen = 'width of the Central Maxima';
+
+        if (isIncrease == 1) {
+            wavelengthChange = 'longer';
+            correctOpt = 'The width of the Central Maxima decreases'
+            wrongOpt1 = 'The width of the Central Maxima increases'
+            wrongOpt2 = 'The width of the Central Maxima remains the same'
 
 
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+        } else {
+            wavelengthChange = 'shorter';
+            correctOpt = 'The width of the Central Maxima increases'
+            wrongOpt1 = 'The width of the Central Maxima decreases'
+            wrongOpt2 = 'The width of the Central Maxima remains the same'
+
+        };
+
+    } else {
+        whatHappen = 'angle of the First Maxima';
+
+        if (isIncrease == 1) {
+            wavelengthChange = 'longer';
+            correctOpt = 'Angle θ increases'
+            wrongOpt1 = 'Angle θ decreases'
+            wrongOpt2 = 'Angle θ remains the same'
+
+        } else {
+            wavelengthChange = 'shorter';
+            wrongOpt1 = 'Angle θ increases'
+            correctOpt = 'Angle θ decreases'
+            wrongOpt2 = 'Angle θ remains the same'
+
+        };
+
+    }
+
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
 
     return {
-        question: `For a double slit, if you decrease the slit width, what happens to the intensity profile?`,
+        question: `Consider a single slit experiment, when the wavelength of the incoming light is ${wavelengthChange}, which of the following changes occurs to the ${whatHappen}?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        `${correctOpt} because intensity is always constant and distance increases!`,
-    };
-}
-
-function SS_increaseWaveLength() {
-    const correctOpt = `Angle θ increases while the width of the width of Central Maxima decreases`
-    const wrongOpt1 = `Angle θ decreases while the width of the width of Central Maxima increases`
-    const wrongOpt2  = `Angle θ increases while the width of the width of Central Maxima remains the same`
-    const wrongOpt3 = `Angle θ decreases while the width of the width of Central Maxima remains the same`
-    const wrongOpt4 = `Angle θ remains the same while the width of the width of Central Maxima increases`
-    const wrongOpt5 = `Angle θ remains the smae while the width of the width of Central Maxima decreases`
-
-    
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
-
-    return {
-        question: `For a single slit, if you increase the wavelength, what happens to the intensity profile?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `${correctOpt} because wavelength is directly proportional to θ and inversely proportional to width of central maxima!`,
+        ``,
     };
 
-}
-
-function SS_decreaseWaveLength() {
-    const wrongOpt1 = `Angle θ increases while the width of the width of Central Maxima decreases`
-    const correctOpt = `Angle θ decreases while the width of the width of Central Maxima increases`
-    const wrongOpt2  = `Angle θ increases while the width of the width of Central Maxima remains the same`
-    const wrongOpt3 = `Angle θ decreases while the width of the width of Central Maxima remains the same`
-    const wrongOpt4 = `Angle θ remains the same while the width of the width of Central Maxima increases`
-    const wrongOpt5 = `Angle θ remains the smae while the width of the width of Central Maxima decreases`
-
-    
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
-
-    return {
-        question: `For a single slit, if you increase the wavelength, what happens to the intensity profile?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `${correctOpt} because wavelength is directly proportional to θ and inversely proportional to width of central maxima!`,
-    };
-
-}
-
-
-
+};
 
 
 //DOUBLE SLIT EXPERIMENTS
-function DS_increaseWaveLength() {
-    const correctOpt = `Only the spacing between maxima points increases`
-    const wrongOpt1 = `Only the spacing between maxima points decreases`
-    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
-    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
-    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
-    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+function DS_WavelengthSlitSeparationQuestions() {
+    const isWavelength = getRandomInt(0, 1) //0 for wavelenght, 1 for slit separation
+    const isInc = getRandomInt(0, 1) //1 for increase else decrease
 
-    
+    var whatChanged;
+    var whatHappened;
+    var correctOpt;
+    var wrongOpt1;
+
+    if (isWavelength == 1) {
+        whatChanged = 'wavelength of the incoming light';
+
+        if (isInc == 1) {
+            whatHappened = 'longer';
+            correctOpt = 'The fringe separation increases';
+            wrongOpt1 = 'The fringe separation decreases';
+
+        } else {
+            whatHappened = 'shorter';
+            correctOpt = 'The fringe separation decrease';
+            wrongOpt1 = 'The fringe separation increase';
+
+        };
+
+    } else {
+        whatChanged = 'slit separation of the slits';
+
+        if (isInc == 1) {
+            whatHappened = 'longer';
+            correctOpt = 'The fringe separation decrease';
+            wrongOpt1 = 'The fringe separation increase';
+
+        } else {
+            whatHappened = 'shorter';
+            correctOpt = 'The fringe separation increases';
+            wrongOpt1 = 'The fringe separation decreases';
+
+        };
+
+    };
+
+    const wrongOpt2 = 'Both the intensity and the fringe separation increases';
+    const wrongOpt3 = 'Both the intensity and the fringe separation decreases';
+    const wrongOpt4 = 'The intensity increases while the fringe separation decreases';
+    const wrongOpt5 = 'The intensity decreases while the fringe separation increases';
+
+
     const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
     const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
 
@@ -321,258 +301,153 @@ function DS_increaseWaveLength() {
     const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
 
     return {
-        question: `For a double slit, if you increase the wavelength, what happens to the intensity profile?`,
+        question: `Consider a double slit experiment, when the ${whatChanged} becomes ${whatHappened}, which of the following changes takes place in the intensity profile?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        `${correctOpt} because intensity is always constant and distance increases!`,
+        ``,
     };
 
-}
+};
 
-function DS_decreaseWaveLength() {
-    const correctOpt = `Only the spacing between maxima points decreases`
-    const wrongOpt1 = `Only the spacing between maxima points increases`
-    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
-    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
-    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
-    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
+function DS_ScreenDistanceQuestions() {
+    const isInc = getRandomInt(0, 1); // 1 if increase else 0
 
+    var whatChanged;
+    var correctOpt;
+    var wrongOpt1;
+
+    if (isInc == 1) {
+        whatChanged = 'increase';
+        correctOpt = 'The fringe separation decreases but the intensity of the maxima increases';
+        wrongOpt1 = 'The fringe separation increases but the intensity of the maxima decreases';
+
+
+    } else {
+        whatChanged = 'decrease';
+        correctOpt = 'The fringe separation increases but the intensity of the maxima decreases';
+        wrongOpt1 = 'The fringe separation decreases but the intensity of the maxima increases';
+        
+
+    };
     
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+    
+    const wrongOpt2 = `The fringe separation increases and the intensity of the maxima increases`;
+    const wrongOpt3 = `The fringe separation decreases and the intensity of the maxima decreases`;
 
-
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
 
     return {
-        question: `For a double slit, if you decrease the wavelength, what happens to the intensity profile?`,
+        question: `Consider a double slit experiment, when you ${whatChanged} the distance from the slits to the screen, which of the following changes takes place in the intensity profile on the screen?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        ` ${correctOpt} because intensity is always constant and spacing decreases!`,
+        ``,
     };
 
-}
-
-function DS_increaseSlitSeparation() {
-    const correctOpt = `Only the spacing between maxima points decreases`
-    const wrongOpt1 = `Only the spacing between maxima points increases`
-    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
-    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
-    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
-    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
-
-    
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
-
-    return {
-        question: `For a double slit, if you increase the slit separation, what happens to the intensity profile?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `${correctOpt} because intensity is always constant and distance decreases!`,
-    };
-
-}
-
-function DS_decreaseSlitSeparation() {
-    const correctOpt = `Only the spacing between maxima points increases`
-    const wrongOpt1 = `Only the spacing between maxima points decreases`
-    const wrongOpt2  = `Both the intensity and the spacing between maxima points increases`
-    const wrongOpt3 = `Both the intensity and the spacing between maxima points decreases`
-    const wrongOpt4 = `The intensity increases while the spacing between maxima points decreases`
-    const wrongOpt5 = `The intensity decreases while the spacing between maxima points increases`
-
-    
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
-
-    return {
-        question: `For a double slit, if you decrease the slit separation, what happens to the intensity profile?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `${correctOpt} because intensity is always constant and distance increases!`,
-    };
-
-}
+};
 
 
 //MULTIPLE SLIT (DIFFRACTION GRATING)
-function MS_increaseGrating(){
-    const correctOpt = `The width of the intensity peaks decreases, while the intensity remains the same`
-    const wrongOpt1 = `The width of the intensity peaks decreases, while the intensity decreases`
-    const wrongOpt2  = `The width of the intensity peaks decreases, while the intensity increases`
-    const wrongOpt3 = `The width of the intensity peaks increases, while the intensity remains the same`
-    const wrongOpt4 = `The width of the intensity peaks increases, while the intensity decreases`
-    const wrongOpt5 = `The width of the intensity peaks increases, while the intensity increases`
+function MS_chagngeGratingQuestions() {
+    const isIncrease = getRandomInt(0, 1); //Increase Wavelength if 1 else 0
 
+    const wrongOpt3 = `I am not sure :(`;
+
+    var correctOpt;
+    var wrongOpt1;
+    var wrongOpt2;
     
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+    if (isIncrease == 1) {
+        whatChanged = 'bigger';
+        correctOpt = 'The distance between the maximum orders increase'
+        wrongOpt1 = 'The distance between the maximum orders decrease'
+        wrongOpt2 = 'The distance between the maximum orders remains the same'
 
 
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+    } else {
+        whatChanged = 'smaller';
+        correctOpt = 'The distance between the maximum orders decrease'
+        wrongOpt1 = 'The distance between the maximum orders increase'
+        wrongOpt2 = 'The distance between the maximum orders remains the same'
+
+    }
+
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
 
     return {
-        question: `For a diffraction grating, if you increase the number of gratings, what happens to the intensity profile?`,
+        question: `Consider a diffraction grating experiment, when the slit separation of the gratings is ${whatChanged}, what happens to the intensity profile?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        `${correctOpt} because intensity is always constant and width of the peaks are inversly proportional to number of grating!`,
+        ``,
     };
 
+};
 
-}
+function MS_changeWaveLengthQuestions() {
+    const isDistance = getRandomInt(0, 1); //angle of first maxima if 0, distance between maxima if 1
+    const isIncrease = getRandomInt(0, 1); //Increase Wavelength if 1 else 0
 
-function MS_decreaseGrating(){
-    const wrongOpt3 = `The width of the intensity peaks decreases, while the intensity remains the same`
-    const wrongOpt1 = `The width of the intensity peaks decreases, while the intensity decreases`
-    const wrongOpt2  = `The width of the intensity peaks decreases, while the intensity increases`
-    const correctOpt = `The width of the intensity peaks increases, while the intensity remains the same`
-    const wrongOpt4 = `The width of the intensity peaks increases, while the intensity decreases`
-    const wrongOpt5 = `The width of the intensity peaks increases, while the intensity increases`
+    const wrongOpt3 = `I am not sure :(`;
 
-    
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
+    var wavelengthChange;
+    var whatHappen;
+    var correctOpt;
+    var wrongOpt1;
+    var wrongOpt2;
+
+    if (isDistance == 1) {
+        whatHappen = 'distance between the maximum orders';
+
+        if (isIncrease == 1) {
+            wavelengthChange = 'longer';
+            correctOpt = 'The distance between the maximum orders increases'
+            wrongOpt1 = 'The distance between the maximum orders decreases'
+            wrongOpt2 = 'The distance between the maximum orders remains the same'
 
 
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+        } else {
+            wavelengthChange = 'shorter';
+            correctOpt = 'The distance between the maximum orders decreases'
+            wrongOpt1 = 'The distance between the maximum orders increases'
+            wrongOpt2 = 'The distance between the maximum orders remains the same'
+
+        };
+
+    } else {
+        whatHappen = 'angle of the First Maxima';
+
+        if (isIncrease == 1) {
+            wavelengthChange = 'longer';
+            correctOpt = 'Angle θ increases'
+            wrongOpt1 = 'Angle θ decreases'
+            wrongOpt2 = 'Angle θ remains the same'
+
+        } else {
+            wavelengthChange = 'shorter';
+            wrongOpt1 = 'Angle θ increases'
+            correctOpt = 'Angle θ decreases'
+            wrongOpt2 = 'Angle θ remains the same'
+
+        };
+
+    }
+
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
 
     return {
-        question: `For a diffraction grating, if you decrease the number of gratings, what happens to the intensity profile?`,
+        question: `Consider a diffraction grating experiment, when the wavelength of the incoming light is ${wavelengthChange}, which of the following changes occurs to the ${whatHappen}?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
-        `${correctOpt} because intensity is always constant and width of the peaks are inversly proportional to number of grating!`,
+        ``,
     };
 
-}
-
-function MS_increaseWavelength(){
-    const correctOpt = `Angle θ increases and the fringe separation increases`
-    const wrongOpt1 = `Angle θ increases while the fringe separation decreases`
-    const wrongOpt2  = `Angle θ decreases while the fringe separation increases`
-    const wrongOpt3 = `Angle θ decreases while the fringe separation decreases`
-    
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3]
-    const options = shuffleOptions([correctOpt, ...wrongOpts])
-
-    return {
-        question: `For a diffraction grating, if you increase the wavelength, what happens to the intensity profile?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `${correctOpt} because wavelength is directly proportional to angle θ and fringe separation!`,
-    };
-}
-
-function MS_decreaseWavelength(){
-    const wrongOpt1 = `Angle θ increases and the fringe separation increases`
-    const wrongOpt3 = `Angle θ increases while the fringe separation decreases`
-    const wrongOpt2  = `Angle θ decreases while the fringe separation increases`
-    const correctOpt = `Angle θ decreases while the fringe separation decreases`
-    
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3]
-    const options = shuffleOptions([correctOpt, ...wrongOpts])
-
-    return {
-        question: `For a diffraction grating, if you decrease the wavelength, what happens to the intensity profile?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        `${correctOpt} because wavelength is directly proportional to angle θ and fringe separation!`,
-    };
-}
+};
 
 
 
-
-
-//RANDOMISING THE QUESTIONS
-function pathDiff_Questions(){
-    rand = getRandomInt(0, 3)
-    if (rand === 0) {
-        return pathDiffConst_inAntiphase();
-    } else if (rand === 1) {
-        return pathDiffConst_inPhase();
-    } else if (rand === 2) {
-        return pathDiffDest_inAntiphase();
-    } else {
-        return pathDiffDest_inPhase();
-    }
-}
-
-function possPhaseDiff_Questions(){
-    rand = getRandomInt(0, 3)
-    if (rand === 0) {
-        return possConstPhaseDiff_inPhase();
-    } else if (rand === 1) {
-        return possDestPhaseDiff_inAntiphase();
-    } else if (rand === 2) {
-        return possDestPhaseDiff_inPhase();
-    } else {
-        return possConstPhaseDiff_inAntiphase();
-    }
-
-}
-
-function DS_changeSlitSeparation_Questons(){
-    if (getRandomInt(0, 1) === 1) {
-        return DS_increaseSlitSeparation();
-    } else {
-        return DS_decreaseSlitSeparation();
-    }
-}
-
-function DS_changeWavelength_Questions(){
-    if (getRandomInt(0, 1) === 1) {
-        return DS_decreaseWaveLength();
-    } else {
-        return DS_increaseWaveLength();
-    }
-}
-
-function SS_changeSlitWidth_Questions(){
-    if (getRandomInt(0, 1) === 1) {
-        return SS_increaseSlitWidth();
-    } else {
-        return SS_decreaseSlitWidth();
-    }
-}
-
-function SS_changeWavelength_Questions(){
-    if (getRandomInt(0, 1) === 1) {
-        return SS_decreaseWaveLength();
-    } else {
-        return SS_increaseWaveLength();
-    }
-}
-
-function MS_changeGrating_Questions(){
-    if (getRandomInt(0, 1) === 1) {
-        return MS_decreaseGrating();
-    } else {
-        return MS_increaseGrating();
-    }
-}
-
-function MS_changeWavelength_Questions(){
-    if (getRandomInt(0, 1) === 1) {
-        return MS_decreaseWavelength();
-    } else {
-        return MS_increaseWavelength();
-    }
-}
 
 //GENERATING QUESTIONS
 function GenQuestion() {
@@ -581,28 +456,28 @@ function GenQuestion() {
         return lightColor();
 
     } else if (randomQuestion === 1) {
-        return pathDiff_Questions();
+        return pathDiffQuestions();
 
     } else if (randomQuestion === 2) {
-        return possPhaseDiff_Questions();
+        return possPhaseDiffQuestions();
 
     } else if (randomQuestion === 3) {
-        return DS_changeSlitSeparation_Questons();
+        return DS_WavelengthSlitSeparationQuestions();
 
     } else if (randomQuestion === 4){
-        return DS_changeWavelength_Questions();
+        return DS_ScreenDistanceQuestions();
 
     } else if (randomQuestion === 5) {
-        return SS_changeSlitWidth_Questions();
+        return SS_changeSlitWidthQuestions();
 
     } else if (randomQuestion === 6) {
-        return SS_changeWavelength_Questions();
+        return SS_changeWaveLengthQuestions();
 
     } else if (randomQuestion === 7) {
-        return MS_changeGrating_Questions();
+        return MS_chagngeGratingQuestions();
 
     } else {
-         return MS_changeWavelength_Questions();
+         return MS_changeWaveLengthQuestions();
     }
 
 }
@@ -611,7 +486,8 @@ function GenQuestion() {
 function generateRandomQuestions(numQuestions) {
     const questions = [];
     for (let i = 0; i < numQuestions; i++) {
-        questions.push(GenQuestion())
+        questions.push(GenQuestion());
+        //questions.push(GenQuestion())
     }
     return questions;
 }
