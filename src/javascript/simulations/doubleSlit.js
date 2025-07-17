@@ -179,6 +179,18 @@ class DoubleSlitSimulation extends Simulation {
     get ypx2m() {
         return 1 / 1_000_00;
     }
+
+    drawScreenView = (screenCtx, width, height) => {
+    // Draw intensity as a horizontal band
+    for (let x = 0; x < width; x++) {
+        // Map x to y on the main screen
+        const y = Math.round((x / width) * this.cvs.height);
+        // Use colorAt for color
+        const color = this.colorAt(this.screen.x, y);
+        screenCtx.fillStyle = color;
+        screenCtx.fillRect(x, 0, 1, height);
+    }
+}
 }
 
 export { DoubleSlitSimulation };
