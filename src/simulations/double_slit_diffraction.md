@@ -29,5 +29,5 @@ Note: Intensity profile is normalized to the maximum intensity.
   <canvas id="screen-view" width="800" height="80"></canvas>
 </div>
 
-
 <script type="module" src="../javascript/sim5.js"></script>
+

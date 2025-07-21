@@ -189,7 +189,8 @@ class DoubleSlitSimulation extends Simulation {
         screenCtx.fillStyle = color;
         screenCtx.fillRect(x, 0, 1, height);
     }
-  }
+    }
 }
+
 
 export { DoubleSlitSimulation };
