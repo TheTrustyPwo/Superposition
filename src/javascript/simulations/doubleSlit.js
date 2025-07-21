@@ -181,12 +181,11 @@ class DoubleSlitSimulation extends Simulation {
     }
 
     drawScreenView = (screenCtx, width, height) => {
-    // Draw intensity as a horizontal band
     for (let x = 0; x < width; x++) {
-        // Map x to y on the main screen
         const y = Math.round((x / width) * this.cvs.height);
-        // Use colorAt for color
-        const color = this.colorAt(this.screen.x, y);
+        const intensity = this.intensityAt(this.screen.x, y);
+        const baseColor = this.color;
+        const color = interpolate(0, baseColor, intensity);
         screenCtx.fillStyle = color;
         screenCtx.fillRect(x, 0, 1, height);
     }
