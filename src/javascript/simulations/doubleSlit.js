@@ -43,7 +43,7 @@ class DoubleSlitSimulation extends Simulation {
         theta = Math.round(theta * 1_000_00) / 1_000_00;
         if (theta in this.cacheEnvelope) return this.cacheEnvelope[theta];
         let sine = Math.sin(theta);
-        let a = Math.PI * this.slit.width * this.ypx2m * sine / this.wavelength;
+        let a = Math.PI * this.slitWidth * sine / this.wavelength;
         let tmp = Math.sin(a) / a;
         this.cacheEnvelope[theta] = tmp * tmp;
         return this.cacheEnvelope[theta];
@@ -179,6 +179,18 @@ class DoubleSlitSimulation extends Simulation {
     get ypx2m() {
         return 1 / 1_000_00;
     }
-}
+
+    drawScreenView = (screenCtx, width, height) => {
+    for (let x = 0; x < width; x++) {
+        const y = Math.round((x / width) * this.cvs.height);
+        const intensity = this.intensityAt(this.screen.x, y);
+        const baseColor = this.color;
+        const color = interpolate(0, baseColor, intensity);
+        screenCtx.fillStyle = color;
+        screenCtx.fillRect(x, 0, 1, height);
+    }
+    }
+} 
+
 
 export { DoubleSlitSimulation };
