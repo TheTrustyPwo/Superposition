@@ -181,25 +181,15 @@ class DoubleSlitSimulation extends Simulation {
     }
 
     drawScreenView = (screenCtx, width, height) => {
-        for (let x = 0; x < width; x++) {
-            // Map x to vertical position y on the main screen
-            const y = Math.round((x / width) * this.cvs.height);
-
-            // Get the light intensity at the screen position
-            const intensity = this.intensityAt(this.screen.x, y);
-
-            // Get the base color (based on wavelength and interference pattern)
-            const baseColor = this.color; // e.g., from setWavelength()
-
-            // Interpolate color based on intensity (this method blends black -> color -> white)
-            const color = interpolate(0, baseColor, intensity);
-
-            // Draw a vertical band at x with height of screen-view canvas
-            screenCtx.fillStyle = color;
-            screenCtx.fillRect(x, 0, 1, height);
-        }
-    } 
-
+    for (let x = 0; x < width; x++) {
+        const y = Math.round((x / width) * this.cvs.height);
+        const intensity = this.intensityAt(this.screen.x, y);
+        const baseColor = this.color;
+        const color = interpolate(0, baseColor, intensity);
+        screenCtx.fillStyle = color;
+        screenCtx.fillRect(x, 0, 1, height);
+    }
+}
 }
 
 export { DoubleSlitSimulation };
