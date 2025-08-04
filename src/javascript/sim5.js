@@ -8,10 +8,15 @@ const wavelengthInput = document.getElementById("wavelengthInput_DS");
 const slitWidthInput = document.getElementById("slitWidthInput_DS");
 const slitSeparationInput = document.getElementById("slitSeparationInput_DS");
 const envelopeInput = document.getElementById("envelopeInput_DS");
+const screenViewCanvas = document.getElementById("screen-view");
+const screenViewCtx = screenViewCanvas?.getContext("2d");
 
 const simulation = new DoubleSlitSimulation(cvs, c)
 const animate = () => {
     simulation.update();
+    if (screenViewCanvas && screenViewCtx) {
+        simulation.drawScreenView(screenViewCtx, screenViewCanvas.width, screenViewCanvas.height);
+    }
 
     setTimeout(() => {
         requestAnimationFrame(animate);
