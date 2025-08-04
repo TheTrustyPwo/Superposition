@@ -14,7 +14,7 @@ const screenViewCtx = screenViewCanvas?.getContext("2d");
 const simulation = new DoubleSlitSimulation(cvs, c)
 
 screenViewCanvas.height = cvs.height;  // Match height exactly
-screenViewCanvas.width = 40;
+screenViewCanvas.width = 100;
 
 const animate = () => {
     simulation.update();
