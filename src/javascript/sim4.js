@@ -8,8 +8,16 @@ const wavelengthInput = document.getElementById("wavelengthInput_SS");
 const slitWidthInput = document.getElementById("slitWidthInput_SS");
 
 const simulation = new SingleSlitSimulation(cvs, c);
+
+const screenViewCanvas = document.getElementById("screen-view");
+const screenViewCtx = screenViewCanvas?.getContext("2d");
+
 const animate = () => {
     simulation.update();
+    if (screenViewCanvas && screenViewCtx) {
+    simulation.drawScreenView(screenViewCtx, screenViewCanvas.width, screenViewCanvas.height);
+    }
+
 
     setTimeout(() => {
         requestAnimationFrame(animate);
