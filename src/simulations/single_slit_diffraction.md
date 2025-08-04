@@ -1,6 +1,9 @@
 Minima Condition: $b \sin(\theta) = m \lambda$
 
-<canvas id="singleSlit"></canvas>
+<div style="display: flex; flex-direction: row; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+    <canvas id="singleSlit"></canvas>
+    <canvas id="screen-view" width="40" height="400" style="border-left: 2px solid #ccc; background: black;"></canvas>
+</div>
 
 <div class="slitWidth">
     <input type="range" min="200" max="1000" step="100" value="500" class="slider" id="slitWidthInput_SS">
