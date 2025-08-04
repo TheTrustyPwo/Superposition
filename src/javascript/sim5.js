@@ -13,6 +13,7 @@ const screenViewCtx = screenViewCanvas?.getContext("2d");
 
 const simulation = new DoubleSlitSimulation(cvs, c)
 
+screenViewCanvas.height = 70
 screenViewCanvas.width = 70;
 
 const animate = () => {
