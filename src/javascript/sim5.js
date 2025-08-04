@@ -11,9 +11,9 @@ const envelopeInput = document.getElementById("envelopeInput_DS");
 const screenViewCanvas = document.getElementById("screen-view");
 const screenViewCtx = screenViewCanvas?.getContext("2d");
 
-const simulation = new DoubleSlitSimulation(cvs, c)
+const simulation = new DoubleSlitSimulation(cvs, c);
 
-screenViewCanvas.height = 70
+screenViewCanvas.height = 70;
 screenViewCanvas.width = 70;
 
 const animate = () => {
