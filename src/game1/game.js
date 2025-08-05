@@ -33,7 +33,7 @@ function loadQuestion() {
     questionNumberElement.textContent = `Question ${currentQuestionIndex + 1}`; // Added
 
     currentQuestion.options.forEach((option, index) => {
-        optionsElements[index].textContent = option;
+        optionsElements[index].innerHTML = option; // instead of textContent
         optionsElements[index].style.backgroundColor = '#e0e0e0';
         optionsElements[index].disabled = false;
     });
