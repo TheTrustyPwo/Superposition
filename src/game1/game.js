@@ -30,7 +30,7 @@ function loadQuestion() {
         document.getElementById('optImg4').classList.remove('hidden');
     }
     questionElement.textContent = currentQuestion.question;
-    questionNumberElement.textContent = `Question ${currentQuestionIndex + 1}`; // Added
+    questionNumberElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
 
     currentQuestion.options.forEach((option, index) => {
         optionsElements[index].innerHTML = option; // instead of textContent
@@ -99,7 +99,7 @@ function nextQuestion() {
 function endQuiz() {
 
     document.getElementById('question-container').innerHTML = 
-        `<h2>Score: ${score}/25!</h2>`
+        `<h2>Score: ${score}/${questions.length}!</h2>`
 
          
 
