@@ -189,6 +189,19 @@ class NSlitSimulation extends Simulation {
     get ypx2m() {
         return 2 / (this.slit.y - this.screen.minY);
     }
+
+    drawScreenView = (screenCtx, width, height) => {
+        screenCtx.clearRect(0, 0, width, height);
+
+        for (let y = 0; y < height; y++) {
+            const theta = Math.atan2((y - this.slit.y) * this.ypx2m, (this.screen.x - this.slit.x) * this.xpx2m);
+            const intensity = this.evaluate(theta);
+            const color = interpolate(0, this.color, intensity);
+
+            screenCtx.fillStyle = color;
+            screenCtx.fillRect(0, y, width, 1);
+        }
+    };
 }
 
 export { NSlitSimulation };
