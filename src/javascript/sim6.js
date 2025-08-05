@@ -9,8 +9,14 @@ const wavelengthInput = document.getElementById("wavelengthInput_nSlit");
 const slitWidthInput = document.getElementById("slitWidthInput_nSlit");
 const slitSeparationInput = document.getElementById("slitSeparationInput_nSlit");
 const envelopeInput = document.getElementById("envelopeInput_nSlit");
+const screenViewCanvas = document.getElementById("screen-view");
+const screenViewCtx = screenViewCanvas?.getContext("2d");
 
-const simulation = new NSlitSimulation(cvs, c)
+const simulation = new NSlitSimulation(cvs, c);
+
+screenViewCanvas.height = cvs.height; 
+screenViewCanvas.width = 40;
+
 const animate = () => {
     simulation.update();
 
