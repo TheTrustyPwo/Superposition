@@ -310,6 +310,25 @@ body {
     color: white;
 }
 
+#progress-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.progress-circle {
+    width: 20px;
+    height: 20px;
+    background-color: grey;
+    border-radius: 50%;
+}
+.progress-circle.correct {
+    background-color: green;
+}
+.progress-circle.wrong {
+    background-color: red;
+}
+
 button:hover {
     background-color: #0056b3;
 }
