@@ -20,6 +20,10 @@ screenViewCanvas.width = cvs.width;
 const animate = () => {
     simulation.update();
 
+    if (screenViewCanvas && screenViewCtx) {
+        simulation.drawScreenView(screenViewCtx, screenViewCanvas.width, screenViewCanvas.height);
+    }
+
     setTimeout(() => {
         requestAnimationFrame(animate);
     }, 1000 / fps);
