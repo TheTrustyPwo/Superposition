@@ -11,7 +11,7 @@ const screenViewCtx = screenViewCanvas?.getContext("2d");
 
 const simulation = new SingleSlitSimulation(cvs, c);
 
-screenViewCanvas.width = 40;
+screenViewCanvas.width = 50;
 screenViewCanvas.height = cvs.height;
 
 const animate = () => {
