@@ -159,5 +159,17 @@ function restartQuiz() {
 
 // Initialize the quiz
 
-questions = generateRandomQuestions(25)
-loadQuestion()
+questions = generateRandomQuestions(15);
+setupProgressIndicators(15);
+loadQuestion();
+
+function setupProgressIndicators(count) {
+    const container = document.getElementById('progress-indicators');
+    container.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        const circle = document.createElement('div');
+        circle.classList.add('progress-circle');
+        circle.id = `progress-${i}`;
+        container.appendChild(circle);
+    }
+}
