@@ -14,8 +14,8 @@ const screenViewCtx = screenViewCanvas?.getContext("2d");
 
 const simulation = new NSlitSimulation(cvs, c);
 
-screenViewCanvas.height = cvs.height; 
-screenViewCanvas.width = 40;
+screenViewCanvas.height = 40; 
+screenViewCanvas.width = cvs.width;
 
 const animate = () => {
     simulation.update();
