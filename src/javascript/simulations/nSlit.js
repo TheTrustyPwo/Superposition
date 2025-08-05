@@ -190,22 +190,23 @@ class NSlitSimulation extends Simulation {
         return 2 / (this.slit.y - this.screen.minY);
     }
 
-    drawScreenView(ctx, width, height) {
-        ctx.clearRect(0, 0, width, height);
+    drawScreenView = (screenCtx, width, height) => {
+        screenCtx.clearRect(0, 0, width, height);
 
-        const maxAngle = Math.PI / 12; 
+        const maxAngle = Math.atan2((this.screen.x + width - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
+        const minAngle = Math.atan2((this.screen.x - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
 
         for (let x = 0; x < width; x++) {
-            const theta = (x / width) * 2 * maxAngle - maxAngle;
+            const ratio = x / width;
+            const theta = minAngle + (maxAngle - minAngle) * ratio;
+
             const intensity = this.evaluate(theta);
+            const color = interpolate(0, this.color, intensity);
 
-            // fallback color if undefined
-            const color = interpolate(0, this.color ?? "white", isNaN(intensity) ? 0 : intensity);
-
-            ctx.fillStyle = color;
-            ctx.fillRect(x, 0, 1, height);
+            screenCtx.fillStyle = color;
+            screenCtx.fillRect(x, 0, 1, height);
         }
-    }
+    };
 }
 
 export { NSlitSimulation };
