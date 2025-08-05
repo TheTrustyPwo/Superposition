@@ -46,18 +46,15 @@ function checkAnswer(selectedOptionIndex) {
     const options = document.querySelectorAll('.option');
     const explanation = document.getElementById('explanation');
     const currentQuestion = questions[currentQuestionIndex];
-
     const selectedOptionText = options[selectedOptionIndex].textContent.trim();
+    const progressCircle = document.getElementById(`progress-${currentQuestionIndex}`);
 
     if (selectedOptionText === currentQuestion.correctAnswer) {
         options[selectedOptionIndex].style.backgroundColor = 'green';
         score += 1;
-        explanation.classList.add('hidden');
-        timeout = setTimeout(nextQuestion, 1000);
-
+        progressCircle.classList.add('correct');
     } else {
         let correctOptionIndex = -1;
-
         options.forEach((option, index) => {
             if (option.textContent.trim() === currentQuestion.correctAnswer) {
                 correctOptionIndex = index;
@@ -75,7 +72,6 @@ function checkAnswer(selectedOptionIndex) {
         explanation.textContent = currentQuestion.explanation;
         explanation.classList.remove('hidden');
 
-        // Add to wrongQuestions
         wrongQuestions.push({
             questionNumber: currentQuestionIndex + 1,
             question: currentQuestion.question,
@@ -83,10 +79,12 @@ function checkAnswer(selectedOptionIndex) {
             selectedAnswer: selectedOptionText,
             explanation: currentQuestion.explanation
         });
-        timeout = setTimeout(nextQuestion, 1000);
+
+        progressCircle.classList.add('wrong');
     }
 
     options.forEach(option => option.disabled = true);
+    document.getElementById('next-button').classList.remove('hidden');  // Show "Next"
 }
 
 function nextQuestion() {
