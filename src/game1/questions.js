@@ -30,6 +30,7 @@ function lightColor() {
         options: options,
         correctAnswer: correctColor,
         explanation: `The correct answer is ${correctColor} because it has a wavelength of ${wavelength}nm!`,
+        ShowImage: false,
     };
 }
 
@@ -86,6 +87,7 @@ function pathDiffQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
+        ShowImage: false,
     };
 
 };
@@ -138,6 +140,7 @@ function possPhaseDiffQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``, // Can add in the future
+        ShowImage: false,
     };
 
 };
@@ -180,6 +183,7 @@ function SS_changeSlitWidthQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
@@ -241,6 +245,7 @@ function SS_changeWaveLengthQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
@@ -306,6 +311,7 @@ function DS_WavelengthSlitSeparationQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
@@ -343,6 +349,7 @@ function DS_ScreenDistanceQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
@@ -381,6 +388,7 @@ function MS_chagngeGratingQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
@@ -442,6 +450,7 @@ function MS_changeWaveLengthQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
