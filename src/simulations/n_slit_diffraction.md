@@ -4,9 +4,9 @@ Maxima Condition: $d \sin(\theta) = n \lambda$
 
 Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\lfloor \frac{d}{b} \right\rfloor + 1$
 
-<div style="display: flex; flex-direction: row; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
-    <canvas id="nSlit" width="800" height="400"></canvas>
-    <canvas id="screen-view" width="40" height="400" style="border-left: 2px solid #ccc; background: black;"></canvas>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px;">
+  <canvas id="screen-view" width="800" height="40" style="border-bottom: 2px solid #ccc; background: black;"></canvas>
+  <canvas id="nSlit" width="800" height="400"></canvas>
 </div>
 
 <div class="slits">
