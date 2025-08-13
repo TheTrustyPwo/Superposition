@@ -192,13 +192,16 @@ class NSlitSimulation extends Simulation {
 
     drawScreenView = (screenCtx, width, height) => {
         screenCtx.clearRect(0, 0, width, height);
+        
+        const leftEdgeX  = this.screen.x - this.screen.w / 2;
+        const rightEdgeX = this.screen.x + this.screen.w / 2;
 
-        const maxAngle = Math.atan2((this.screen.x + width - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
-        const minAngle = Math.atan2((this.screen.x - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
+        const minAngle = Math.atan2((leftEdgeX - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
+        const maxAngle = Math.atan2((rightEdgeX - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
 
         for (let x = 0; x < width; x++) {
-            const ratio = x / width;
-            const theta = minAngle + (maxAngle - minAngle) * ratio;
+            const ratio = x / (width - 1);
+            const theta = minAngle + ratio * (maxAngle - minAngle);
 
             const intensity = this.evaluate(theta);
             const color = interpolate(0, this.color, intensity);
