@@ -56,7 +56,10 @@ where:
 The central maximum is the brightest point and occurs at \(\theta = 0\). The positions of secondary maxima (less bright than the central maximum) are not as straightforward to calculate analytically. However, they occur between the minima and can be found using more detailed analysis or approximation methods.
 
 **SIMULATION**
-<canvas id="singleSlit"></canvas>
+<div style="display: flex; flex-direction: row; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+    <canvas id="singleSlit" width="800" height="400"></canvas>
+    <canvas id="screen-view" width="40" height="400" style="border-left: 2px solid #ccc; background: black;"></canvas>
+</div>
 
 <div class="slitWidth">
     <input type="range" min="200" max="1000" step="100" value="500" class="slider" id="slitWidthInput_SS">
