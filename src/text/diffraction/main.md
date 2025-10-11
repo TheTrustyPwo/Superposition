@@ -58,7 +58,7 @@ The central maximum is the brightest point and occurs at \(\theta = 0\). The pos
 **SIMULATION**
 <div style="display: flex; flex-direction: row; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
     <canvas id="singleSlit" width="800" height="400"></canvas>
-    <canvas id="screen-view" width="40" height="400" style="border-left: 2px solid #ccc; background: black;"></canvas>
+    <canvas id="screen-view-single" width="40" height="400" style="border-left: 2px solid #ccc; background: black;"></canvas>
 </div>
 
 <div class="slitWidth">
