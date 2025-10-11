@@ -91,7 +91,8 @@ where:
  - $\lambda$ is the wavelength of light.
 
 **SIMULATION**
-<canvas id="nSlit"></canvas>
+<canvas id="screen-view" width="800" height="40" style="border-bottom: 2px solid #ccc; background: black;"></canvas>
+<canvas id="nSlit" width="800" height="400"></canvas>
 
 <div class="slits">
     <input type="range" min="1" max="50" step="1" value="3" class="slider" id="slitsInput_nSlit">
