@@ -11,28 +11,6 @@ function shuffleOptions(options) {
 }
 
 // Generating question bank
-function lightColor() {
-    let wavelengths = [405, 473, 532, 585, 685];
-    let possibleColors = ['Violet', 'Blue', 'Green', 'Yellow', 'Red']
-    let randNum = getRandomInt(0, 4);
-    
-    const wavelength = wavelengths[randNum]
-    const correctColor = possibleColors[randNum]
-
-    const shuffledColors = possibleColors.sort(() => 0.5 - Math.random());
-    
-    // Remove the correctColor from the shuffled array and take the first 3 colors
-    const incorrectColors = shuffledColors.filter(color => color !== correctColor).slice(0, 3);
-    const options = shuffleOptions([correctColor, ...incorrectColors]);
-
-    return {
-        question: `Whhat color is a light of wavelength ${wavelength}nm?`,
-        options: options,
-        correctAnswer: correctColor,
-        explanation: `The correct answer is ${correctColor} because it has a wavelength of ${wavelength}nm!`,
-        ShowImage: false,
-    };
-}
 
 // TWO SOURCE INTERFERENCE
 function pathDiffQuestions() {
