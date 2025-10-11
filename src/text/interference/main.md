@@ -152,7 +152,11 @@ $\delta = m \cdot \lambda$.
 $\delta = (m + \frac{1}{2}) \cdot \lambda$.
 
 **SIMULATION**
-<canvas id="doubleSlit"></canvas>
+<div style="display: flex; flex-direction: row; align-items: flex-start; gap: 20px;">
+  <canvas id="doubleSlit" width="700" height="400"></canvas>
+
+  <canvas id="screen-view" width="100" height="400" style="border-left: 2px solid #ccc; background: black;"></canvas>
+</div>
 
 <div class="slitWidth">
     <input type="range" min="100" max="500" step="100" value="300" class="slider" id="slitWidthInput_DS">
