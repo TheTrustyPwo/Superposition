@@ -334,7 +334,7 @@ function DS_ScreenDistanceQuestions() {
 
 
 //MULTIPLE SLIT (DIFFRACTION GRATING)
-function MS_chagngeGratingQuestions() {
+function MS_changeGratingQuestions() {
     const isIncrease = getRandomInt(0, 1); //Increase Wavelength if 1 else 0
 
     const wrongOpt3 = `I am not sure :(`;
@@ -461,7 +461,7 @@ function GenQuestion() {
         return SS_changeWaveLengthQuestions();
 
     } else if (randomQuestion === 7) {
-        return MS_chagngeGratingQuestions();
+        return MS_changeGratingQuestions();
 
     } else {
          return MS_changeWaveLengthQuestions();
