@@ -6,7 +6,7 @@ const cvs = document.getElementById('singleSlit');
 const c = cvs.getContext('2d');
 const wavelengthInput = document.getElementById("wavelengthInput_SS");
 const slitWidthInput = document.getElementById("slitWidthInput_SS");
-const screenViewCanvas = document.getElementById("screen-view");
+const screenViewCanvas = document.getElementById("screen-view-single");
 const screenViewCtx = screenViewCanvas?.getContext("2d");
 
 const simulation = new SingleSlitSimulation(cvs, c);
