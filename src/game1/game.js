@@ -16,6 +16,7 @@ function loadQuestion() {
     const questionElement = document.getElementById('question');
     const optionsElements = document.querySelectorAll('.option');
     const questionNumberElement = document.getElementById('question-number'); // Added
+    const mainImageElement = document.getElementById('question-image');
 
     const currentQuestion = questions[currentQuestionIndex];
     if (currentQuestion.ShowImage == false) {
@@ -31,6 +32,13 @@ function loadQuestion() {
     }
     questionElement.textContent = currentQuestion.question;
     questionNumberElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+
+    if (currentQuestion.mainImage) {
+        mainImageElement.src = currentQuestion.mainImage;
+        mainImageElement.classList.remove('hidden');
+    } else {
+        mainImageElement.classList.add('hidden');
+    }
 
     currentQuestion.options.forEach((option, index) => {
         optionsElements[index].innerHTML = option; // instead of textContent
