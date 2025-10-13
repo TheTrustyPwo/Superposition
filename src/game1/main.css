@@ -31,6 +31,13 @@ body {
     overflow-y: auto; /* Enable scrolling within the container */
 }
 
+.question-main-image {
+    display: block;
+    margin: 15px auto;
+    max-width: 80%;
+    height: auto;
+    border-radius: 10px;
+}
 
 .hidden {
     display: none;
