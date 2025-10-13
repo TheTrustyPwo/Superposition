@@ -13,6 +13,44 @@ function shuffleOptions(options) {
 // Generating question bank
 
 // TWO SOURCE INTERFERENCE
+function phaseDiffQuestions() {
+    const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase,  if it is in phase 
+    const phaseDiff = getRandomInt(1, 10); 
+
+    var whatPhase; 
+    if (isInPhase == 1) {
+        whatPhase = "in phase"; 
+    } else { 
+        whatPhase = "in antiphase"; 
+    }
+
+    var remainder = phaseDiff%2 
+    var correctOpt 
+    var wrongOpt1
+
+    if (remainder = 0) {
+        correctOpt = 'Constructive Interference';
+        wrongOpt1 = 'Destructive Interference'; 
+    } else { 
+        correctOpt = 'Destructive Interference';
+        wrongOpt1 = 'Constructive Interference'; 
+    } 
+
+    const wrongOpt2 = 'Partial Constructive Interference'; 
+    const wrongOpt3 = 'Partial Destructive Interference'; 
+
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
+
+    return {
+        question: `Given that two sources emit coherent waves ${whatPhase} with a phase difference of ${phaseDiff}π, what is the interference type?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        ``, // add later 
+        ShowImage: false,
+    };
+}
+
 function pathDiffQuestions() {
     const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase, 1 if it is in phase
     const isDest = getRandomInt(0, 1); //0 if it is constructive, 1 if it is destructive
