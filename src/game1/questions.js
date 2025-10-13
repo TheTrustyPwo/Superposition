@@ -168,30 +168,24 @@ function SS_changeSlitWidthQuestions() {
 
     var whatChanged;
     var correctOpt;
+    var wrongOpt1;
 
     if (isInc == 1) {
         whatChanged = "bigger";
-        correctOpt = "The intensity decreases while the fringe separation doesn’t change";
-
+        correctOpt = "B: fringe separation decreases, intensity increases";
+        wrongOpt1 = "D: fringe separation increases, intensity decreases";
 
     } else {
         whatChanged = "smaller";
-        correctOpt = "The intensity increases while the fringe separation doesn’t change";
-    
+        correctOpt = "D: fringe separation increases, intensity decreases";
+        wrongOpt1 = "B: fringe separation decreases, intensity increases";
     
     };
 
-    const wrongOpt1 = 'The fringe separation decreases'
-    const wrongOpt2 = 'Both the intensity and the fringe separation increases'
-    const wrongOpt3 = 'Both the intensity and the fringe separation decreases'
-    const wrongOpt4 = 'The fringe separation increases'
-    const wrongOpt5 = 'The intensity decreases while the fringe separation increases'
+    const wrongOpt2 = "A: fringe separation constant, intensity increases"
+    const wrongOpt3 = "C: fringe separation constant, intensity decreases"
 
-
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
+    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
 
     return {
         question: `Consider a single slit experiment, when the slit width of the slit is ${whatChanged}, which of the following changes takes place in the intensity profile?`,
