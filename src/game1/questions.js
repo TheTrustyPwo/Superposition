@@ -231,7 +231,7 @@ function SS_changeWaveLengthQuestions() {
 
 //DOUBLE SLIT EXPERIMENTS
 function DS_WavelengthSlitSeparationQuestions() {
-    const isWavelength = getRandomInt(0, 1) //0 for wavelenght, 1 for slit separation
+    const isWavelength = getRandomInt(0, 1) //0 for wavelength, 1 for slit separation
     const isInc = getRandomInt(0, 1) //1 for increase else decrease
 
     var whatChanged;
@@ -335,7 +335,7 @@ function DS_ScreenDistanceQuestions() {
 
 //MULTIPLE SLIT (DIFFRACTION GRATING)
 function MS_changeGratingQuestions() {
-    const isIncrease = getRandomInt(0, 1); //Increase Wavelength if 1 else 0
+    const isIncrease = getRandomInt(0, 1); //Increase slit separation between gratings if 1 else 0
 
     const wrongOpt3 = `I am not sure :(`;
 
