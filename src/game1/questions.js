@@ -196,10 +196,10 @@ function SS_changeSlitWidthQuestions() {
     return {
         question: `Consider a single slit experiment, when the slit width of the slit is ${whatChanged}, which of the following changes takes place in the intensity profile?`,
         options: options,
+        mainImage: "assets/images/SS_table.png", 
         correctAnswer: correctOpt,
         explanation: 
         ``,
-        mainImage: "assets/images/SS_table.png", 
         ShowImage: false,
     };
 
