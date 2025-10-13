@@ -199,6 +199,7 @@ function SS_changeSlitWidthQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        mainImage: "assets/images/SS_table.png", 
         ShowImage: false,
     };
 
