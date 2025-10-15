@@ -512,7 +512,7 @@ function MS_changeWaveLengthQuestions() {
 
 //GENERATING QUESTIONS
 function GenQuestion() {
-    randomQuestion = getRandomInt(0, 8)
+    randomQuestion = getRandomInt(0, 9)
     if (randomQuestion === 0) {
         return lightColor();
 
@@ -523,18 +523,21 @@ function GenQuestion() {
         return possPhaseDiffQuestions();
 
     } else if (randomQuestion === 3) {
-        return DS_WavelengthSlitSeparationQuestions();
+        return DS_WavelengthQuestions();
 
-    } else if (randomQuestion === 4){
+    } else if (randomQuestion === 4) {
+        return DS_SlitSeparationQuestions(); 
+
+    } else if (randomQuestion === 5){
         return DS_ScreenDistanceQuestions();
 
-    } else if (randomQuestion === 5) {
+    } else if (randomQuestion === 6) {
         return SS_changeSlitWidthQuestions();
 
-    } else if (randomQuestion === 6) {
+    } else if (randomQuestion === 7) {
         return SS_changeWaveLengthQuestions();
 
-    } else if (randomQuestion === 7) {
+    } else if (randomQuestion === 8) {
         return MS_changeGratingQuestions();
 
     } else {
