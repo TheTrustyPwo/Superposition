@@ -27,19 +27,19 @@ function phaseDiffQuestions() {
     var remainder = phaseDiff%2 
     var correctOpt 
     var wrongOpt1
+    const wrongOpt2 = 'Partial Constructive Interference'; 
+    const wrongOpt3 = 'Partial Destructive Interference'; 
+    let options;
 
     if (remainder = 0) {
         correctOpt = 'Constructive Interference';
         wrongOpt1 = 'Destructive Interference'; 
+        options = [correctOpt, wrongOpt2, wrongOpt3, wrongOpt1];
     } else { 
         correctOpt = 'Destructive Interference';
         wrongOpt1 = 'Constructive Interference'; 
+        options = [wrongOpt1, wrongOpt2, wrongOpt3, correctOpt]; 
     } 
-
-    const wrongOpt2 = 'Partial Constructive Interference'; 
-    const wrongOpt3 = 'Partial Destructive Interference'; 
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
 
     return {
         question: `Given that two sources emit coherent waves ${whatPhase} with a phase difference of ${phaseDiff}π, what is the interference type?`,
@@ -133,7 +133,7 @@ function possPhaseDiffQuestions() {
     }
 
     var correctOpt;
-    var wrongOpt1
+    var wrongOpt1;
 
     if ((isInPhase == 1 && isDest == 0) || (isInPhase == 0 && isDest == 1)) { //inphase const or antiphase dest
         correctOpt = `0, 2π, 4π, ...`;
@@ -169,23 +169,23 @@ function SS_changeSlitWidthQuestions() {
     var whatChanged;
     var correctOpt;
     var wrongOpt1;
+    const wrongOpt2 = "A: fringe separation constant, intensity increases"
+    const wrongOpt3 = "C: fringe separation constant, intensity decreases"
+    let options;
 
     if (isInc == 1) {
         whatChanged = "bigger";
         correctOpt = "B: fringe separation decreases, intensity increases";
         wrongOpt1 = "D: fringe separation increases, intensity decreases";
+        options = [wrongOpt2, correctOpt, wrongOpt3, wrongOpt1];
 
     } else {
         whatChanged = "smaller";
         correctOpt = "D: fringe separation increases, intensity decreases";
         wrongOpt1 = "B: fringe separation decreases, intensity increases";
+        options = [wrongOpt2, wrongOpt1, wrongOpt3, correctOpt];
     
     };
-
-    const wrongOpt2 = "A: fringe separation constant, intensity increases"
-    const wrongOpt3 = "C: fringe separation constant, intensity decreases"
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3])
 
     return {
         question: `Consider a single slit experiment, when the slit width of the slit is ${whatChanged}, which of the following changes takes place in the intensity profile?`,
