@@ -169,8 +169,8 @@ function SS_changeSlitWidthQuestions() {
     var whatChanged;
     var correctOpt;
     var wrongOpt1;
-    const wrongOpt2 = "A: fringe separation constant, intensity increases"
-    const wrongOpt3 = "C: fringe separation constant, intensity decreases"
+    const wrongOpt2 = "A: fringe separation decreases, intensity remains the same"
+    const wrongOpt3 = "C: fringe separation increases, intensity remains the same"
     let options;
 
     if (isInc == 1) {
@@ -205,8 +205,8 @@ function SS_changeDistanceQuestions() {
     var whatChanged;
     var correctOpt;
     var wrongOpt1;
-    const wrongOpt2 = "A: fringe separation constant, intensity increases"
-    const wrongOpt3 = "C: fringe separation constant, intensity decreases"
+    const wrongOpt2 = "A: fringe separation decreases, intensity remains the same"
+    const wrongOpt3 = "C: fringe separation increases, intensity remains the same"
     let options;
 
     if (isInc == 0) {
@@ -297,62 +297,72 @@ function SS_changeWaveLengthQuestions() {
 
 
 //DOUBLE SLIT EXPERIMENTS
-function DS_WavelengthSlitSeparationQuestions() {
-    const isWavelength = getRandomInt(0, 1) //0 for wavelength, 1 for slit separation
-    const isInc = getRandomInt(0, 1) //1 for increase else decrease
+function DS_WavelengthQuestions() {
+    const isInc = getRandomInt(0, 1); // 0 for decrease, 1 for increase 
 
     var whatChanged;
-    var whatHappened;
     var correctOpt;
     var wrongOpt1;
+    const wrongOpt2 = "B: fringe separation decreases, intensity increases"
+    const wrongOpt3 = "D: fringe separation increases, intensity decreases"
+    let options;
 
-    if (isWavelength == 1) {
-        whatChanged = 'wavelength of the incoming light';
-
-        if (isInc == 1) {
-            whatHappened = 'longer';
-            correctOpt = 'The fringe separation increases';
-            wrongOpt1 = 'The fringe separation decreases';
-
-        } else {
-            whatHappened = 'shorter';
-            correctOpt = 'The fringe separation decrease';
-            wrongOpt1 = 'The fringe separation increase';
-
-        };
+    if (isInc == 1) {
+        whatChanged = "longer";
+        correctOpt = "C: fringe separation inreases, intensity remains the same";
+        wrongOpt1 = "A: fringe separation decreases, intensity remains the same";
+        options = [wrongOpt1, wrongOpt2, correctOpt, wrongOpt3];
 
     } else {
-        whatChanged = 'slit separation of the slits';
-
-        if (isInc == 1) {
-            whatHappened = 'longer';
-            correctOpt = 'The fringe separation decrease';
-            wrongOpt1 = 'The fringe separation increase';
-
-        } else {
-            whatHappened = 'shorter';
-            correctOpt = 'The fringe separation increases';
-            wrongOpt1 = 'The fringe separation decreases';
-
-        };
-
+        whatChanged = "shorter";
+        correctOpt = "A: fringe separation decreases, intensity remains the same";
+        wrongOpt1 = "C: fringe separation inreases, intensity remains the same";
+        options = [correctOpt, wrongOpt2, wrongOpt1, wrongOpt3];
+    
     };
 
-    const wrongOpt2 = 'Both the intensity and the fringe separation increases';
-    const wrongOpt3 = 'Both the intensity and the fringe separation decreases';
-    const wrongOpt4 = 'The intensity increases while the fringe separation decreases';
-    const wrongOpt5 = 'The intensity decreases while the fringe separation increases';
-
-
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
 
     return {
-        question: `Consider a double slit experiment, when the ${whatChanged} becomes ${whatHappened}, which of the following changes takes place in the intensity profile?`,
+        question: `Consider a double slit experiment, when the wavelength of the incoming light is ${whatChanged}, which of the following changes takes place in the intensity profile?`,
         options: options,
+        mainImage: "assets/images/SS_table.png",
+        correctAnswer: correctOpt,
+        explanation: 
+        ``,
+        ShowImage: false,
+    };
+
+};
+
+function DS_SlitSeparationQuestions() {
+    const isInc = getRandomInt(0, 1); // 0 for decrease, 1 for increase 
+
+    var whatChanged;
+    var correctOpt;
+    var wrongOpt1;
+    const wrongOpt2 = "B: fringe separation decreases, intensity increases"
+    const wrongOpt3 = "D: fringe separation increases, intensity decreases"
+    let options;
+
+    if (isInc == 0) {
+        whatChanged = "shorter";
+        correctOpt = "C: fringe separation inreases, intensity remains the same";
+        wrongOpt1 = "A: fringe separation decreases, intensity remains the same";
+        options = [wrongOpt1, wrongOpt2, correctOpt, wrongOpt3];
+
+    } else {
+        whatChanged = "longer";
+        correctOpt = "A: fringe separation decreases, intensity remains the same";
+        wrongOpt1 = "C: fringe separation inreases, intensity remains the same";
+        options = [correctOpt, wrongOpt2, wrongOpt1, wrongOpt3];
+    
+    };
+
+
+    return {
+        question: `Consider a double slit experiment, when the slit separation of the slits becomes ${whatChanged}, which of the following changes takes place in the intensity profile?` ,
+        options: options,
+        mainImage: "assets/images/SS_table.png",
         correctAnswer: correctOpt,
         explanation: 
         ``,
@@ -367,26 +377,23 @@ function DS_ScreenDistanceQuestions() {
     var whatChanged;
     var correctOpt;
     var wrongOpt1;
+    const wrongOpt2 = "A: fringe separation decreases, intensity remains the same"
+    const wrongOpt3 = "C: fringe separation increases, intensity remains the same"
+    let options;
 
-    if (isInc == 1) {
-        whatChanged = 'increase';
-        correctOpt = 'The fringe separation decreases but the intensity of the maxima increases';
-        wrongOpt1 = 'The fringe separation increases but the intensity of the maxima decreases';
-
+    if (isInc == 0) {
+        whatChanged = "decrease";
+        correctOpt = "B: fringe separation decreases, intensity increases";
+        wrongOpt1 = "D: fringe separation increases, intensity decreases";
+        options = [wrongOpt2, correctOpt, wrongOpt3, wrongOpt1];
 
     } else {
-        whatChanged = 'decrease';
-        correctOpt = 'The fringe separation increases but the intensity of the maxima decreases';
-        wrongOpt1 = 'The fringe separation decreases but the intensity of the maxima increases';
-        
-
+        whatChanged = "increase";
+        correctOpt = "D: fringe separation increases, intensity decreases";
+        wrongOpt1 = "B: fringe separation decreases, intensity increases";
+        options = [wrongOpt2, wrongOpt1, wrongOpt3, correctOpt];
+    
     };
-    
-    
-    const wrongOpt2 = `The fringe separation increases and the intensity of the maxima increases`;
-    const wrongOpt3 = `The fringe separation decreases and the intensity of the maxima decreases`;
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
 
     return {
         question: `Consider a double slit experiment, when you ${whatChanged} the distance from the slits to the screen, which of the following changes takes place in the intensity profile on the screen?`,
