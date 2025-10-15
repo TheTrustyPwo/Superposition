@@ -398,6 +398,7 @@ function DS_ScreenDistanceQuestions() {
     return {
         question: `Consider a double slit experiment, when you ${whatChanged} the distance from the slits to the screen, which of the following changes takes place in the intensity profile on the screen?`,
         options: options,
+        mainImage: "assets/images/SS_table.png",
         correctAnswer: correctOpt,
         explanation: 
         ``,
@@ -514,7 +515,7 @@ function MS_changeWaveLengthQuestions() {
 function GenQuestion() {
     randomQuestion = getRandomInt(0, 9)
     if (randomQuestion === 0) {
-        return lightColor();
+        return phaseDiffQuestions();
 
     } else if (randomQuestion === 1) {
         return pathDiffQuestions();
