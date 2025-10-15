@@ -49,7 +49,7 @@ function phaseDiffQuestions() {
         ``, // add later 
         ShowImage: false,
     };
-}
+};
 
 function pathDiffQuestions() {
     const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase, 1 if it is in phase
@@ -232,6 +232,7 @@ function SS_changeDistanceQuestions() {
         ``,
         ShowImage: false,
     };
+};
 
 function SS_changeWaveLengthQuestions() {
     const isWidth = getRandomInt(0, 1); //angle of first maxima if 0, width of central maxima if 1
