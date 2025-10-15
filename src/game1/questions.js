@@ -164,7 +164,7 @@ function possPhaseDiffQuestions() {
 
 //SINGLE SLIT EXPERIMENTS
 function SS_changeSlitWidthQuestions() {
-    const isInc = getRandomInt(0, 1);
+    const isInc = getRandomInt(0, 1); // 0 for smaller, 1 for bigger 
 
     var whatChanged;
     var correctOpt;
@@ -198,6 +198,40 @@ function SS_changeSlitWidthQuestions() {
     };
 
 };
+
+function SS_changeDistanceQuestions() {
+    const isInc = getRandomInt(0, 1); // 0 for decrease, 1 for increase 
+
+    var whatChanged;
+    var correctOpt;
+    var wrongOpt1;
+    const wrongOpt2 = "A: fringe separation constant, intensity increases"
+    const wrongOpt3 = "C: fringe separation constant, intensity decreases"
+    let options;
+
+    if (isInc == 0) {
+        whatChanged = "decrease";
+        correctOpt = "B: fringe separation decreases, intensity increases";
+        wrongOpt1 = "D: fringe separation increases, intensity decreases";
+        options = [wrongOpt2, correctOpt, wrongOpt3, wrongOpt1];
+
+    } else {
+        whatChanged = "increase";
+        correctOpt = "D: fringe separation increases, intensity decreases";
+        wrongOpt1 = "B: fringe separation decreases, intensity increases";
+        options = [wrongOpt2, wrongOpt1, wrongOpt3, correctOpt];
+    
+    };
+
+    return {
+        question: `Consider a single slit experiment, when you ${whatChanged} the distance from the slits to the screen, which of the following changes takes place in the intensity profile on the screen?`,
+        options: options,
+        mainImage: "assets/images/SS_table.png", 
+        correctAnswer: correctOpt,
+        explanation: 
+        ``,
+        ShowImage: false,
+    };
 
 function SS_changeWaveLengthQuestions() {
     const isWidth = getRandomInt(0, 1); //angle of first maxima if 0, width of central maxima if 1
