@@ -24,9 +24,9 @@ function phaseDiffQuestions() {
         whatPhase = "in antiphase"; 
     }
 
-    var remainder = phaseDiff%2 
-    var correctOpt 
-    var wrongOpt
+    var remainder = phaseDiff%2 ;
+    var correctOpt; 
+    var wrongOpt;
     let options;
 
     if (remainder = 0) {
@@ -94,7 +94,7 @@ function pathDiffQuestions() {
     };
 
     return {
-        question: `Two sources emit coherent Sound waves ${whatPhase}. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
+        question: `Two sources emit coherent sound waves ${whatPhase}. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
