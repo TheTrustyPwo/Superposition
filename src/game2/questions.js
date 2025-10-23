@@ -11,29 +11,46 @@ function shuffleOptions(options) {
 }
 
 // Generating question bank
-function lightColor() {
-    let wavelengths = [405, 473, 532, 585, 685];
-    let possibleColors = ['Violet', 'Blue', 'Green', 'Yellow', 'Red']
-    let randNum = getRandomInt(0, 4);
-    
-    const wavelength = wavelengths[randNum]
-    const correctColor = possibleColors[randNum]
-
-    const shuffledColors = possibleColors.sort(() => 0.5 - Math.random());
-    
-    // Remove the correctColor from the shuffled array and take the first 3 colors
-    const incorrectColors = shuffledColors.filter(color => color !== correctColor).slice(0, 3);
-    const options = shuffleOptions([correctColor, ...incorrectColors]);
-
-    return {
-        question: `Whhat color is a light of wavelength ${wavelength}nm?`,
-        options: options,
-        correctAnswer: correctColor,
-        explanation: `The correct answer is ${correctColor} because it has a wavelength of ${wavelength}nm!`,
-    };
-}
 
 // TWO SOURCE INTERFERENCE
+function phaseDiffQuestions() {
+    const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase,  if it is in phase 
+    const phaseDiff = getRandomInt(1, 10); 
+
+    var whatPhase; 
+    if (isInPhase == 1) {
+        whatPhase = "in phase"; 
+    } else { 
+        whatPhase = "in antiphase"; 
+    }
+
+    var remainder = phaseDiff%2 
+    var correctOpt 
+    var wrongOpt1
+    const wrongOpt2 = 'Partial Constructive Interference'; 
+    const wrongOpt3 = 'Partial Destructive Interference'; 
+    let options;
+
+    if (remainder = 0) {
+        correctOpt = 'Constructive Interference';
+        wrongOpt1 = 'Destructive Interference'; 
+        options = [correctOpt, wrongOpt2, wrongOpt3, wrongOpt1];
+    } else { 
+        correctOpt = 'Destructive Interference';
+        wrongOpt1 = 'Constructive Interference'; 
+        options = [wrongOpt1, wrongOpt2, wrongOpt3, correctOpt]; 
+    } 
+
+    return {
+        question: `Given that two sources emit coherent waves ${whatPhase} with a phase difference of ${phaseDiff}π, what is the interference type?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        ``, // add later 
+        ShowImage: false,
+    };
+};
+
 function pathDiffQuestions() {
     const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase, 1 if it is in phase
     const isDest = getRandomInt(0, 1); //0 if it is constructive, 1 if it is destructive
@@ -86,6 +103,7 @@ function pathDiffQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
+        ShowImage: false,
     };
 
 };
@@ -115,7 +133,7 @@ function possPhaseDiffQuestions() {
     }
 
     var correctOpt;
-    var wrongOpt1
+    var wrongOpt1;
 
     if ((isInPhase == 1 && isDest == 0) || (isInPhase == 0 && isDest == 1)) { //inphase const or antiphase dest
         correctOpt = `0, 2π, 4π, ...`;
@@ -138,6 +156,7 @@ function possPhaseDiffQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``, // Can add in the future
+        ShowImage: false,
     };
 
 };
@@ -145,43 +164,74 @@ function possPhaseDiffQuestions() {
 
 //SINGLE SLIT EXPERIMENTS
 function SS_changeSlitWidthQuestions() {
-    const isInc = getRandomInt(0, 1);
+    const isInc = getRandomInt(0, 1); // 0 for smaller, 1 for bigger 
 
     var whatChanged;
     var correctOpt;
+    var wrongOpt1;
+    const wrongOpt2 = "A: fringe separation decreases, intensity remains the same"
+    const wrongOpt3 = "C: fringe separation increases, intensity remains the same"
+    let options;
 
     if (isInc == 1) {
         whatChanged = "bigger";
-        correctOpt = "The intensity decreases while the fringe separation doesn’t change";
-
+        correctOpt = "B: fringe separation decreases, intensity increases";
+        wrongOpt1 = "D: fringe separation increases, intensity decreases";
+        options = [wrongOpt2, correctOpt, wrongOpt3, wrongOpt1];
 
     } else {
         whatChanged = "smaller";
-        correctOpt = "The intensity increases while the fringe separation doesn’t change";
-    
+        correctOpt = "D: fringe separation increases, intensity decreases";
+        wrongOpt1 = "B: fringe separation decreases, intensity increases";
+        options = [wrongOpt2, wrongOpt1, wrongOpt3, correctOpt];
     
     };
-
-    const wrongOpt1 = 'The fringe separation decreases'
-    const wrongOpt2 = 'Both the intensity and the fringe separation increases'
-    const wrongOpt3 = 'Both the intensity and the fringe separation decreases'
-    const wrongOpt4 = 'The fringe separation increases'
-    const wrongOpt5 = 'The intensity decreases while the fringe separation increases'
-
-
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
 
     return {
         question: `Consider a single slit experiment, when the slit width of the slit is ${whatChanged}, which of the following changes takes place in the intensity profile?`,
         options: options,
+        mainImage: "assets/images/SS_table.png", 
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
+};
+
+function SS_changeDistanceQuestions() {
+    const isInc = getRandomInt(0, 1); // 0 for decrease, 1 for increase 
+
+    var whatChanged;
+    var correctOpt;
+    var wrongOpt1;
+    const wrongOpt2 = "A: fringe separation decreases, intensity remains the same"
+    const wrongOpt3 = "C: fringe separation increases, intensity remains the same"
+    let options;
+
+    if (isInc == 0) {
+        whatChanged = "decrease";
+        correctOpt = "B: fringe separation decreases, intensity increases";
+        wrongOpt1 = "D: fringe separation increases, intensity decreases";
+        options = [wrongOpt2, correctOpt, wrongOpt3, wrongOpt1];
+
+    } else {
+        whatChanged = "increase";
+        correctOpt = "D: fringe separation increases, intensity decreases";
+        wrongOpt1 = "B: fringe separation decreases, intensity increases";
+        options = [wrongOpt2, wrongOpt1, wrongOpt3, correctOpt];
+    
+    };
+
+    return {
+        question: `Consider a single slit experiment, when you ${whatChanged} the distance from the slits to the screen, which of the following changes takes place in the intensity profile on the screen?`,
+        options: options,
+        mainImage: "assets/images/SS_table.png", 
+        correctAnswer: correctOpt,
+        explanation: 
+        ``,
+        ShowImage: false,
+    };
 };
 
 function SS_changeWaveLengthQuestions() {
@@ -241,71 +291,83 @@ function SS_changeWaveLengthQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
 
 
 //DOUBLE SLIT EXPERIMENTS
-function DS_WavelengthSlitSeparationQuestions() {
-    const isWavelength = getRandomInt(0, 1) //0 for wavelenght, 1 for slit separation
-    const isInc = getRandomInt(0, 1) //1 for increase else decrease
+function DS_WavelengthQuestions() {
+    const isInc = getRandomInt(0, 1); // 0 for decrease, 1 for increase 
 
     var whatChanged;
-    var whatHappened;
     var correctOpt;
     var wrongOpt1;
+    const wrongOpt2 = "B: fringe separation decreases, intensity increases"
+    const wrongOpt3 = "D: fringe separation increases, intensity decreases"
+    let options;
 
-    if (isWavelength == 1) {
-        whatChanged = 'wavelength of the incoming light';
-
-        if (isInc == 1) {
-            whatHappened = 'longer';
-            correctOpt = 'The fringe separation increases';
-            wrongOpt1 = 'The fringe separation decreases';
-
-        } else {
-            whatHappened = 'shorter';
-            correctOpt = 'The fringe separation decrease';
-            wrongOpt1 = 'The fringe separation increase';
-
-        };
+    if (isInc == 1) {
+        whatChanged = "longer";
+        correctOpt = "C: fringe separation inreases, intensity remains the same";
+        wrongOpt1 = "A: fringe separation decreases, intensity remains the same";
+        options = [wrongOpt1, wrongOpt2, correctOpt, wrongOpt3];
 
     } else {
-        whatChanged = 'slit separation of the slits';
-
-        if (isInc == 1) {
-            whatHappened = 'longer';
-            correctOpt = 'The fringe separation decrease';
-            wrongOpt1 = 'The fringe separation increase';
-
-        } else {
-            whatHappened = 'shorter';
-            correctOpt = 'The fringe separation increases';
-            wrongOpt1 = 'The fringe separation decreases';
-
-        };
-
+        whatChanged = "shorter";
+        correctOpt = "A: fringe separation decreases, intensity remains the same";
+        wrongOpt1 = "C: fringe separation inreases, intensity remains the same";
+        options = [correctOpt, wrongOpt2, wrongOpt1, wrongOpt3];
+    
     };
 
-    const wrongOpt2 = 'Both the intensity and the fringe separation increases';
-    const wrongOpt3 = 'Both the intensity and the fringe separation decreases';
-    const wrongOpt4 = 'The intensity increases while the fringe separation decreases';
-    const wrongOpt5 = 'The intensity decreases while the fringe separation increases';
-
-
-    const wrongOpts = [wrongOpt1, wrongOpt2, wrongOpt3, wrongOpt4, wrongOpt5]
-    const shuffledWrongOpts = wrongOpts.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-
-    const options = shuffleOptions([correctOpt, ...shuffledWrongOpts])
 
     return {
-        question: `Consider a double slit experiment, when the ${whatChanged} becomes ${whatHappened}, which of the following changes takes place in the intensity profile?`,
+        question: `Consider a double slit experiment, when the wavelength of the incoming light is ${whatChanged}, which of the following changes takes place in the intensity profile?`,
         options: options,
+        mainImage: "assets/images/SS_table.png",
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
+    };
+
+};
+
+function DS_SlitSeparationQuestions() {
+    const isInc = getRandomInt(0, 1); // 0 for decrease, 1 for increase 
+
+    var whatChanged;
+    var correctOpt;
+    var wrongOpt1;
+    const wrongOpt2 = "B: fringe separation decreases, intensity increases"
+    const wrongOpt3 = "D: fringe separation increases, intensity decreases"
+    let options;
+
+    if (isInc == 0) {
+        whatChanged = "shorter";
+        correctOpt = "C: fringe separation inreases, intensity remains the same";
+        wrongOpt1 = "A: fringe separation decreases, intensity remains the same";
+        options = [wrongOpt1, wrongOpt2, correctOpt, wrongOpt3];
+
+    } else {
+        whatChanged = "longer";
+        correctOpt = "A: fringe separation decreases, intensity remains the same";
+        wrongOpt1 = "C: fringe separation inreases, intensity remains the same";
+        options = [correctOpt, wrongOpt2, wrongOpt1, wrongOpt3];
+    
+    };
+
+
+    return {
+        question: `Consider a double slit experiment, when the slit separation of the slits becomes ${whatChanged}, which of the following changes takes place in the intensity profile?` ,
+        options: options,
+        mainImage: "assets/images/SS_table.png",
+        correctAnswer: correctOpt,
+        explanation: 
+        ``,
+        ShowImage: false,
     };
 
 };
@@ -316,41 +378,40 @@ function DS_ScreenDistanceQuestions() {
     var whatChanged;
     var correctOpt;
     var wrongOpt1;
+    const wrongOpt2 = "A: fringe separation decreases, intensity remains the same"
+    const wrongOpt3 = "C: fringe separation increases, intensity remains the same"
+    let options;
 
-    if (isInc == 1) {
-        whatChanged = 'increase';
-        correctOpt = 'The fringe separation decreases but the intensity of the maxima increases';
-        wrongOpt1 = 'The fringe separation increases but the intensity of the maxima decreases';
-
+    if (isInc == 0) {
+        whatChanged = "decrease";
+        correctOpt = "B: fringe separation decreases, intensity increases";
+        wrongOpt1 = "D: fringe separation increases, intensity decreases";
+        options = [wrongOpt2, correctOpt, wrongOpt3, wrongOpt1];
 
     } else {
-        whatChanged = 'decrease';
-        correctOpt = 'The fringe separation increases but the intensity of the maxima decreases';
-        wrongOpt1 = 'The fringe separation decreases but the intensity of the maxima increases';
-        
-
+        whatChanged = "increase";
+        correctOpt = "D: fringe separation increases, intensity decreases";
+        wrongOpt1 = "B: fringe separation decreases, intensity increases";
+        options = [wrongOpt2, wrongOpt1, wrongOpt3, correctOpt];
+    
     };
-    
-    
-    const wrongOpt2 = `The fringe separation increases and the intensity of the maxima increases`;
-    const wrongOpt3 = `The fringe separation decreases and the intensity of the maxima decreases`;
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
 
     return {
         question: `Consider a double slit experiment, when you ${whatChanged} the distance from the slits to the screen, which of the following changes takes place in the intensity profile on the screen?`,
         options: options,
+        mainImage: "assets/images/SS_table.png",
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
 
 
 //MULTIPLE SLIT (DIFFRACTION GRATING)
-function MS_chagngeGratingQuestions() {
-    const isIncrease = getRandomInt(0, 1); //Increase Wavelength if 1 else 0
+function MS_changeGratingQuestions() {
+    const isIncrease = getRandomInt(0, 1); //Increase slit separation between gratings if 1 else 0
 
     const wrongOpt3 = `I am not sure :(`;
 
@@ -381,6 +442,7 @@ function MS_chagngeGratingQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
@@ -442,6 +504,7 @@ function MS_changeWaveLengthQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         ``,
+        ShowImage: false,
     };
 
 };
@@ -451,9 +514,9 @@ function MS_changeWaveLengthQuestions() {
 
 //GENERATING QUESTIONS
 function GenQuestion() {
-    randomQuestion = getRandomInt(0, 8)
+    randomQuestion = getRandomInt(0, 9)
     if (randomQuestion === 0) {
-        return lightColor();
+        return phaseDiffQuestions();
 
     } else if (randomQuestion === 1) {
         return pathDiffQuestions();
@@ -462,19 +525,22 @@ function GenQuestion() {
         return possPhaseDiffQuestions();
 
     } else if (randomQuestion === 3) {
-        return DS_WavelengthSlitSeparationQuestions();
+        return DS_WavelengthQuestions();
 
-    } else if (randomQuestion === 4){
+    } else if (randomQuestion === 4) {
+        return DS_SlitSeparationQuestions(); 
+
+    } else if (randomQuestion === 5){
         return DS_ScreenDistanceQuestions();
 
-    } else if (randomQuestion === 5) {
+    } else if (randomQuestion === 6) {
         return SS_changeSlitWidthQuestions();
 
-    } else if (randomQuestion === 6) {
+    } else if (randomQuestion === 7) {
         return SS_changeWaveLengthQuestions();
 
-    } else if (randomQuestion === 7) {
-        return MS_chagngeGratingQuestions();
+    } else if (randomQuestion === 8) {
+        return MS_changeGratingQuestions();
 
     } else {
          return MS_changeWaveLengthQuestions();
