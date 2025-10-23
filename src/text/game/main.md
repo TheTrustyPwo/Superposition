@@ -9,4 +9,4 @@ If you are stuck, feel free to use our simulations for help!
 ### Level 2 Quiz (Moderate) 
 <a href='https://thetrustypwo.github.io/Superposition/game2/main.html'>Link to quiz</a>
 
-## Level 3 Quiz (Hard) -- Work in Progress 
+### Level 3 Quiz (Hard) -- Work in Progress 
