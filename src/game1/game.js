@@ -18,13 +18,9 @@ function loadQuestion() {
     if (currentQuestion.ShowImage == false) {
         document.getElementById('optImg1').classList.add('hidden');
         document.getElementById('optImg2').classList.add('hidden');
-        document.getElementById('optImg3').classList.add('hidden');
-        document.getElementById('optImg4').classList.add('hidden');
     } else {
         document.getElementById('optImg1').classList.remove('hidden');
         document.getElementById('optImg2').classList.remove('hidden');
-        document.getElementById('optImg3').classList.remove('hidden');
-        document.getElementById('optImg4').classList.remove('hidden');
     }
     questionElement.textContent = currentQuestion.question;
     questionNumberElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
