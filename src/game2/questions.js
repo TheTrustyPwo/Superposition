@@ -13,44 +13,6 @@ function shuffleOptions(options) {
 // Generating question bank
 
 // TWO SOURCE INTERFERENCE
-function phaseDiffQuestions() {
-    const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase,  if it is in phase 
-    const phaseDiff = getRandomInt(1, 10); 
-
-    var whatPhase; 
-    if (isInPhase == 1) {
-        whatPhase = "in phase"; 
-    } else { 
-        whatPhase = "in antiphase"; 
-    }
-
-    var remainder = phaseDiff%2 
-    var correctOpt 
-    var wrongOpt1
-    const wrongOpt2 = 'Partial Constructive Interference'; 
-    const wrongOpt3 = 'Partial Destructive Interference'; 
-    let options;
-
-    if (remainder = 0) {
-        correctOpt = 'Constructive Interference';
-        wrongOpt1 = 'Destructive Interference'; 
-        options = [correctOpt, wrongOpt2, wrongOpt3, wrongOpt1];
-    } else { 
-        correctOpt = 'Destructive Interference';
-        wrongOpt1 = 'Constructive Interference'; 
-        options = [wrongOpt1, wrongOpt2, wrongOpt3, correctOpt]; 
-    } 
-
-    return {
-        question: `Given that two sources emit coherent waves ${whatPhase} with a phase difference of ${phaseDiff}π, what is the interference type?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        ``, // add later 
-        ShowImage: false,
-    };
-};
-
 function pathDiffQuestions() {
     const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase, 1 if it is in phase
     const isDest = getRandomInt(0, 1); //0 if it is constructive, 1 if it is destructive
@@ -103,59 +65,6 @@ function pathDiffQuestions() {
         correctAnswer: correctOpt,
         explanation: 
         `The correct answer is ${correctOpt} because path difference = ${pathDiff}λ and phase difference = ${phaseDiff}π`,
-        ShowImage: false,
-    };
-
-};
-
-function possPhaseDiffQuestions() {
-    const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase, 1 if it is in phase
-    const isDest = getRandomInt(0, 1); //0 if it is constructive, 1 if it is destructive
-
-    var whatPhase;
-
-    if (isInPhase == 1) {
-        whatPhase = "in phase";
-
-    } else {
-        whatPhase = "in antiphase";
-
-    };
-
-    var whatType;
-    
-    if (isDest == 1) {
-        whatType = "destructive";
-
-    } else {
-        whatType = "constructive";
-
-    }
-
-    var correctOpt;
-    var wrongOpt1;
-
-    if ((isInPhase == 1 && isDest == 0) || (isInPhase == 0 && isDest == 1)) { //inphase const or antiphase dest
-        correctOpt = `0, 2π, 4π, ...`;
-        wrongOpt1 = `π, 3π, 5π, ...`;
-
-    } else {
-        correctOpt = `π, 3π, 5π, ...`;
-        wrongOpt1 = `2π, 4π, 6π, ...`;
-
-    };
-
-    const wrongOpt2 = `0, π, 2π, ...`
-    const wrongOpt3 = `π/2, 3π/2, 5π/2, ...`
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
-
-    return {
-        question: `Which of the below lists the possible phase difference for ${whatType} interference of two sound waves ${whatPhase}?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        ``, // Can add in the future
         ShowImage: false,
     };
 
@@ -233,69 +142,6 @@ function SS_changeDistanceQuestions() {
         ShowImage: false,
     };
 };
-
-function SS_changeWaveLengthQuestions() {
-    const isWidth = getRandomInt(0, 1); //angle of first maxima if 0, width of central maxima if 1
-    const isIncrease = getRandomInt(0, 1); //Increase Wavelength if 1 else 0
-
-    const wrongOpt3 = `I am not sure :(`;
-
-    var wavelengthChange;
-    var whatHappen;
-    var correctOpt;
-    var wrongOpt1;
-    var wrongOpt2;
-
-    if (isWidth == 1) {
-        whatHappen = 'width of the Central Maxima';
-
-        if (isIncrease == 1) {
-            wavelengthChange = 'longer';
-            correctOpt = 'The width of the Central Maxima decreases'
-            wrongOpt1 = 'The width of the Central Maxima increases'
-            wrongOpt2 = 'The width of the Central Maxima remains the same'
-
-
-        } else {
-            wavelengthChange = 'shorter';
-            correctOpt = 'The width of the Central Maxima increases'
-            wrongOpt1 = 'The width of the Central Maxima decreases'
-            wrongOpt2 = 'The width of the Central Maxima remains the same'
-
-        };
-
-    } else {
-        whatHappen = 'angle of the First Maxima';
-
-        if (isIncrease == 1) {
-            wavelengthChange = 'longer';
-            correctOpt = 'Angle θ increases'
-            wrongOpt1 = 'Angle θ decreases'
-            wrongOpt2 = 'Angle θ remains the same'
-
-        } else {
-            wavelengthChange = 'shorter';
-            wrongOpt1 = 'Angle θ increases'
-            correctOpt = 'Angle θ decreases'
-            wrongOpt2 = 'Angle θ remains the same'
-
-        };
-
-    }
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
-
-    return {
-        question: `Consider a single slit experiment, when the wavelength of the incoming light is ${wavelengthChange}, which of the following changes occurs to the ${whatHappen}?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        ``,
-        ShowImage: false,
-    };
-
-};
-
 
 //DOUBLE SLIT EXPERIMENTS
 function DS_WavelengthQuestions() {
@@ -410,140 +256,28 @@ function DS_ScreenDistanceQuestions() {
 
 
 //MULTIPLE SLIT (DIFFRACTION GRATING)
-function MS_changeGratingQuestions() {
-    const isIncrease = getRandomInt(0, 1); //Increase slit separation between gratings if 1 else 0
-
-    const wrongOpt3 = `I am not sure :(`;
-
-    var correctOpt;
-    var wrongOpt1;
-    var wrongOpt2;
-    
-    if (isIncrease == 1) {
-        whatChanged = 'bigger';
-        correctOpt = 'The distance between the maximum orders increase'
-        wrongOpt1 = 'The distance between the maximum orders decrease'
-        wrongOpt2 = 'The distance between the maximum orders remains the same'
-
-
-    } else {
-        whatChanged = 'smaller';
-        correctOpt = 'The distance between the maximum orders decrease'
-        wrongOpt1 = 'The distance between the maximum orders increase'
-        wrongOpt2 = 'The distance between the maximum orders remains the same'
-
-    }
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
-
-    return {
-        question: `Consider a diffraction grating experiment, when the slit separation of the gratings is ${whatChanged}, what happens to the intensity profile?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        ``,
-        ShowImage: false,
-    };
-
-};
-
-function MS_changeWaveLengthQuestions() {
-    const isDistance = getRandomInt(0, 1); //angle of first maxima if 0, distance between maxima if 1
-    const isIncrease = getRandomInt(0, 1); //Increase Wavelength if 1 else 0
-
-    const wrongOpt3 = `I am not sure :(`;
-
-    var wavelengthChange;
-    var whatHappen;
-    var correctOpt;
-    var wrongOpt1;
-    var wrongOpt2;
-
-    if (isDistance == 1) {
-        whatHappen = 'distance between the maximum orders';
-
-        if (isIncrease == 1) {
-            wavelengthChange = 'longer';
-            correctOpt = 'The distance between the maximum orders increases'
-            wrongOpt1 = 'The distance between the maximum orders decreases'
-            wrongOpt2 = 'The distance between the maximum orders remains the same'
-
-
-        } else {
-            wavelengthChange = 'shorter';
-            correctOpt = 'The distance between the maximum orders decreases'
-            wrongOpt1 = 'The distance between the maximum orders increases'
-            wrongOpt2 = 'The distance between the maximum orders remains the same'
-
-        };
-
-    } else {
-        whatHappen = 'angle of the First Maxima';
-
-        if (isIncrease == 1) {
-            wavelengthChange = 'longer';
-            correctOpt = 'Angle θ increases'
-            wrongOpt1 = 'Angle θ decreases'
-            wrongOpt2 = 'Angle θ remains the same'
-
-        } else {
-            wavelengthChange = 'shorter';
-            wrongOpt1 = 'Angle θ increases'
-            correctOpt = 'Angle θ decreases'
-            wrongOpt2 = 'Angle θ remains the same'
-
-        };
-
-    }
-
-    const options = shuffleOptions([correctOpt, wrongOpt1, wrongOpt2, wrongOpt3]);
-
-    return {
-        question: `Consider a diffraction grating experiment, when the wavelength of the incoming light is ${wavelengthChange}, which of the following changes occurs to the ${whatHappen}?`,
-        options: options,
-        correctAnswer: correctOpt,
-        explanation: 
-        ``,
-        ShowImage: false,
-    };
-
-};
-
-
 
 
 //GENERATING QUESTIONS
 function GenQuestion() {
-    randomQuestion = getRandomInt(0, 9)
+    randomQuestion = getRandomInt(0, 5)
     if (randomQuestion === 0) {
-        return phaseDiffQuestions();
-
-    } else if (randomQuestion === 1) {
         return pathDiffQuestions();
 
-    } else if (randomQuestion === 2) {
-        return possPhaseDiffQuestions();
-
-    } else if (randomQuestion === 3) {
+    } else if (randomQuestion === 1) {
         return DS_WavelengthQuestions();
 
-    } else if (randomQuestion === 4) {
-        return DS_SlitSeparationQuestions(); 
+    } else if (randomQuestion === 2) {
+        return DS_SlitSeparationQuestions():
 
-    } else if (randomQuestion === 5){
+    } else if (randomQuestion === 3) {
         return DS_ScreenDistanceQuestions();
 
-    } else if (randomQuestion === 6) {
+    } else if (randomQuestion === 4) {
         return SS_changeSlitWidthQuestions();
 
-    } else if (randomQuestion === 7) {
-        return SS_changeWaveLengthQuestions();
-
-    } else if (randomQuestion === 8) {
-        return MS_changeGratingQuestions();
-
-    } else {
-         return MS_changeWaveLengthQuestions();
+    } else if (randomQuestion === 5){
+        return SS_changeDistanceQuestions();
     }
 
 }
