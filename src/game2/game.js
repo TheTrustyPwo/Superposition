@@ -1,13 +1,7 @@
-
 let score = 0;
-let combo = 0;
 let currentQuestionIndex = 0;
-let timeLeft = 60;
-let timer;
 let questions;
-let timeout;
 let wrongQuestions = []
-let maxCombo = 0;
 let wrongQuestionIndex = 0;
 
 const bgmElement = document.getElementById('bgm');
@@ -18,6 +12,7 @@ function loadQuestion() {
     const questionElement = document.getElementById('question');
     const optionsElements = document.querySelectorAll('.option');
     const questionNumberElement = document.getElementById('question-number'); // Added
+    const mainImageElement = document.getElementById('question-image');
 
     const currentQuestion = questions[currentQuestionIndex];
     if (currentQuestion.ShowImage == false) {
@@ -32,10 +27,17 @@ function loadQuestion() {
         document.getElementById('optImg4').classList.remove('hidden');
     }
     questionElement.textContent = currentQuestion.question;
-    questionNumberElement.textContent = `Question ${currentQuestionIndex + 1}`; // Added
+    questionNumberElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+
+    if (currentQuestion.mainImage) {
+        mainImageElement.src = currentQuestion.mainImage;
+        mainImageElement.classList.remove('hidden');
+    } else {
+        mainImageElement.classList.add('hidden');
+    }
 
     currentQuestion.options.forEach((option, index) => {
-        optionsElements[index].textContent = option;
+        optionsElements[index].innerHTML = option; // instead of textContent
         optionsElements[index].style.backgroundColor = '#e0e0e0';
         optionsElements[index].disabled = false;
     });
@@ -48,19 +50,15 @@ function checkAnswer(selectedOptionIndex) {
     const options = document.querySelectorAll('.option');
     const explanation = document.getElementById('explanation');
     const currentQuestion = questions[currentQuestionIndex];
-
     const selectedOptionText = options[selectedOptionIndex].textContent.trim();
+    const progressCircle = document.getElementById(`progress-${currentQuestionIndex}`);
 
     if (selectedOptionText === currentQuestion.correctAnswer) {
         options[selectedOptionIndex].style.backgroundColor = 'green';
-        combo += 1;
-        maxCombo = Math.max(maxCombo, combo); // Update maxCombo if current combo is greater
-        score += 100 + (100 * 25 * (combo - 1)) / 100;
-        explanation.classList.add('hidden');
-        timeout = setTimeout(nextQuestion, 1000);
+        score += 1;
+        progressCircle.classList.add('correct');
     } else {
         let correctOptionIndex = -1;
-
         options.forEach((option, index) => {
             if (option.textContent.trim() === currentQuestion.correctAnswer) {
                 correctOptionIndex = index;
@@ -75,11 +73,9 @@ function checkAnswer(selectedOptionIndex) {
             }
         });
 
-        combo = 0;
         explanation.textContent = currentQuestion.explanation;
         explanation.classList.remove('hidden');
 
-        // Add to wrongQuestions
         wrongQuestions.push({
             questionNumber: currentQuestionIndex + 1,
             question: currentQuestion.question,
@@ -87,49 +83,15 @@ function checkAnswer(selectedOptionIndex) {
             selectedAnswer: selectedOptionText,
             explanation: currentQuestion.explanation
         });
-        timeout = setTimeout(nextQuestion, 1000);
+
+        progressCircle.classList.add('wrong');
     }
 
-    document.getElementById('score').textContent = `Score: ${Math.floor(score)}`;
-    document.getElementById('combo').textContent = `Combo: ${combo}`;
-
-    updateProgressBar(); // Update the progress bar
     options.forEach(option => option.disabled = true);
-}
-
-function updateProgressBar() {
-    const progressBar = document.getElementById('progress-bar');
-    const star1 = document.getElementById('star1');
-    const star2 = document.getElementById('star2');
-    const star3 = document.getElementById('star3');
-    
-    const progress = Math.min(score / 2000, 1) * 100;
-    progressBar.style.width = `${progress}%`;
-
-    if (score >= 500) {
-        star1.textContent = '★';
-        document.getElementById('marker1').classList.add('hidden');
-    } else {
-        star1.textContent = '☆';
-    }
-
-    if (score >= 1000) {
-        star2.textContent = '★';
-        document.getElementById('marker2').classList.add('hidden');
-    } else {
-        star2.textContent = '☆';
-    }
-
-    if (score >= 1500) {
-        star3.textContent = '★';
-        document.getElementById('marker3').classList.add('hidden');
-    } else {
-        star3.textContent = '☆';
-    }
+    document.getElementById('next-button').classList.remove('hidden');  // Show "Next"
 }
 
 function nextQuestion() {
-    clearTimeout(timeout);
     currentQuestionIndex += 1;
     if (currentQuestionIndex < questions.length) {
         loadQuestion();
@@ -138,55 +100,15 @@ function nextQuestion() {
     }
 }
 
-function startTimer() {
-    const timerBar = document.getElementById('timer-bar');
-    const timerBg = document.getElementById('timer-bg');
-    const timeLeftElement = document.getElementById('time-left');
-    timerBar.style.width = '100%';
-    timerBg.style.width = '100%';
-
-    timer = setInterval(() => {
-        timeLeft -= 1;
-        const widthPercentage = (timeLeft / 60) * 100;
-        timerBar.style.width = `${widthPercentage}%`;
-        timeLeftElement.textContent = `Time left: ${timeLeft}s`;
-
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            endQuiz();
-        }
-    }, 1000);
-}
-
 function endQuiz() {
-    clearInterval(timer);
-
-    // Hide the timer container
-    document.getElementById('timer-container').style.display = 'none';
-
-    let starRating = '';
-    if (score < 500) {
-        starRating = '☆☆☆';
-    } else if (score < 1000) {
-        starRating = '★☆☆';
-    } else if (score < 1500) {
-        starRating = '★★☆';
-    } else {
-        starRating = '★★★';
-    }
 
     document.getElementById('question-container').innerHTML = 
-        `<h2>Final Score: ${Math.floor(score)}</h2>
-         <h2>Max Combo: ${maxCombo}</h2>`;
+        `<h2>Score: ${score}/${questions.length}!</h2>`
 
-    document.getElementById('star-rating').classList.remove('hidden');
-    document.getElementById('star-rating').innerHTML = `${starRating}`;
          
 
     document.getElementById('next-button').classList.add('hidden');
     document.getElementById('explanation').classList.add('hidden');
-    document.getElementById('score').classList.add('hidden');
-    document.getElementById('combo').classList.add('hidden');
 
     // Show restart button at the end
     document.getElementById('restart-button').classList.remove('hidden');
@@ -201,7 +123,6 @@ function endQuiz() {
     };
 
     bgmElement.pause();
-    bgmElement.currentTime = 0; // Reset to start
 
     // Play ending BGM and make sure it doesn't loop
     bgmEndElement.loop = false;
@@ -240,6 +161,17 @@ function restartQuiz() {
 
 // Initialize the quiz
 
-questions = generateRandomQuestions(70);
+questions = generateRandomQuestions(15);
+setupProgressIndicators(15);
 loadQuestion();
-startTimer();
+
+function setupProgressIndicators(count) {
+    const container = document.getElementById('progress-indicators');
+    container.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        const circle = document.createElement('div');
+        circle.classList.add('progress-circle');
+        circle.id = `progress-${i}`;
+        container.appendChild(circle);
+    }
+}
