@@ -31,11 +31,11 @@ function phaseDiffQuestions() {
 
     if (remainder = 0) {
         correctOpt = 'Constructive Interference';
-        wrongOpt1 = 'Destructive Interference'; 
+        wrongOpt = 'Destructive Interference'; 
         options = [correctOpt, wrongOpt];
     } else { 
         correctOpt = 'Destructive Interference';
-        wrongOpt1 = 'Constructive Interference'; 
+        wrongOpt = 'Constructive Interference'; 
         options = [wrongOpt, correctOpt]; 
     } 
 
