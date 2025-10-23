@@ -1,10 +1,6 @@
-
 let score = 0;
 let currentQuestionIndex = 0;
-let timeLeft = 60;
-let timer;
 let questions;
-let timeout;
 let wrongQuestions = []
 let wrongQuestionIndex = 0;
 
