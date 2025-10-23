@@ -27,7 +27,7 @@ function phaseDiffQuestions() {
     var remainder = phaseDiff%2 ;
     var correctOpt; 
     var wrongOpt;
-    let options;
+    var options;
 
     if (remainder = 0) {
         correctOpt = 'Constructive Interference';
