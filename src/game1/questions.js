@@ -13,7 +13,7 @@ function shuffleOptions(options) {
 // Generating question bank
 
 // TWO SOURCE INTERFERENCE
-function phaseDiffQuestions() {
+function phaseDiffQuestions() { // path diff -> CI/DI
     const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase,  if it is in phase 
     const phaseDiff = getRandomInt(1, 10); 
 
@@ -47,6 +47,60 @@ function phaseDiffQuestions() {
         ``, // add later 
         ShowImage: false,
     };
+};
+
+function pathDiffQuestions2() { //path diff -> phase diff
+    const isInPhase = getRandomInt(0, 1); //0 if it is in antiphase, 1 if it is in phase
+    const isDest = getRandomInt(0, 1); //0 if it is constructive, 1 if it is destructive
+
+    var whatPhase;
+    if (isInPhase == 1) {
+        whatPhase = "in phase";
+
+    } else {
+        whatPhase = "in antiphase";
+
+    }
+
+    var p1;
+    var p2;
+    if ((isInPhase == 1 && isDest == 0) || (isInPhase == 0 && isDest == 1)) { //inphase const or antiphase dest
+        p1 = getRandomInt(2, 10);
+        p2 = p1 + 1 * getRandomInt(1, 5);
+
+    } else {
+        p1 = getRandomInt(2, 10);
+        p2 = p1 + 0.5 + getRandomInt(1, 5);
+
+    };
+
+    const pathDiff = p2 - p1;
+    const phaseDiff = pathDiff * 2;
+
+    var correctOpt;
+    var wrongOpt;
+
+    if ((isInPhase == 1 && isDest == 0) || (isInPhase == 0 && isDest == 0)) { //inphase const or antiphase const
+        correctOpt = `Phase Difference Δϕ = ${phaseDiff}π`;
+        wrongOpt = `Phase Difference Δϕ = ${pathDiff}π`;
+
+    } else {
+        correctOpt = `Phase Difference Δϕ = ${phaseDiff}π`;
+        wrongOpt = `Phase Difference Δϕ = ${pathDiff}π`;
+
+    };
+
+    const options = shuffleOptions([correctOpt, wrongOpt]);
+
+    return {
+        question: `Two sources emit coherent Sound waves ${whatPhase}. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference?`,
+        options: options,
+        correctAnswer: correctOpt,
+        explanation: 
+        `The correct answer is ${phaseDiff}π because path difference = ${pathDiff}λ`,
+        ShowImage: false,
+    };
+
 };
 
 function pathDiffQuestions() {
@@ -304,7 +358,7 @@ function MS_changeWaveLengthQuestions() {
 
 //GENERATING QUESTIONS
 function GenQuestion() {
-    randomQuestion = getRandomInt(0, 5)
+    randomQuestion = getRandomInt(0, 6)
     if (randomQuestion === 0) {
         return phaseDiffQuestions();
 
@@ -323,7 +377,9 @@ function GenQuestion() {
     } else if (randomQuestion === 5){
         return MS_changeWaveLengthQuestions();
 
-    } 
+    } else {
+        return pathDiffQuestions2();
+    }
 
 }
 
