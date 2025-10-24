@@ -33,7 +33,7 @@ function phaseDiffQuestions() { // path diff -> CI/DI
         correctOpt = 'Constructive Interference';
         wrongOpt = 'Destructive Interference'; 
         options = [correctOpt, wrongOpt];
-    } else { 
+    } else if (remainder = 1) { 
         correctOpt = 'Destructive Interference';
         wrongOpt = 'Constructive Interference'; 
         options = [wrongOpt, correctOpt]; 
