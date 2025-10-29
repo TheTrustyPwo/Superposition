@@ -276,7 +276,7 @@ function GenQuestion() {
     } else if (randomQuestion === 4) {
         return SS_changeSlitWidthQuestions();
 
-    } else if (randomQuestion === 5){
+    } else {
         return SS_changeDistanceQuestions();
     }
 
