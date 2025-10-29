@@ -87,15 +87,23 @@ function pathDiffQuestions2() { //path diff -> phase diff
     };
 
     const pathDiff = p2 - p1;
-    const phaseDiff = pathDiff * 2;
+    var phaseDiff = pathDiff * 2;
 
     var correctOpt;
     var wrongOpt;
 
-    if ((isInPhase == 1 && isDest == 0) || (isInPhase == 0 && isDest == 0)) { //inphase const or antiphase const
+    if (isInPhase == 1 && isDest == 0)  { //inphase const or antiphase const
         correctOpt = `Phase Difference Δϕ = ${phaseDiff}π`;
         wrongOpt = `Phase Difference Δϕ = ${pathDiff}π`;
+    } else if (isInPhase == 0 && isDest == 0) {
+        phaseDiff++;
+        correctOpt = `Phase Difference Δϕ = ${phaseDiff}π`;
+        wrongOpt = `Phase Difference Δϕ = ${phaseDiff-1}π`;
 
+    } else if (isInPhase == 0 && isDest == 1) {
+        phaseDiff++;
+        correctOpt = `Phase Difference Δϕ = ${phaseDiff}π`;
+        wrongOpt = `Phase Difference Δϕ = ${phaseDiff - 1}π`;
     } else {
         correctOpt = `Phase Difference Δϕ = ${phaseDiff}π`;
         wrongOpt = `Phase Difference Δϕ = ${pathDiff}π`;
@@ -203,7 +211,7 @@ function possPhaseDiffQuestions() {
 
     } else {
         correctOpt = `π, 3π, 5π, ...`;
-        wrongOpt = `2π, 4π, 6π, ...`;
+        wrongOpt = `0, 2π, 4π, ...`;
 
     };
 
