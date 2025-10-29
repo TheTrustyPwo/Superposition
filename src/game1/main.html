@@ -56,31 +56,7 @@
     <audio id="bgm" src="assets/audio/bgm.mpeg" autoplay loop></audio>
     <audio id="bgm_end" src="assets/audio/end_bgm.mp3"></audio>
 
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
-<script type = "module">  
-  // Import Firebase modules
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-    // Your Firebase config
-    const firebaseConfig = {
-        apiKey: "AIzaSyDIdvD8bb8sky4S0UHdcaFsRo_B5QGqx0g",
-      authDomain: "super1-hwach.firebaseapp.com",
-      databaseURL: "https://super1-hwach-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "super1-hwach",
-      storageBucket: "super1-hwach.firebasestorage.app",
-      messagingSenderId: "986991618807",
-      appId: "1:986991618807:web:86f6e6e462d434565f41f2",
-      measurementId: "G-EC7TR9BTJ7"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-</script>
-    
-<script src="questions.js"></script>
+    <script src="questions.js"></script>
 <script type = "module" src="game.js"></script>
 </body>
 </html>
