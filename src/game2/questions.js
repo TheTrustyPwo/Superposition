@@ -268,7 +268,7 @@ function GenQuestion() {
         return DS_WavelengthQuestions();
 
     } else if (randomQuestion === 2) {
-        return DS_SlitSeparationQuestions():
+        return DS_SlitSeparationQuestions();
 
     } else if (randomQuestion === 3) {
         return DS_ScreenDistanceQuestions();
