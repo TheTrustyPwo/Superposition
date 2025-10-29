@@ -260,7 +260,7 @@ function DS_ScreenDistanceQuestions() {
 
 //GENERATING QUESTIONS
 function GenQuestion() {
-    randomQuestion = getRandomInt(0, 5)
+    const randomQuestion = getRandomInt(0, 5);
     if (randomQuestion === 0) {
         return pathDiffQuestions();
 
