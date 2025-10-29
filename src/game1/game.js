@@ -116,7 +116,7 @@ function nextQuestion() {
     }
 }
 
-function endQuiz() {
+async function endQuiz() {
     document.getElementById('question-container').innerHTML = 
         `<h2>Score: ${score}/${questions.length}!</h2>`;
 
@@ -191,11 +191,6 @@ function restartQuiz() {
 }
 
 // Initialize the quiz
-
-questions = generateRandomQuestions(15);
-setupProgressIndicators(15);
-loadQuestion();
-
 function setupProgressIndicators(count) {
     const container = document.getElementById('progress-indicators');
     container.innerHTML = '';
@@ -206,3 +201,7 @@ function setupProgressIndicators(count) {
         container.appendChild(circle);
     }
 }
+
+questions = generateRandomQuestions(15);
+setupProgressIndicators(15);
+loadQuestion();
