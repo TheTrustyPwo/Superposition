@@ -56,24 +56,24 @@
     <audio id="bgm" src="assets/audio/bgm.mpeg" autoplay loop></audio>
     <audio id="bgm_end" src="assets/audio/end_bgm.mp3"></audio>
     <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyDIdvD8bb8sky4S0UHdcaFsRo_B5QGqx0g",
+    authDomain: "super1-hwach.firebaseapp.com",
+    projectId: "super1-hwach",
+    storageBucket: "super1-hwach.firebasestorage.app",
+    messagingSenderId: "986991618807",
+    appId: "1:986991618807:web:86f6e6e462d434565f41f2",
+    measurementId: "G-EC7TR9BTJ7"
+  };
 
-<script>
-  // 🔥 Your Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyDIdvD8bb8sky4S0UHdcaFsRo_B5QGqx0g",
-        authDomain: "super1-hwach.firebaseapp.com",
-        projectId: "super1-hwach",
-        storageBucket: "super1-hwach.firebasestorage.app",
-        messagingSenderId: "986991618807",
-        appId: "1:986991618807:web:86f6e6e462d434565f41f2",
-        measurementId: "G-EC7TR9BTJ7"
-    };
-
-  // 🔥 Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 </script>
     
 <script src="questions.js"></script>
