@@ -96,7 +96,7 @@ function nextQuestion() {
     }
 }
 
-async function endQuiz() {
+function endQuiz() {
     document.getElementById('question-container').innerHTML = 
         `<h2>Score: ${score}/${questions.length}!</h2>`;
 
@@ -127,18 +127,20 @@ async function endQuiz() {
     const playerName = prompt("Enter your name to record your score:") || "Anonymous";
 
     // 🟢 Save result to Firebase
-    try {
-        await db.collection("quiz_scores").add({
-            name: playerName,
-            score: score,
-            totalQuestions: questions.length,
-            timestamp: new Date().toISOString()
-        });
-        console.log("Score saved to Firebase ✅");
-    } catch (error) {
-        console.error("Error saving score:", error);
-    }
-}
+    db.collection("quiz_scores").add({
+      name: playerName,
+      score: score,
+      totalQuestions: questions.length,
+      timestamp: new Date().toISOString()
+      })
+    .then(() => {
+      alert("✅ Score saved!");
+    })
+    .catch((error) => {
+      console.error("Error adding document: ", error);
+      alert("⚠️ Failed to save score, check console for error.");
+    });
+};
 
 function showWrongQuestion(index) {
     const wrongQuestion = wrongQuestions[index];
