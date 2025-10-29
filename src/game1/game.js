@@ -1,23 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { generateRandomQuestions } from "./questions.js"; // make questions.js export generateRandomQuestions
-
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyDIdvD8bb8sky4S0UHdcaFsRo_B5QGqx0g",
-  authDomain: "super1-hwach.firebaseapp.com",
-  databaseURL: "https://super1-hwach-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "super1-hwach",
-  storageBucket: "super1-hwach.firebasestorage.app",
-  messagingSenderId: "986991618807",
-  appId: "1:986991618807:web:86f6e6e462d434565f41f2",
-  measurementId: "G-EC7TR9BTJ7"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
 let score = 0;
 let currentQuestionIndex = 0;
 let questions;
@@ -62,7 +42,7 @@ function loadQuestion() {
     document.getElementById('next-button').classList.add('hidden');
 }
 
-window.checkAnswer = function(selectedOptionIndex) {
+function checkAnswer(selectedOptionIndex) {
     const options = document.querySelectorAll('.option');
     const explanation = document.getElementById('explanation');
     const currentQuestion = questions[currentQuestionIndex];
@@ -107,7 +87,7 @@ window.checkAnswer = function(selectedOptionIndex) {
     document.getElementById('next-button').classList.remove('hidden');  // Show "Next"
 }
 
-window.nextQuestion = function() {
+function nextQuestion() {
     currentQuestionIndex += 1;
     if (currentQuestionIndex < questions.length) {
         loadQuestion();
@@ -116,7 +96,7 @@ window.nextQuestion = function() {
     }
 }
 
-async function endQuiz() {
+function endQuiz() {
     document.getElementById('question-container').innerHTML = 
         `<h2>Score: ${score}/${questions.length}!</h2>`;
 
@@ -160,7 +140,7 @@ async function endQuiz() {
     }
 };
 
-window.showWrongQuestion = function(index) {
+function showWrongQuestion(index) {
     const wrongQuestion = wrongQuestions[index];
     document.getElementById('wrong-question-number').textContent = `Question ${wrongQuestion.questionNumber}`;
     document.getElementById('wrong-question-text').textContent = wrongQuestion.question;
@@ -172,25 +152,30 @@ window.showWrongQuestion = function(index) {
     document.getElementById('next-wrong-button').style.display = index === wrongQuestions.length - 1 ? 'none' : 'inline-block';
 }
 
-window.showPreviousWrongQuestion = function() {
+function showPreviousWrongQuestion() {
     if (wrongQuestionIndex > 0) {
         wrongQuestionIndex--;
         showWrongQuestion(wrongQuestionIndex);
     }
 }
 
-window.showNextWrongQuestion = function() {
+function showNextWrongQuestion() {
     if (wrongQuestionIndex < wrongQuestions.length - 1) {
         wrongQuestionIndex++;
         showWrongQuestion(wrongQuestionIndex);
     }
 }
 
-window.restartQuiz = function() {
+function restartQuiz() {
     location.reload();
 }
 
 // Initialize the quiz
+
+questions = generateRandomQuestions(15);
+setupProgressIndicators(15);
+loadQuestion();
+
 function setupProgressIndicators(count) {
     const container = document.getElementById('progress-indicators');
     container.innerHTML = '';
@@ -201,7 +186,3 @@ function setupProgressIndicators(count) {
         container.appendChild(circle);
     }
 }
-
-questions = generateRandomQuestions(15);
-setupProgressIndicators(15);
-loadQuestion();
