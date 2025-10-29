@@ -29,15 +29,27 @@ function phaseDiffQuestions() { // path diff -> CI/DI
     var wrongOpt;
     var options;
 
-    if (remainder = 0) {
-        correctOpt = 'Constructive Interference';
-        wrongOpt = 'Destructive Interference'; 
-        options = [correctOpt, wrongOpt];
-    } else if (remainder = 1) { 
-        correctOpt = 'Destructive Interference';
-        wrongOpt = 'Constructive Interference'; 
-        options = [wrongOpt, correctOpt]; 
-    } 
+    if (isInPhase = 1) {
+        if (remainder = 0) {
+            correctOpt = 'Constructive Interference';
+            wrongOpt = 'Destructive Interference'; 
+            options = [correctOpt, wrongOpt];
+        } else if (remainder = 1) { 
+            correctOpt = 'Destructive Interference';
+            wrongOpt = 'Constructive Interference'; 
+            options = [wrongOpt, correctOpt]; 
+        } 
+    } else if (isInPhase = 0) {
+        if (remainder = 1) {
+            correctOpt = 'Constructive Interference';
+            wrongOpt = 'Destructive Interference'; 
+            options = [correctOpt, wrongOpt];
+        } else if (remainder = 0) { 
+            correctOpt = 'Destructive Interference';
+            wrongOpt = 'Constructive Interference'; 
+            options = [wrongOpt, correctOpt]; 
+        } 
+    }
 
     return {
         question: `Given that two sources emit coherent waves ${whatPhase} with a phase difference of ${phaseDiff}π, what is the interference type?`,
@@ -93,7 +105,7 @@ function pathDiffQuestions2() { //path diff -> phase diff
     const options = shuffleOptions([correctOpt, wrongOpt]);
 
     return {
-        question: `Two sources emit coherent Sound waves ${whatPhase}. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference?`,
+        question: `Two sources emit coherent sound waves ${whatPhase}. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
@@ -275,13 +287,13 @@ function MS_changeGratingQuestions() {
     var correctOpt;
     var wrongOpt;
     
-    if (isIncrease == 1) {
-        whatChanged = 'bigger';
+    if (isIncrease == 0) {
+        whatChanged = 'smaller';
         correctOpt = 'The distance between the maximum orders increase'
         wrongOpt = 'The distance between the maximum orders decrease'
 
     } else {
-        whatChanged = 'smaller';
+        whatChanged = 'bigger';
         correctOpt = 'The distance between the maximum orders decrease'
         wrongOpt = 'The distance between the maximum orders increase'
 
@@ -290,7 +302,7 @@ function MS_changeGratingQuestions() {
     const options = shuffleOptions([correctOpt, wrongOpt]);
 
     return {
-        question: `Consider a diffraction grating experiment, when the slit separation of the gratings is ${whatChanged}, what happens to the intensity profile?`,
+        question: `Consider a diffraction grating experiment, when the slit separation of the gratings is ${whatChanged}, what happens to the distance between the maximum orders?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
