@@ -1,3 +1,23 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { generateRandomQuestions } from "./questions.js"; // make questions.js export generateRandomQuestions
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDIdvD8bb8sky4S0UHdcaFsRo_B5QGqx0g",
+  authDomain: "super1-hwach.firebaseapp.com",
+  databaseURL: "https://super1-hwach-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "super1-hwach",
+  storageBucket: "super1-hwach.firebasestorage.app",
+  messagingSenderId: "986991618807",
+  appId: "1:986991618807:web:86f6e6e462d434565f41f2",
+  measurementId: "G-EC7TR9BTJ7"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 let score = 0;
 let currentQuestionIndex = 0;
 let questions;
@@ -126,20 +146,18 @@ function endQuiz() {
     // 🟢 Ask for player name
     const playerName = prompt("Enter your name to record your score:") || "Anonymous";
 
-    // 🟢 Save result to Firebase
-    db.collection("quiz_scores").add({
-      name: playerName,
-      score: score,
-      totalQuestions: questions.length,
-      timestamp: new Date().toISOString()
-      })
-    .then(() => {
-      alert("✅ Score saved!");
-    })
-    .catch((error) => {
-      console.error("Error adding document: ", error);
-      alert("⚠️ Failed to save score, check console for error.");
-    });
+    try {
+        await addDoc(collection(db, "quiz_scores"), {
+            name: playerName,
+            score: score,
+            totalQuestions: questions.length,
+            timestamp: new Date().toISOString()
+        });
+        alert("✅ Score saved!");
+    } catch (error) {
+        console.error("Error saving score:", error);
+        alert("⚠️ Failed to save score. Check console for error.");
+    }
 };
 
 function showWrongQuestion(index) {
