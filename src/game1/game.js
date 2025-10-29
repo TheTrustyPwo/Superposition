@@ -96,33 +96,48 @@ function nextQuestion() {
     }
 }
 
-function endQuiz() {
-
+async function endQuiz() {
     document.getElementById('question-container').innerHTML = 
-        `<h2>Score: ${score}/${questions.length}!</h2>`
-
-         
+        `<h2>Score: ${score}/${questions.length}!</h2>`;
 
     document.getElementById('next-button').classList.add('hidden');
     document.getElementById('explanation').classList.add('hidden');
 
-    // Show restart button at the end
+    // Show restart and return buttons
     document.getElementById('restart-button').classList.remove('hidden');
     document.getElementById('return-button').classList.remove('hidden');
 
+    // Wrong question review
     if (wrongQuestions.length > 0) {
         document.getElementById('wrong-questions-container').classList.remove('hidden');
         showWrongQuestion(0);
     } else {
-        document.getElementById('no-wrong').classList.remove('hidden')
-        document.getElementById('no-wrong').innerHTML = `<h3>Congratulations! You made no errors!</h3>`
-    };
+        document.getElementById('no-wrong').classList.remove('hidden');
+        document.getElementById('no-wrong').innerHTML = `<h3>Congratulations! You made no errors!</h3>`;
+    }
 
-    bgmElement.pause();
+    // Stop quiz BGM, play end BGM
+    if (bgmElement) bgmElement.pause();
+    if (bgmEndElement) {
+        bgmEndElement.loop = false;
+        bgmEndElement.play();
+    }
 
-    // Play ending BGM and make sure it doesn't loop
-    bgmEndElement.loop = false;
-    bgmEndElement.play();
+    // 🟢 Ask for player name
+    const playerName = prompt("Enter your name to record your score:") || "Anonymous";
+
+    // 🟢 Save result to Firebase
+    try {
+        await db.collection("quiz_scores").add({
+            name: playerName,
+            score: score,
+            totalQuestions: questions.length,
+            timestamp: new Date().toISOString()
+        });
+        console.log("Score saved to Firebase ✅");
+    } catch (error) {
+        console.error("Error saving score:", error);
+    }
 }
 
 function showWrongQuestion(index) {
