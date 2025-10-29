@@ -126,18 +126,19 @@ function endQuiz() {
     // 🟢 Ask for player name
     const playerName = prompt("Enter your name to record your score:") || "Anonymous";
 
-    try {
-        await addDoc(collection(db, "quiz_scores"), {
-            name: playerName,
-            score: score,
-            totalQuestions: questions.length,
-            timestamp: new Date().toISOString()
-        });
-        alert("✅ Score saved!");
-    } catch (error) {
+    db.collection("quiz_scores").add({
+        name: playerName,
+        score: score,
+        totalQuestions: questions.length,
+        timestamp: new Date().toISOString()
+    })
+    .then(() => {
+        alert("✅ Score saved to Firebase!");
+    })
+    .catch((error) => {
         console.error("Error saving score:", error);
-        alert("⚠️ Failed to save score. Check console for error.");
-    }
+        alert("⚠️ Failed to save score. Check console.");
+    });
 };
 
 function showWrongQuestion(index) {
