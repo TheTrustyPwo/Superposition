@@ -62,7 +62,7 @@ function loadQuestion() {
     document.getElementById('next-button').classList.add('hidden');
 }
 
-function checkAnswer(selectedOptionIndex) {
+window.checkAnswer = function(selectedOptionIndex) {
     const options = document.querySelectorAll('.option');
     const explanation = document.getElementById('explanation');
     const currentQuestion = questions[currentQuestionIndex];
@@ -107,7 +107,7 @@ function checkAnswer(selectedOptionIndex) {
     document.getElementById('next-button').classList.remove('hidden');  // Show "Next"
 }
 
-function nextQuestion() {
+window.nextQuestion = function() {
     currentQuestionIndex += 1;
     if (currentQuestionIndex < questions.length) {
         loadQuestion();
@@ -160,7 +160,7 @@ async function endQuiz() {
     }
 };
 
-function showWrongQuestion(index) {
+window.showWrongQuestion = function(index) {
     const wrongQuestion = wrongQuestions[index];
     document.getElementById('wrong-question-number').textContent = `Question ${wrongQuestion.questionNumber}`;
     document.getElementById('wrong-question-text').textContent = wrongQuestion.question;
@@ -172,21 +172,21 @@ function showWrongQuestion(index) {
     document.getElementById('next-wrong-button').style.display = index === wrongQuestions.length - 1 ? 'none' : 'inline-block';
 }
 
-function showPreviousWrongQuestion() {
+window.showPreviousWrongQuestion = function() {
     if (wrongQuestionIndex > 0) {
         wrongQuestionIndex--;
         showWrongQuestion(wrongQuestionIndex);
     }
 }
 
-function showNextWrongQuestion() {
+window.showNextWrongQuestion = function() {
     if (wrongQuestionIndex < wrongQuestions.length - 1) {
         wrongQuestionIndex++;
         showWrongQuestion(wrongQuestionIndex);
     }
 }
 
-function restartQuiz() {
+window.restartQuiz = function() {
     location.reload();
 }
 
