@@ -29,22 +29,22 @@ function phaseDiffQuestions() { // path diff -> CI/DI
     var wrongOpt;
     var options;
 
-    if (isInPhase = 1) {
-        if (remainder = 0) {
+    if (isInPhase == 1) {
+        if (remainder == 0) {
             correctOpt = 'Constructive Interference';
             wrongOpt = 'Destructive Interference'; 
             options = [correctOpt, wrongOpt];
-        } else if (remainder = 1) { 
+        } else if (remainder == 1) { 
             correctOpt = 'Destructive Interference';
             wrongOpt = 'Constructive Interference'; 
             options = [wrongOpt, correctOpt]; 
         } 
-    } else if (isInPhase = 0) {
-        if (remainder = 1) {
+    } else if (isInPhase == 0) {
+        if (remainder == 1) {
             correctOpt = 'Constructive Interference';
             wrongOpt = 'Destructive Interference'; 
             options = [correctOpt, wrongOpt];
-        } else if (remainder = 0) { 
+        } else if (remainder == 0) { 
             correctOpt = 'Destructive Interference';
             wrongOpt = 'Constructive Interference'; 
             options = [wrongOpt, correctOpt]; 
@@ -168,7 +168,7 @@ function pathDiffQuestions() {
     };
 
     return {
-        question: `Two sources emit coherent sound waves ${whatPhase}. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, What is their phase difference and interference type?`,
+        question: `Two sources emit coherent sound waves ${whatPhase}. If path 1 is ${p1}λ and path 2 is ${p2}λ from screen, what is their interference type?`,
         options: options,
         correctAnswer: correctOpt,
         explanation: 
