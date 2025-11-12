@@ -62,51 +62,24 @@ class NSlit {
     }
 
     draw = () => {
-      const c = this.c;
-      const totalPatternWidth = this.slits * this.width + (this.slits - 1) * this.separation;
-      const startX = this.x - totalPatternWidth / 2;
-
-      c.strokeStyle = "#FFFFFF"; // white barrier line
-      c.lineWidth = 2;
-
-        // Draw line segments before, between, and after slits
-      let currentX = this.x - this.w / 2;
-
-      // Draw left segment before first slit
-      if (startX > currentX) {
-        c.beginPath();
-        c.moveTo(currentX, this.y);
-        c.lineTo(startX, this.y);
-        c.stroke();
-      }
-
-      // Draw segments between slits
-      for (let i = 0; i < this.slits; i++) {
-        const slitStart = startX + i * (this.width + this.separation);
-        const slitEnd = slitStart + this.width;
-
-        // Draw line after this slit (except last one)
-        if (i < this.slits - 1) {
-          const nextSegmentStart = slitEnd;
-          const nextSegmentEnd = slitEnd + this.separation;
-
-          c.beginPath();
-          c.moveTo(nextSegmentStart, this.y);
-          c.lineTo(nextSegmentEnd, this.y);
-          c.stroke();
+        this.c.beginPath();
+        this.c.strokeStyle = SLITS.COLOR;
+        this.c.lineWidth = SLITS.WIDTH;
+        this.c.moveTo(this.x - this.w / 2, this.y);
+        let dist = this.x - (this.slits * this.width) / 2 - ((this.slits - 1) * this.separation) / 2;
+        this.c.lineTo(dist, this.y);
+        for (let i = 1; i <= this.slits; i++) {
+            dist += this.width;
+            this.c.moveTo(dist, this.y);
+            if (i < this.slits) {
+                dist += this.separation;
+                this.c.lineTo(dist, this.y);
+            }
         }
-      }
-
-      // Draw right segment after last slit
-      const endX = this.x + this.w / 2;
-      const lastSlitEnd = startX + (this.slits - 1) * (this.width + this.separation) + this.width;
-      if (endX > lastSlitEnd) {
-        c.beginPath();
-        c.moveTo(lastSlitEnd, this.y);
-        c.lineTo(endX, this.y);
-        c.stroke();
-      }
-    };
+        this.c.lineTo(this.x + this.w / 2, this.y);
+        this.c.closePath();
+        this.c.stroke();
+    }
 
 
 }
