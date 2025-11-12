@@ -63,30 +63,51 @@ class NSlit {
 
     draw = () => {
       const c = this.c;
-
-      // --- Draw white base line with gaps representing slits ---
-      c.beginPath();
-      c.strokeStyle = "#FFFFFF"; // white line
-      c.lineWidth = 2;
-
-      // Compute total pattern width (slits + separations)
       const totalPatternWidth = this.slits * this.width + (this.slits - 1) * this.separation;
       const startX = this.x - totalPatternWidth / 2;
 
-      // Draw line segments between slits to create visible gaps
-      let x = startX;
+      c.strokeStyle = "#FFFFFF"; // white barrier line
+      c.lineWidth = 2;
 
-      for (let i = 0; i < this.slits; i++) {
-        // Draw up to the next slit
-        c.moveTo(x, this.y);
-        c.lineTo(x + this.separation, this.y);
+        // Draw line segments before, between, and after slits
+      let currentX = this.x - this.w / 2;
 
-        // Skip over the slit (gap)
-        x += this.separation + this.width;
+      // Draw left segment before first slit
+      if (startX > currentX) {
+        c.beginPath();
+        c.moveTo(currentX, this.y);
+        c.lineTo(startX, this.y);
+        c.stroke();
       }
 
-      c.stroke();
+      // Draw segments between slits
+      for (let i = 0; i < this.slits; i++) {
+        const slitStart = startX + i * (this.width + this.separation);
+        const slitEnd = slitStart + this.width;
+
+        // Draw line after this slit (except last one)
+        if (i < this.slits - 1) {
+          const nextSegmentStart = slitEnd;
+          const nextSegmentEnd = slitEnd + this.separation;
+
+          c.beginPath();
+          c.moveTo(nextSegmentStart, this.y);
+          c.lineTo(nextSegmentEnd, this.y);
+          c.stroke();
+        }
+      }
+
+      // Draw right segment after last slit
+      const endX = this.x + this.w / 2;
+      const lastSlitEnd = startX + (this.slits - 1) * (this.width + this.separation) + this.width;
+      if (endX > lastSlitEnd) {
+        c.beginPath();
+        c.moveTo(lastSlitEnd, this.y);
+        c.lineTo(endX, this.y);
+        c.stroke();
+      }
     };
+
 
 }
 
