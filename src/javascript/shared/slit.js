@@ -62,25 +62,39 @@ class NSlit {
     }
 
     draw = () => {
-        this.c.beginPath();
-        this.c.strokeStyle = SLITS.COLOR;
-        this.c.lineWidth = SLITS.WIDTH;
-        this.c.moveTo(this.x - this.w / 2, this.y);
-        let dist = this.x - (this.slits * this.width) / 2 - ((this.slits - 1) * this.separation) / 2;
-        this.c.lineTo(dist, this.y);
-        for (let i = 1; i <= this.slits; i++) {
+        const ctx = this.c; // shorthand for readability
+        ctx.beginPath();
+        ctx.strokeStyle = SLITS.COLOR;
+        ctx.lineWidth = SLITS.WIDTH;
+
+        // Start drawing from the left edge of the full structure
+        ctx.moveTo(this.x - this.w / 2, this.y);
+
+        // Calculate the starting position for the first slit region (centered)
+        let dist = this.x - ((this.slits - 1) * (this.width + this.separation)) / 2 - this.width / 2;
+
+        // Draw the solid line up to the first slit
+        ctx.lineTo(dist, this.y);
+
+        // Loop through all slits
+        for (let i = 0; i < this.slits; i++) {
+            // Skip over the slit (gap)
             dist += this.width;
-            this.c.moveTo(dist, this.y);
-            if (i < this.slits) {
+            ctx.moveTo(dist, this.y);
+
+            // If this isn’t the last slit, draw the solid section between slits
+            if (i < this.slits - 1) {
                 dist += this.separation;
-                this.c.lineTo(dist, this.y);
+                ctx.lineTo(dist, this.y);
             }
         }
-        this.c.lineTo(this.x + this.w / 2, this.y);
-        this.c.closePath();
-        this.c.stroke();
-    }
 
+        // Draw the remaining right section of the barrier
+        ctx.lineTo(this.x + this.w / 2, this.y);
+
+        ctx.closePath();
+        ctx.stroke();
+    };
 
 }
 
