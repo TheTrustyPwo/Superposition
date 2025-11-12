@@ -21,13 +21,36 @@ class NSlitSimulation extends Simulation {
 
     resize = () => {
         super.resize();
-        this.screen = new HorizontalScreen(this.cvs, this.c, this.cvs.width / 2, 0.25 * this.cvs.height, this.cvs.width * 0.95);
-        this.slit = new NSlit(this.cvs, this.c, this.cvs.width / 2, 0.9 * this.cvs.height, this.cvs.width * 0.95,
-            this.slitWidth / this.xpx2m, (this.slitSeparation - this.slitWidth) / this.xpx2m, this.slits);
+
+        // Position of the screen (where interference pattern appears)
+        this.screen = new HorizontalScreen(
+            this.cvs,
+            this.c,
+            this.cvs.width / 2,       // center horizontally
+            0.25 * this.cvs.height,   // height position (quarter down)
+            this.cvs.width * 0.95     // total width
+        );
+
+        // Compute total physical width of all slits in meters
+        const totalWidthMeters = this.slits * this.slitWidth + (this.slits - 1) * (this.slitSeparation - this.slitWidth);
+
+        // Create centered slit array
+        this.slit = new NSlit(
+            this.cvs,
+            this.c,
+            this.cvs.width / 2,         // center x
+            0.9 * this.cvs.height,      // vertical position near bottom
+            totalWidthMeters / this.xpx2m, // total physical width converted to pixels
+            this.slitWidth / this.xpx2m,   // slit width in pixels
+            (this.slitSeparation - this.slitWidth) / this.xpx2m, // separation in pixels
+            this.slits
+        );
+
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};
-    }
+    };
+
 
     evaluate = (theta) => {
         if (theta === 0) return 1;
@@ -147,10 +170,21 @@ class NSlitSimulation extends Simulation {
     setSlits = (slits) => {
         this.slits = slits;
         this.slit.slits = slits;
+
+        // Recalculate total width of the entire slit array in pixels
+        const totalWidthMeters = this.slits * this.slitWidth + (this.slits - 1) * (this.slitSeparation - this.slitWidth);
+        this.slit.w = totalWidthMeters / this.xpx2m;
+
+        // Keep slit width and separation consistent
+        this.slit.width = this.slitWidth / this.xpx2m;
+        this.slit.separation = (this.slitSeparation - this.slitWidth) / this.xpx2m;
+
+        // Redraw everything
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};
-    }
+    };
+
 
     setEnvelope = (envelope) => {
         this.envelope = envelope;
