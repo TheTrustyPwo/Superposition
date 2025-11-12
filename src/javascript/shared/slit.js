@@ -62,24 +62,30 @@ class NSlit {
     }
 
     draw = () => {
-      this.c.beginPath();
-      this.c.strokeStyle = SLITS.COLOR;
-      this.c.lineWidth = SLITS.WIDTH;
+      const c = this.c;
 
-      // Compute total slit array width in pixels
+      // --- Draw white base line with gaps representing slits ---
+      c.beginPath();
+      c.strokeStyle = "#FFFFFF"; // white line
+      c.lineWidth = 2;
+
+      // Compute total pattern width (slits + separations)
       const totalPatternWidth = this.slits * this.width + (this.slits - 1) * this.separation;
+      const startX = this.x - totalPatternWidth / 2;
 
-      // Start so that the whole pattern is centered at this.x
-      let dist = this.x - totalPatternWidth / 2;
+      // Draw line segments between slits to create visible gaps
+      let x = startX;
 
-      // Draw each slit
       for (let i = 0; i < this.slits; i++) {
-        this.c.moveTo(dist, this.y);
-        this.c.lineTo(dist + this.width, this.y);
-        dist += this.width + this.separation;
+        // Draw up to the next slit
+        c.moveTo(x, this.y);
+        c.lineTo(x + this.separation, this.y);
+
+        // Skip over the slit (gap)
+        x += this.separation + this.width;
       }
 
-      this.c.stroke();
+      c.stroke();
     };
 
 }
