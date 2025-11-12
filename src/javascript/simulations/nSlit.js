@@ -39,7 +39,7 @@ class NSlitSimulation extends Simulation {
             this.cvs,
             this.c,
             this.cvs.width / 2,         // center x
-            0.9 * this.cvs.height,      // vertical position near bottom
+            this.screen.y,      // vertical position near bottom
             totalWidthMeters / this.xpx2m, // total physical width converted to pixels
             this.slitWidth / this.xpx2m,   // slit width in pixels
             (this.slitSeparation - this.slitWidth) / this.xpx2m, // separation in pixels
