@@ -22,8 +22,18 @@ class NSlitSimulation extends Simulation {
     resize = () => {
         super.resize();
         this.screen = new HorizontalScreen(this.cvs, this.c, this.cvs.width / 2, 0.25 * this.cvs.height, this.cvs.width * 0.95);
-        this.slit = new NSlit(this.cvs, this.c, this.cvs.width / 2, 0.9 * this.cvs.height, this.cvs.width * 0.95,
-            this.slitWidth / this.xpx2m, (this.slitSeparation - this.slitWidth) / this.xpx2m, this.slits);
+        this.slit = new NSlit(
+            this.cvs,
+            this.c,
+            this.cvs.width / 2,
+            0.9 * this.cvs.height,
+            this.cvs.width * 0.95,
+
+            this.slitWidth / this.xpx2m,              // slit opening width (px)
+            this.slitSeparation / this.xpx2m,         // separation in px (FIXED)
+            this.slits
+        );
+
         this.redraw = true;
         this.cache = {};
         this.cacheEnvelope = {};
@@ -130,19 +140,14 @@ class NSlitSimulation extends Simulation {
     setSlitWidth = (slitWidth) => {
         this.slitWidth = slitWidth;
         this.slit.width = slitWidth / this.xpx2m;
-        this.slit.separation = (this.slitSeparation - this.slitWidth) / this.xpx2m;
-        this.redraw = true;
-        this.cache = {};
-        this.cacheEnvelope = {};
+        this.slit.separation = this.slitSeparation / this.xpx2m;  // match constructor
     }
 
     setSlitSeparation = (slitSeparation) => {
         this.slitSeparation = slitSeparation;
-        this.slit.separation = (this.slitSeparation - this.slitWidth) / this.xpx2m;
-        this.redraw = true;
-        this.cache = {};
-        this.cacheEnvelope = {};
+        this.slit.separation = slitSeparation / this.xpx2m;        // match constructor
     }
+
 
     setSlits = (slits) => {
         this.slits = slits;
