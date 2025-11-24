@@ -62,69 +62,39 @@ class NSlit {
     }
 
     draw = () => {
-        const ctx = this.c;
-
-        // Thin border line
-        ctx.strokeStyle = SLITS.COLOR;
-        ctx.lineWidth = SLITS.WIDTH / 2;
+        const ctx = this.c; // shorthand for readability
         ctx.beginPath();
+        ctx.strokeStyle = SLITS.COLOR;
+        ctx.lineWidth = SLITS.WIDTH;
 
-        const cy = this.y;
-        const cx = this.x;
-        const half = this.w / 2;
+        // Start drawing from the left edge of the full structure
+        ctx.moveTo(this.x - this.w / 2, this.y);
 
-        const slitWidth = this.width;        // actual gap width (px)
-        const sep = this.separation;         // center-to-center spacing (px)
+        // Calculate the starting position for the first slit region (centered)
+        let dist = this.x - ((this.slits - 1) * (this.width + this.separation)) / 2 - this.width / 2;
 
-        const leftEdge = cx - half;
-        const rightEdge = cx + half;
+        // Draw the solid line up to the first slit
+        ctx.lineTo(dist, this.y);
 
-        // 1. Draw continuous line first
-        ctx.moveTo(leftEdge, cy);
-        ctx.lineTo(rightEdge, cy);
-        ctx.stroke();
+        // Loop through all slits
+        for (let i = 0; i < this.slits; i++) {
+            // Skip over the slit (gap)
+            dist += this.width;
+            ctx.moveTo(dist, this.y);
 
-        // 2. Now ERASE GAPS (subtract slit regions)
-        ctx.save();
-        ctx.globalCompositeOperation = "destination-out";  // erase mode
-        ctx.fillStyle = "black";
-
-        // ALWAYS DRAW THE CENTER SLIT
-        ctx.fillRect(
-            cx - slitWidth / 2,
-            cy - SLITS.WIDTH,     // small thickness vertically
-            slitWidth,
-            SLITS.WIDTH * 2
-        );
-
-        // 3. Compute how many slits fit on each side
-        const slitsPerSide = Math.floor(half / sep);
-
-        // 4. Draw actual gaps left and right 
-        for (let i = 1; i <= slitsPerSide; i++) {
-
-            // Left slit
-            const lx = cx - i * sep;
-            ctx.fillRect(
-                lx - slitWidth / 2,
-                cy - SLITS.WIDTH,
-                slitWidth,
-                SLITS.WIDTH * 2
-            );
-
-            // Right slit
-            const rx = cx + i * sep;
-            ctx.fillRect(
-                rx - slitWidth / 2,
-                cy - SLITS.WIDTH,
-                slitWidth,
-                SLITS.WIDTH * 2
-            );
+            // If this isn’t the last slit, draw the solid section between slits
+            if (i < this.slits - 1) {
+                dist += this.separation;
+                ctx.lineTo(dist, this.y);
+            }
         }
 
-        ctx.restore();
-    };
+        // Draw the remaining right section of the barrier
+        ctx.lineTo(this.x + this.w / 2, this.y);
 
+        ctx.closePath();
+        ctx.stroke();
+    };
 }
 
 export { Slit, DoubleSlit, NSlit };
