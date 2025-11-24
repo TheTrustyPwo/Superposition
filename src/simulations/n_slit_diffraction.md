@@ -18,6 +18,9 @@ Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\l
     Wavelength (λ): <span id="wavelengthValue_nSlit">500</span> nm
 </div>
 
+<label>Slit Density (slits/mm):</label>
+<input id="densityInput" type="number" value="300" step="10" min="10" max="2000">
+
 <script type="module" src="../javascript/sim6.js"></script>
 
 Note: Intensity profile is normalized to the maximum intensity.
