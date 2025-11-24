@@ -2,54 +2,114 @@ import {Simulation} from "./index.js";
 import {HorizontalScreen} from "../shared/screen.js";
 import {i2h, interpolate, w2h} from "../utils/color.js";
 import {distance} from "../utils/math.js";
-import {NSlit} from "../shared/slit.js";
+import {Grating} from "../shared/slit.js";
 
-class NSlitSimulation extends Simulation {
-    constructor(cvs, c, wavelength = 500 / 1_000_000_000 , slitWidth = 3 / 1_000_000, slitSeparation = 8 / 1_000_000, slits = 3) {
+/*
+ GratingSimulation (Option 2 - symbolic drawing)
+ - density: lines per mm
+ - beam width fixed to half canvas width
+ - draw only up to MAX_DRAWN_SLITS for performance
+*/
+
+class GratingSimulation extends Simulation {
+    constructor(cvs, c, density = 600, wavelength = 500e-9) {
         super(cvs, c);
-        this.wavelength = wavelength;
-        this.slitWidth = slitWidth;
-        this.slitSeparation = slitSeparation;
-        this.slits = slits;
-        this.envelope = 1;
+
+        this.density = density;           // lines per mm
+        this.wavelength = wavelength;     // meters
         this.color = w2h(this.wavelength);
 
         this.t = 0;
         this.dt = 1 / 60;
+
+        // fixed beam fraction
+        this.beamFraction = 0.5;
+
+        this.redraw = true;
+        this.cache = {};
+
         this.resize();
+    }
+
+    // center-to-center spacing in meters
+    get spacing() {
+        return 1 / (this.density * 1e3);
+    }
+
+    // mapping px -> m. Keep same default scale as original but you can tune.
+    get xpx2m() {
+        return 5 / 1_000_0; // (same as your original)
+    }
+
+    get ypx2m() {
+        // some safe fallback using current geometry
+        return 2 / Math.max(1, (this.gratingY - (this.screen?.minY ?? 1)));
+    }
+
+    // illuminated width in px (half canvas width)
+    get illuminatedWidthPx() {
+        return this.cvs.width * this.beamFraction;
+    }
+
+    // illuminated width in meters
+    get illuminatedWidthM() {
+        return this.illuminatedWidthPx * this.xpx2m;
+    }
+
+    // theoretical total slits illuminated
+    get totalSlits() {
+        return Math.max(1, Math.floor(this.illuminatedWidthM / this.spacing));
+    }
+
+    // intensity: ideal grating using full totalSlits (N)
+    evaluate = (theta) => {
+        // caching key
+        const key = Math.round(theta * 1e6) / 1e6;
+        if (key in this.cache) return this.cache[key];
+
+        const d = this.spacing;
+        const lambda = this.wavelength;
+        const N = this.totalSlits;
+
+        const alpha = Math.PI * d * Math.sin(theta) / lambda;
+
+        let value;
+        if (Math.abs(alpha) < 1e-12) {
+            value = N * N;
+        } else {
+            const numerator = Math.sin(N * alpha);
+            const denom = Math.sin(alpha);
+            value = (numerator / denom) ** 2;
+        }
+
+        value = value / (N * N); // normalize so max ~1
+
+        this.cache[key] = value;
+        return value;
     }
 
     resize = () => {
         super.resize();
-        this.screen = new HorizontalScreen(this.cvs, this.c, this.cvs.width / 2, 0.25 * this.cvs.height, this.cvs.width * 0.95);
-        this.slit = new NSlit(this.cvs, this.c, this.cvs.width / 2, 0.9 * this.cvs.height, this.cvs.width * 0.95,
-            this.slitWidth / this.xpx2m, (this.slitSeparation - this.slitWidth) / this.xpx2m, this.slits);
+
+        // screen area
+        this.screen = new HorizontalScreen(
+            this.cvs,
+            this.c,
+            this.cvs.width / 2,
+            0.25 * this.cvs.height,
+            this.cvs.width * 0.95
+        );
+
+        // grating coordinates
+        this.gratingY = 0.9 * this.cvs.height;
+        this.gratingX = this.cvs.width / 2;
+
+        // set grating object that will be drawn symbolically
+        const wPx = this.illuminatedWidthPx;
+        this.grating = new Grating(this.cvs, this.c, this.gratingX, this.gratingY, wPx, this.density);
+
         this.redraw = true;
         this.cache = {};
-        this.cacheEnvelope = {};
-    }
-
-
-    evaluate = (theta) => {
-        if (theta === 0) return 1;
-        theta = Math.round(theta * 1_000_0) / 1_000_0;
-        if (theta in this.cache) return this.cache[theta];
-        let sine = Math.sin(theta);
-        let beta = Math.PI * this.slitWidth * sine / this.wavelength;
-        let alpha = Math.PI * this.slitSeparation * sine / this.wavelength;
-        let tmp = Math.sin(beta) / beta * Math.sin(this.slit.slits * alpha) / Math.sin(alpha) / this.slit.slits
-        this.cache[theta] = tmp * tmp;
-        return this.cache[theta];
-    }
-
-    evaluateEnvelope = (theta) => {
-        theta = Math.round(theta * 1_000_00) / 1_000_00;
-        if (theta in this.cacheEnvelope) return this.cacheEnvelope[theta];
-        let sine = Math.sin(theta);
-        let a = Math.PI * this.slit.width * this.xpx2m * sine / this.wavelength;
-        let tmp = Math.sin(a) / a;
-        this.cacheEnvelope[theta] = tmp * tmp;
-        return this.cacheEnvelope[theta];
     }
 
     update = () => {
@@ -58,13 +118,16 @@ class NSlitSimulation extends Simulation {
         if (this.redraw) {
             this.c.clearRect(0, 0, this.cvs.width, this.cvs.height);
             this.screen.draw();
-            this.slit.draw();
+            // draw grating (symbolic)
+            this.grating.draw(this.xpx2m);
             this.plotIntensity();
-            if (this.envelope) this.plotEnvelope();
             this.redraw = false;
-        } else this.c.clearRect(0, this.screen.y + 2.5, this.cvs.width, this.slit.y - this.screen.y - 5);
+        } else {
+            // partial clear between screen and grating for performance
+            this.c.clearRect(0, this.screen.y + 2.5, this.cvs.width, this.gratingY - this.screen.y - 5);
+        }
 
-
+        // render intensity field (coarse sampling)
         this.c.save();
         this.displayMeasurements();
         for (let x = 0; x <= this.cvs.width; x += 5) {
@@ -78,141 +141,88 @@ class NSlitSimulation extends Simulation {
     }
 
     plotIntensity = () => {
-        this.c.beginPath();
-        this.c.lineWidth = 3;
-        this.c.strokeStyle = i2h(this.color);
+        const ctx = this.c;
+        ctx.beginPath();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = i2h(this.color);
         for (let x = 0; x <= this.cvs.width; x++) {
-            const theta = Math.atan2((x - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
-            const intensity =  this.evaluate(theta) * this.cvs.height / 5;
-            if (x === 0) this.c.moveTo(x, this.screen.y - 5 - intensity);
-            else this.c.lineTo(x, this.screen.y - 5 - intensity);
+            const theta = Math.atan2((x - this.gratingX) * this.xpx2m, (this.gratingY - this.screen.y) * this.ypx2m);
+            const intensity = this.evaluate(theta) * this.cvs.height / 5;
+            if (x === 0) ctx.moveTo(x, this.screen.y - 5 - intensity);
+            else ctx.lineTo(x, this.screen.y - 5 - intensity);
         }
-        this.c.stroke();
-    }
-
-    plotEnvelope = () => {
-        this.c.beginPath();
-        this.c.lineWidth = 1;
-        this.c.strokeStyle = "#FFFFFF";
-        for (let x = 0; x <= this.cvs.width; x++) {
-            const theta = Math.atan2((x - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
-            const intensity =  this.evaluateEnvelope(theta) * this.cvs.height / 5;
-            if (x === 0) this.c.moveTo(x, this.screen.y - 5 - intensity);
-            else this.c.lineTo(x, this.screen.y - 5 - intensity);
-        }
-        this.c.stroke();
-    }
-
-    displayMeasurements = () => {
-        this.c.save();
-        this.c.beginPath();
-        this.c.moveTo(this.cvs.width * 0.9, this.slit.y);
-        this.c.lineTo(this.cvs.width * 0.9, this.screen.y);
-        this.c.lineWidth = 3;
-        this.c.strokeStyle = "#179e7e";
-        this.c.stroke();
-        this.c.translate(this.cvs.width * 0.9 + 40, (this.slit.y + this.screen.y) / 2);
-        this.c.font = "20px arial";
-        this.c.textAlign = "center";
-        this.c.fillStyle = "#179e7e";
-        const dist = Math.round((this.slit.y - this.screen.y) * this.ypx2m * 1000) / 10;
-        this.c.fillText(`${dist} cm`, 0, 10);
-        this.c.restore();
-    }
-
-    setWavelength = (wavelength) => {
-        this.wavelength = wavelength;
-        this.color = w2h(wavelength);
-        this.redraw = true;
-        this.cache = {};
-        this.cacheEnvelope = {};
-    }
-
-    setSlitWidth = (slitWidth) => {
-        this.slitWidth = slitWidth;
-        this.slit.width = slitWidth / this.xpx2m;
-        this.slit.separation = (this.slitSeparation - this.slitWidth) / this.xpx2m;
-        this.redraw = true;
-        this.cache = {};
-        this.cacheEnvelope = {};
-    }
-
-    setSlitSeparation = (slitSeparation) => {
-        this.slitSeparation = slitSeparation;
-        this.slit.separation = (this.slitSeparation - this.slitWidth) / this.xpx2m;
-        this.redraw = true;
-        this.cache = {};
-        this.cacheEnvelope = {};
-    }
-
-
-
-    setSlits = (slits) => {
-        this.slits = slits;
-        this.slit.slits = slits;
-        this.redraw = true;
-        this.cache = {};
-        this.cacheEnvelope = {};
-    }
-
-    setEnvelope = (envelope) => {
-        this.envelope = envelope;
-        this.redraw = true;
+        ctx.stroke();
     }
 
     intensityAt = (x, y) => {
-        if (y > this.slit.y) return 1;
-        const theta = Math.atan2((x - this.slit.x) * this.xpx2m, (y - this.slit.y) * this.ypx2m);
+        if (y > this.gratingY) return 1;
+        const theta = Math.atan2((x - this.gratingX) * this.xpx2m, (y - this.gratingY) * this.ypx2m);
         return this.evaluate(theta);
     }
 
     colorAt = (x, y) => {
-        const dist = (y > this.slit.y ? this.cvs.height - y : distance(this.slit.x, this.slit.y, x, y));
+        const dist = (y > this.gratingY ? this.cvs.height - y : distance(this.gratingX, this.gratingY, x, y));
         const v = 2 * dist / (this.wavelength * 50000000) - 10 * this.t;
         const factor = (1 + Math.cos(v)) / 2;
         return interpolate(0, this.color, factor);
     }
 
-    mouseDown = () => {};
-
-    mouseUp = () => {};
-
-    mouseMove = (event, x, y) => {
-        const prevY = this.screen.y;
-        this.screen.y = Math.max(Math.min(y, this.screen.maxY), this.screen.minY);
-        if (prevY === this.screen.y) return;
-        this.redraw = true;
-        this.cache = {};
-    }
-
-    get xpx2m() {
-        return 5 / 1_000_0;
-    }
-
-    get ypx2m() {
-        return 2 / (this.slit.y - this.screen.minY);
-    }
-
     drawScreenView = (screenCtx, width, height) => {
         screenCtx.clearRect(0, 0, width, height);
-        
-        const leftEdgeX  = this.screen.x - this.screen.w / 2;
+        const leftEdgeX = this.screen.x - this.screen.w / 2;
         const rightEdgeX = this.screen.x + this.screen.w / 2;
-
-        const minAngle = Math.atan2((leftEdgeX - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
-        const maxAngle = Math.atan2((rightEdgeX - this.slit.x) * this.xpx2m, (this.slit.y - this.screen.y) * this.ypx2m);
+        const minAngle = Math.atan2((leftEdgeX - this.gratingX) * this.xpx2m, (this.gratingY - this.screen.y) * this.ypx2m);
+        const maxAngle = Math.atan2((rightEdgeX - this.gratingX) * this.xpx2m, (this.gratingY - this.screen.y) * this.ypx2m);
 
         for (let x = 0; x < width; x++) {
             const ratio = x / (width - 1);
             const theta = minAngle + ratio * (maxAngle - minAngle);
-
             const intensity = this.evaluate(theta);
             const color = interpolate(0, this.color, intensity);
-
             screenCtx.fillStyle = color;
             screenCtx.fillRect(x, 0, 1, height);
         }
-    };
+    }
+
+    // UI setters
+    setDensity = (density) => {
+        this.density = Number(density);
+        // update grating density and trigger redraw
+        if (this.grating) this.grating.density = this.density;
+        this.color = w2h(this.wavelength);
+        this.redraw = true;
+        this.cache = {};
+    }
+
+    setWavelength = (wavelengthNm) => {
+        this.wavelength = Number(wavelengthNm) / 1e9;
+        this.color = w2h(this.wavelength);
+        this.redraw = true;
+        this.cache = {};
+    }
+
+    displayMeasurements = () => {
+        this.c.save();
+        this.c.beginPath();
+        this.c.moveTo(this.cvs.width * 0.9, this.gratingY);
+        this.c.lineTo(this.cvs.width * 0.9, this.screen.y);
+        this.c.lineWidth = 3;
+        this.c.strokeStyle = "#179e7e";
+        this.c.stroke();
+        this.c.translate(this.cvs.width * 0.9 + 40, (this.gratingY + this.screen.y) / 2);
+        this.c.font = "20px arial";
+        this.c.textAlign = "center";
+        this.c.fillStyle = "#179e7e";
+
+        // show distance in cm between screen and grating
+        const dist = Math.round((this.gratingY - this.screen.y) * this.ypx2m * 1000) / 10;
+        this.c.fillText(`${dist} cm`, 0, 10);
+
+        // show theoretical total slits & density
+        this.c.fillText(`density: ${this.density} /mm`, 0, 40);
+        this.c.fillText(`N (theoretical): ${this.totalSlits}`, 0, 70);
+        this.c.restore();
+    }
 }
 
-export { NSlitSimulation };
+export { GratingSimulation };
