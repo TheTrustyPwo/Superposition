@@ -1,21 +1,30 @@
-import { NSlitSimulation } from "./simulations/nSlit.js"
+// sim6.js
+import { GratingSimulation } from "./simulations/nSlit.js";
 
 const fps = 60;
 
 const cvs = document.getElementById('nSlit');
 const c = cvs.getContext('2d');
-const slitsInput = document.getElementById("slitsInput_nSlit");
+
+const densityInput = document.getElementById("densityInput");
+const densityValue = document.getElementById("densityValue");
 const wavelengthInput = document.getElementById("wavelengthInput_nSlit");
-const slitWidthInput = document.getElementById("slitWidthInput_nSlit");
-const slitSeparationInput = document.getElementById("slitSeparationInput_nSlit");
-const envelopeInput = document.getElementById("envelopeInput_nSlit");
+const wavelengthValue = document.getElementById("wavelengthValue_nSlit");
 const screenViewCanvas = document.getElementById("screen-view");
 const screenViewCtx = screenViewCanvas?.getContext("2d");
 
-const simulation = new NSlitSimulation(cvs, c);
+// instantiate
+const simulation = new GratingSimulation(cvs, c);
 
-screenViewCanvas.height = 40; 
+// setup initial UI state
+screenViewCanvas.height = 40;
 screenViewCanvas.width = cvs.width;
+
+densityInput.value = simulation.density;
+densityValue.innerText = densityInput.value;
+
+wavelengthValue.innerText = (simulation.wavelength * 1e9).toFixed(0);
+wavelengthInput.value = (simulation.wavelength * 1e9).toFixed(0);
 
 const animate = () => {
     simulation.update();
@@ -24,34 +33,17 @@ const animate = () => {
         simulation.drawScreenView(screenViewCtx, screenViewCanvas.width, screenViewCanvas.height);
     }
 
-    setTimeout(() => {
-        requestAnimationFrame(animate);
-    }, 1000 / fps);
+    setTimeout(() => requestAnimationFrame(animate), 1000 / fps);
+}
+
+densityInput.oninput = () => {
+    densityValue.innerText = densityInput.value;
+    simulation.setDensity(densityInput.value);
 }
 
 wavelengthInput.oninput = () => {
-    document.getElementById("wavelengthValue_nSlit").innerText = wavelengthInput.value;
-    simulation.setWavelength(wavelengthInput.value / 1_000_000_000);
+    wavelengthValue.innerText = wavelengthInput.value;
+    simulation.setWavelength(wavelengthInput.value);
 }
 
-slitWidthInput.oninput = () => {
-    document.getElementById("slitWidthValue_nSlit").innerText = slitWidthInput.value;
-    simulation.setSlitWidth(slitWidthInput.value / 1_000_000);
-}
-
-slitSeparationInput.oninput = () => {
-    document.getElementById("slitSeparationValue_nSlit").innerText = slitSeparationInput.value;
-    simulation.setSlitSeparation(slitSeparationInput.value / 1_000_000);
-}
-
-slitsInput.oninput = () => {
-    document.getElementById("slitsValue_nSlit").innerText = slitsInput.value;
-    simulation.setSlits(slitsInput.value);
-}
-
-envelopeInput.oninput = () => {
-    simulation.setEnvelope(envelopeInput.checked);
-}
-
-
-animate()
+animate();
