@@ -25,46 +25,6 @@ densityValue.innerText = densityInput.value;
 wavelengthValue.innerText = (simulation.wavelength * 1e9).toFixed(0);
 wavelengthInput.value = (simulation.wavelength * 1e9).toFixed(0);
 
-//
-// ─── DRAGGABLE SCREEN ─────────────────────────────────────────────
-//
-
-let dragging = false;
-let dragOffset = 0;
-
-cvs.addEventListener("mousedown", (e) => {
-    const rect = cvs.getBoundingClientRect();
-    const y = e.clientY - rect.top;
-
-    // detect click within 10px of screen line
-    if (Math.abs(y - simulation.screen.y) < 10) {
-        dragging = true;
-        dragOffset = y - simulation.screen.y;
-    }
-});
-
-cvs.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
-
-    const rect = cvs.getBoundingClientRect();
-    let y = e.clientY - rect.top - dragOffset;
-
-    // limits: mid-height → just below grating
-    const minY = cvs.height * 0.5;
-    const maxY = simulation.gratingY - 50;
-
-    y = Math.max(minY, Math.min(maxY, y));
-
-    simulation.setScreenY(y);
-});
-
-cvs.addEventListener("mouseup", () => dragging = false);
-cvs.addEventListener("mouseleave", () => dragging = false);
-
-//
-// ─── ANIMATION LOOP ─────────────────────────────────────────────
-//
-
 const animate = () => {
     simulation.update();
 
