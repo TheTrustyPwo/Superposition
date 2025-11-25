@@ -52,28 +52,40 @@ class GratingSimulation extends Simulation {
     }
 
     evaluate = (theta) => {
-        const key = Math.round(theta * 1e6) / 1e6;
-        if (key in this.cache) return this.cache[key];
+     const key = Math.round(theta * 1e6) / 1e6;
+     if (key in this.cache) return this.cache[key];
 
-        const d = this.spacing;
-        const lambda = this.wavelength;
-        const N = this.totalSlits;
+     const d = this.spacing;
+     const lambda = this.wavelength;
+     const N = this.totalSlits;
 
-        const alpha = Math.PI * d * Math.sin(theta) / lambda;
+     // slit width: assume 1/10 of spacing if no explicit slit width parameter
+     const b = d * 0.1;
 
-        let value;
-        if (Math.abs(alpha) < 1e-12) {
-            value = N * N;
-        } else {
-            const numerator = Math.sin(N * alpha);
-            const denom = Math.sin(alpha);
-            value = (numerator / denom) ** 2;
-        }
+     const sinT = Math.sin(theta);
 
-        value = value / (N * N);
-        this.cache[key] = value;
-        return value;
-    }
+     // ---- diffraction envelope ----
+     const beta = Math.PI * b * sinT / lambda;
+     const envelope = (Math.abs(beta) < 1e-12)
+         ? 1
+         : (Math.sin(beta) / beta) ** 2;
+
+     // ---- interference pattern ----
+     const alpha = Math.PI * d * sinT / lambda;
+     const interference = (Math.abs(alpha) < 1e-12)
+         ? N * N
+         : (Math.sin(N * alpha) / Math.sin(alpha)) ** 2;
+
+     // combine
+     let I = envelope * interference;
+
+     // normalize so max ≈ 1
+     I = I / (N * N);
+
+     this.cache[key] = I;
+     return I;
+  }
+
 
     resize = () => {
         super.resize();
