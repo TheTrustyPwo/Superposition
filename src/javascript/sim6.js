@@ -1,4 +1,3 @@
-// sim6.js
 import { GratingSimulation } from "./simulations/nSlit.js";
 
 const fps = 60;
