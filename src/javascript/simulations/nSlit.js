@@ -15,14 +15,13 @@ class GratingSimulation extends Simulation {
     constructor(cvs, c, density = 600, wavelength = 500e-9) {
         super(cvs, c);
 
-        this.density = density;           // lines per mm
-        this.wavelength = wavelength;     // meters
+        this.density = density;           
+        this.wavelength = wavelength;     
         this.color = w2h(this.wavelength);
 
         this.t = 0;
         this.dt = 1 / 60;
 
-        // fixed beam fraction
         this.beamFraction = 0.5;
 
         this.redraw = true;
@@ -31,39 +30,28 @@ class GratingSimulation extends Simulation {
         this.resize();
     }
 
-    // center-to-center spacing in meters
+    // center-to-center spacing
     get spacing() {
         return 1 / (this.density * 1e3);
     }
 
-    // mapping px -> m. Keep same default scale as original but you can tune.
-    get xpx2m() {
-        return 5 / 1_000_0; // (same as your original)
-    }
+    // constant px→m scaling
+    get xpx2m() { return 5 / 10000; }
+    get ypx2m() { return 5 / 10000; }
 
-    get ypx2m() {
-        // some safe fallback using current geometry
-        return 2 / Math.max(1, (this.gratingY - (this.screen?.minY ?? 1)));
-    }
-
-    // illuminated width in px (half canvas width)
     get illuminatedWidthPx() {
         return this.cvs.width * this.beamFraction;
     }
 
-    // illuminated width in meters
     get illuminatedWidthM() {
         return this.illuminatedWidthPx * this.xpx2m;
     }
 
-    // theoretical total slits illuminated
     get totalSlits() {
         return Math.max(1, Math.floor(this.illuminatedWidthM / this.spacing));
     }
 
-    // intensity: ideal grating using full totalSlits (N)
     evaluate = (theta) => {
-        // caching key
         const key = Math.round(theta * 1e6) / 1e6;
         if (key in this.cache) return this.cache[key];
 
@@ -82,8 +70,7 @@ class GratingSimulation extends Simulation {
             value = (numerator / denom) ** 2;
         }
 
-        value = value / (N * N); // normalize so max ~1
-
+        value = value / (N * N);
         this.cache[key] = value;
         return value;
     }
@@ -91,7 +78,6 @@ class GratingSimulation extends Simulation {
     resize = () => {
         super.resize();
 
-        // screen area
         this.screen = new HorizontalScreen(
             this.cvs,
             this.c,
@@ -100,13 +86,22 @@ class GratingSimulation extends Simulation {
             this.cvs.width * 0.95
         );
 
-        // grating coordinates
         this.gratingY = 0.9 * this.cvs.height;
         this.gratingX = this.cvs.width / 2;
 
-        // set grating object that will be drawn symbolically
         const wPx = this.illuminatedWidthPx;
         this.grating = new Grating(this.cvs, this.c, this.gratingX, this.gratingY, wPx, this.density);
+
+        this.screenDistanceM = (this.gratingY - this.screen.y) * this.ypx2m;
+
+        this.redraw = true;
+        this.cache = {};
+    }
+
+    // NEW — dragged screen updates physical distance
+    setScreenY = (newY) => {
+        this.screen.y = newY;
+        this.screenDistanceM = (this.gratingY - this.screen.y) * this.ypx2m;
 
         this.redraw = true;
         this.cache = {};
@@ -118,21 +113,25 @@ class GratingSimulation extends Simulation {
         if (this.redraw) {
             this.c.clearRect(0, 0, this.cvs.width, this.cvs.height);
             this.screen.draw();
-            // draw grating (symbolic)
             this.grating.draw(this.xpx2m);
             this.plotIntensity();
             this.redraw = false;
         } else {
-            // partial clear between screen and grating for performance
             this.c.clearRect(0, this.screen.y + 2.5, this.cvs.width, this.gratingY - this.screen.y - 5);
         }
 
-        // render intensity field (coarse sampling)
         this.c.save();
         this.displayMeasurements();
+
+        // coarse intensity field
         for (let x = 0; x <= this.cvs.width; x += 5) {
             for (let y = this.screen.y + 5; y <= this.cvs.height - 5; y += 5) {
-                this.c.globalAlpha = this.intensityAt(x, y);
+
+                const dx = (x - this.gratingX) * this.xpx2m;
+                const dy = (y - this.gratingY) * this.ypx2m;
+                const theta = Math.atan(dx / this.screenDistanceM);
+
+                this.c.globalAlpha = this.evaluate(theta);
                 this.c.fillStyle = this.colorAt(x, y);
                 this.c.fillRect(x, y, 3, 3);
             }
@@ -145,9 +144,12 @@ class GratingSimulation extends Simulation {
         ctx.beginPath();
         ctx.lineWidth = 2.5;
         ctx.strokeStyle = i2h(this.color);
+
         for (let x = 0; x <= this.cvs.width; x++) {
-            const theta = Math.atan2((x - this.gratingX) * this.xpx2m, (this.gratingY - this.screen.y) * this.ypx2m);
+            const dx = (x - this.gratingX) * this.xpx2m;
+            const theta = Math.atan(dx / this.screenDistanceM);
             const intensity = this.evaluate(theta) * this.cvs.height / 5;
+
             if (x === 0) ctx.moveTo(x, this.screen.y - 5 - intensity);
             else ctx.lineTo(x, this.screen.y - 5 - intensity);
         }
@@ -156,12 +158,15 @@ class GratingSimulation extends Simulation {
 
     intensityAt = (x, y) => {
         if (y > this.gratingY) return 1;
-        const theta = Math.atan2((x - this.gratingX) * this.xpx2m, (y - this.gratingY) * this.ypx2m);
+
+        const dx = (x - this.gratingX) * this.xpx2m;
+        const theta = Math.atan(dx / this.screenDistanceM);
+
         return this.evaluate(theta);
     }
 
     colorAt = (x, y) => {
-        const dist = (y > this.gratingY ? this.cvs.height - y : distance(this.gratingX, this.gratingY, x, y));
+        const dist = distance(this.gratingX, this.gratingY, x, y);
         const v = 2 * dist / (this.wavelength * 50000000) - 10 * this.t;
         const factor = (1 + Math.cos(v)) / 2;
         return interpolate(0, this.color, factor);
@@ -169,10 +174,12 @@ class GratingSimulation extends Simulation {
 
     drawScreenView = (screenCtx, width, height) => {
         screenCtx.clearRect(0, 0, width, height);
+
         const leftEdgeX = this.screen.x - this.screen.w / 2;
         const rightEdgeX = this.screen.x + this.screen.w / 2;
-        const minAngle = Math.atan2((leftEdgeX - this.gratingX) * this.xpx2m, (this.gratingY - this.screen.y) * this.ypx2m);
-        const maxAngle = Math.atan2((rightEdgeX - this.gratingX) * this.xpx2m, (this.gratingY - this.screen.y) * this.ypx2m);
+
+        const minAngle = Math.atan((leftEdgeX - this.gratingX) * this.xpx2m / this.screenDistanceM);
+        const maxAngle = Math.atan((rightEdgeX - this.gratingX) * this.xpx2m / this.screenDistanceM);
 
         for (let x = 0; x < width; x++) {
             const ratio = x / (width - 1);
@@ -184,12 +191,9 @@ class GratingSimulation extends Simulation {
         }
     }
 
-    // UI setters
     setDensity = (density) => {
         this.density = Number(density);
-        // update grating density and trigger redraw
         if (this.grating) this.grating.density = this.density;
-        this.color = w2h(this.wavelength);
         this.redraw = true;
         this.cache = {};
     }
@@ -209,18 +213,18 @@ class GratingSimulation extends Simulation {
         this.c.lineWidth = 3;
         this.c.strokeStyle = "#179e7e";
         this.c.stroke();
+
         this.c.translate(this.cvs.width * 0.9 + 40, (this.gratingY + this.screen.y) / 2);
         this.c.font = "20px arial";
         this.c.textAlign = "center";
         this.c.fillStyle = "#179e7e";
 
-        // show distance in cm between screen and grating
-        const dist = Math.round((this.gratingY - this.screen.y) * this.ypx2m * 1000) / 10;
-        this.c.fillText(`${dist} cm`, 0, 10);
+        const distCm = Math.round(this.screenDistanceM * 10000) / 10;
+        this.c.fillText(`${distCm} cm`, 0, 10);
 
-        // show theoretical total slits & density
         this.c.fillText(`density: ${this.density} /mm`, 0, 40);
         this.c.fillText(`N (theoretical): ${this.totalSlits}`, 0, 70);
+
         this.c.restore();
     }
 }
