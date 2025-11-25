@@ -74,7 +74,7 @@ nav:
       - Two Source Interference: simulations/two_source_interference.md
       - Single Slit Diffraction: simulations/single_slit_diffraction.md
       - Double Slit Diffraction: simulations/double_slit_diffraction.md
-      - N Slit Diffraction: simulations/n_slit_diffraction.md
+      - Diffraction Grating: simulations/n_slit_diffraction.md
   - Game:
       - Game: text/game/main.md
   - Feedback:
