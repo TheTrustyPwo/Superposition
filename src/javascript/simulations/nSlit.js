@@ -53,7 +53,7 @@ class GratingSimulation extends Simulation {
         // illuminated width in px = half canvas
         this.illuminatedWidthPx = Math.round(this.cvs.width * this.beamFraction);
 
-        this.grating = new GratingFFT(this.cvs, this.c, this.gratingX, this.gratingY, this.illuminatedWidthPx, this.density, this.slitWidth);
+        this.grating = new Grating(this.cvs, this.c, this.gratingX, this.gratingY, this.illuminatedWidthPx, this.density, this.slitWidth);
 
         // rebuild window (simple rectangular window used; you can apply others)
         this.window = null;
