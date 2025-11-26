@@ -2,6 +2,7 @@ import { Simulation } from "./index.js";
 import { HorizontalScreen } from "../shared/screen.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 import { distance } from "../utils/math.js";
+import { Grating } from "../shared/slit.js";
 
 class GratingSimulation extends Simulation {
 
