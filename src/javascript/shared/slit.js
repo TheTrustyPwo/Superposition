@@ -50,60 +50,37 @@ class DoubleSlit {
 }
 
 class Grating {
-    /**
-     * @param cvs Canvas element
-     * @param c   CanvasRenderingContext2D
-     * @param x   center x (px)
-     * @param y   grating y (px)
-     * @param w   illuminated width (px)  -- we set this to half canvas width from simulation
-     * @param density lines per mm (number)
-     */
-    constructor(cvs, c, x, y, w, density = 600) {
+    constructor(cvs, ctx, centerX, centerY, illuminatedWidthPx, densityPerMm, slitWidthMeters = 2e-6) {
         this.cvs = cvs;
-        this.c = c;
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.density = density; // lines per mm
-
-        // visual limits for drawing (symbolic drawing)
-        this.MAX_DRAWN_SLITS = 300;
+        this.c = ctx;
+        this.x = centerX;
+        this.y = centerY;
+        this.w = illuminatedWidthPx;
+        this.density = densityPerMm;
+        this.slitWidth = slitWidthMeters;
+        this.MAX_DRAWN_SLITS = 600; // draw cap for performance/visibility
     }
 
-    // spacing in meters (center-to-center)
+    // center-to-center spacing in meters
     get spacingMeters() {
         return 1 / (this.density * 1e3);
     }
 
-    // spacing in pixels using simulation's xpx2m mapping (must be set by simulation when constructed)
-    // If simulation doesn't set xpx2m on this object, default fallback below will be used.
-    get spacingPx() {
-        const xpx2m = this.xpx2m ?? (5 / 1_000_0); // fallback if not provided
-        return this.spacingMeters / xpx2m;
-    }
-
-    // total theoretical slits across the illuminated width (may be large)
+    // returns total theoretical slits across illuminated region given xpx2m mapping
     totalSlits(xpx2m) {
-        const widthMeters = (this.w) * (xpx2m);
+        const widthMeters = (this.w) * xpx2m;
         return Math.max(1, Math.floor(widthMeters / this.spacingMeters));
     }
 
-    /**
-     * Draws the substrate line and symbolic slits:
-     * - draws only up to MAX_DRAWN_SLITS tick or short-gap representations
-     * - uses step to select which physical slits to draw, so positions stay physically correct
-     *
-     * @param {number} xpx2m mapping px -> m used by simulation
-     */
-    draw = (xpx2m) => {
+    // draw the grating substrate and symbolic slits (ticks or small erased gaps)
+    draw(xpx2m) {
+        this.xpx2m = xpx2m;
         const ctx = this.c;
-        this.xpx2m = xpx2m; // store for spacingPx getter
-
         const half = this.w / 2;
         const left = this.x - half;
         const right = this.x + half;
 
-        // 1) Draw substrate line (half thickness for requested style)
+        // substrate
         ctx.save();
         ctx.beginPath();
         ctx.strokeStyle = SLITS.COLOR;
@@ -113,54 +90,74 @@ class Grating {
         ctx.stroke();
         ctx.restore();
 
-        // 2) Compute theoretical counts and sampling for drawing
-        const total = this.totalSlits(xpx2m);
-
-        // Compute actual spacing in px (may be fractional)
+        // determine spacing in px and total slits
         const spacingPx = this.spacingMeters / xpx2m;
-
-        // If spacing is extremely small, we'll still draw at most MAX_DRAWN_SLITS by sampling
+        const total = this.totalSlits(xpx2m);
         const step = Math.max(1, Math.floor(total / this.MAX_DRAWN_SLITS));
-
-        // Compute index of the center slit (we place slits centered in the illuminated region)
-        // Approach: compute the index 0..total-1 where center is nearest; then position each slit at:
-        // left + (i + 0.5) * spacingPxScaled where spacingPxScaled = spacing in px
-        // But simpler: compute center position as this.x and calculate positions relative to center index.
         const centerIndex = Math.floor(total / 2);
+        const tickLen = 8;
 
-        // 3) Draw symbolic slits (small gaps or tick marks) for every 'step'th slit
         ctx.beginPath();
         ctx.lineWidth = 1.5;
         ctx.strokeStyle = SLITS.COLOR;
 
-        // Visual half-length of tick marks
-        const tickLen = 8;
-
         for (let i = 0; i < total; i += step) {
-            // compute offset from center (in slits)
             const offset = i - centerIndex;
             const px = this.x + offset * spacingPx;
+            if (px < left - 2 || px > right + 2) continue;
 
-            // Only draw if the px lies within left..right
-            if (px < left - 1 || px > right + 1) continue;
-
-            // If spacingPx >= ~4px, draw a short actual gap (erase a tiny rectangle)
             if (spacingPx >= 6) {
-                // small visual gap (erase mode) to look like a slit
+                // small erased gap to look like a slit
                 ctx.save();
                 ctx.globalCompositeOperation = "destination-out";
-                // make gap height proportional to substrate thickness (a modest vertical rectangle)
+                const gapW = Math.max(2, Math.round((this.slitWidth / xpx2m) * 0.6));
                 ctx.fillStyle = "rgba(0,0,0,1)";
-                ctx.fillRect(px - Math.max(1, Math.floor(spacingPx * 0.15)), this.y - SLITS.WIDTH * 1.5, Math.max(2, Math.floor(spacingPx * 0.3)), SLITS.WIDTH * 3);
+                ctx.fillRect(px - gapW/2, this.y - SLITS.WIDTH * 1.5, gapW, SLITS.WIDTH * 3);
                 ctx.restore();
             } else {
-                // spacing small - draw a tick mark
+                // small tick
                 ctx.moveTo(px, this.y - tickLen);
                 ctx.lineTo(px, this.y + tickLen);
             }
         }
-
         ctx.stroke();
+    }
+
+    // Build sampled aperture array (Float32Array) with given FFT size and xpx2m mapping.
+    // aperture samples are in meters mapped to array indices: each sample corresponds to
+    // dx = apertureWidthMeters / fftSize
+    buildAperture(fftSize, xpx2m) {
+        const N = fftSize;
+        const aperture = new Float32Array(N);
+        const apertureWidthMeters = this.w * xpx2m;
+        const dx = apertureWidthMeters / N;
+        const total = this.totalSlits(xpx2m);
+        const centerIndex = Math.floor(total / 2);
+        const spacing = this.spacingMeters;
+        const slitHalf = this.slitWidth / 2;
+
+        // center of aperture in meters relative to left edge
+        const leftEdgeMeters = -apertureWidthMeters / 2;
+
+        for (let i = 0; i < total; i++) {
+            const offset = (i - centerIndex) * spacing;
+            const slitCenterMeters = offset;
+            // compute sample indices covering the slit
+            const startMeters = slitCenterMeters - slitHalf;
+            const endMeters = slitCenterMeters + slitHalf;
+
+            // convert to sample indices
+            const s = Math.floor((startMeters - leftEdgeMeters) / dx);
+            const e = Math.ceil((endMeters - leftEdgeMeters) / dx);
+
+            // clamp
+            const si = Math.max(0, s);
+            const ei = Math.min(N-1, e);
+
+            for (let k = si; k <= ei; k++) aperture[k] = 1.0;
+        }
+
+        return aperture;
     }
 }
 
