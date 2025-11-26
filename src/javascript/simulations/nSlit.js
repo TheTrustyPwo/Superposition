@@ -3,7 +3,7 @@ import { HorizontalScreen } from "../shared/screen.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 import { distance } from "../utils/math.js";
 
-class NSlitSimulation extends Simulation {
+class GratingSimulation extends Simulation {
 
     constructor(
         cvs,
