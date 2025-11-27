@@ -154,7 +154,6 @@ class GratingFFTSimulation {
     }
 
     resize = () => {
-        super.resize();
 
         // top mini-screen preview region
         this.screen = {
