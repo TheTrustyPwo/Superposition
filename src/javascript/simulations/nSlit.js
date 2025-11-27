@@ -4,7 +4,7 @@ import { i2h, interpolate, w2h } from "../utils/color.js";
 import { distance } from "../utils/math.js";
 import { Grating } from "../shared/slit.js";
 
-class GratingSimulation extends Simulation {
+class GratingSimulation {
 
     constructor(cvs, ctx, centerX, centerY, illuminatedWidthPx, densityPerMm, slitWidthMeters = 2e-6) {
         this.cvs = cvs;
