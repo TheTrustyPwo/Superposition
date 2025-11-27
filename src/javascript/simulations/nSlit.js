@@ -440,4 +440,4 @@ class GratingFFTSimulation extends Simulation {
     };
 }
 
-export { GratingSimulation };
+export { GratingSimulation, GratingFFTSimulation };
