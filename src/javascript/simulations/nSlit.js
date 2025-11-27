@@ -172,7 +172,7 @@ class GratingFFTSimulation extends Simulation {
         this.illuminatedWidthPx = Math.round(this.cvs.width * this.beamFraction);
 
         // setup grating helper
-        this.grating = new GratingFFT(this.cvs, this.c, this.gratingX, this.gratingY, this.illuminatedWidthPx, this.density, this.slitWidth);
+        this.grating = new GratingSimulation(this.cvs, this.c, this.gratingX, this.gratingY, this.illuminatedWidthPx, this.density, this.slitWidth);
 
         // allocate FFT arrays and build aperture
         this.fftRe = new Float32Array(this.fftSize);
@@ -440,4 +440,4 @@ class GratingFFTSimulation extends Simulation {
     };
 }
 
-export { GratingSimulation, GratingFFTSimulation };
+export { GratingFFTSimulation };
