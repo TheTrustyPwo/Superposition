@@ -119,7 +119,7 @@ class GratingSimulation {
 /* -----------------------------
    GratingFFTSimulation
    ----------------------------- */
-class GratingFFTSimulation extends GratingSimulation {
+class GratingFFTSimulation {
     constructor(cvs, c, density = 600, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
         super(cvs, c);
         this.cvs = cvs;
