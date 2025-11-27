@@ -19,7 +19,7 @@ Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\l
 </div>
 
 <div class="distance">
-    <input type="range" min="10" max="500" step="1" value="200" class="slider" id="distanceInput">
+    <input type="range" min="100" max="200" step="1" value="200" class="slider" id="distanceInput">
     Distance (cm): <span id="distanceValue">200</span> cm
 </div>
 
