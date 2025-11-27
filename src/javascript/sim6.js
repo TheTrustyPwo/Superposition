@@ -1,4 +1,3 @@
-import { GratingSimulation } from "./simulations/nSlit.js";
 import { GratingFFTSimulation } from "./simulations/nSlit.js";
 
 const fps = 60;
