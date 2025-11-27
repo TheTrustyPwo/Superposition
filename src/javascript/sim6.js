@@ -1,8 +1,14 @@
 import { GratingSimulation } from "./simulations/nSlit.js";
+import { GratingFFTSimulation } from "./simulations/nSlit.js";
 
 const fps = 60;
+
 const cvs = document.getElementById('nSlit');
-const c = cvs.getContext('2d');
+const c = cvs?.getContext('2d');
+
+if (!cvs || !c) {
+    throw new Error("Canvas #nSlit not found in DOM");
+}
 
 const densityInput = document.getElementById("densityInput");
 const densityValue = document.getElementById("densityValue");
@@ -10,50 +16,52 @@ const wavelengthInput = document.getElementById("wavelengthInput_nSlit");
 const wavelengthValue = document.getElementById("wavelengthValue_nSlit");
 const screenViewCanvas = document.getElementById("screen-view");
 const screenViewCtx = screenViewCanvas?.getContext("2d");
+const distanceInput = document.getElementById("distanceInput");
+const distanceValue = document.getElementById("distanceValue");
 
-if (!cvs || !c) throw new Error("Canvas #nSlit not found");
+// instantiate simulation
+const simulation = new GratingFFTSimulation(cvs, c);
 
-const simulation = new GratingSimulation(cvs, c);
-
-// set up small preview canvas size
+// setup preview canvas size
 if (screenViewCanvas && screenViewCtx) {
     screenViewCanvas.height = 40;
     screenViewCanvas.width = cvs.width;
 }
 
-// init UI values safely (guard nulls)
+// initialize UI values with guards
 if (densityInput) {
     densityInput.value = simulation.density;
-    densityValue.innerText = densityInput.value;
+    if (densityValue) densityValue.innerText = densityInput.value;
     densityInput.oninput = () => {
-        densityValue.innerText = densityInput.value;
-        simulation.setDensity(densityInput.value);
+        const val = Number(densityInput.value);
+        if (densityValue) densityValue.innerText = val;
+        simulation.setDensity(val);
     };
 }
 
 if (wavelengthInput) {
-    wavelengthInput.value = Math.round(simulation.wavelength * 1e9);
-    wavelengthValue.innerText = wavelengthInput.value;
+    const nm = Math.round(simulation.wavelength * 1e9);
+    wavelengthInput.value = nm;
+    if (wavelengthValue) wavelengthValue.innerText = nm;
     wavelengthInput.oninput = () => {
-        wavelengthValue.innerText = wavelengthInput.value;
-        simulation.setWavelength(wavelengthInput.value);
+        const val = Number(wavelengthInput.value);
+        if (wavelengthValue) wavelengthValue.innerText = val;
+        simulation.setWavelength(val);
     };
 }
 
-// optional distance control: if you have a distanceInput element, wire it
-const distanceInput = document.getElementById("distanceInput");
-const distanceValue = document.getElementById("distanceValue");
+// distance slider: 100..200 cm mapped to 1.0..2.0 m
 if (distanceInput) {
-    distanceInput.value = Math.round(simulation.distanceToScreen * 100); // cm
-    if (distanceValue) distanceValue.innerText = distanceInput.value;
+    const cm = Math.round(simulation.distanceToScreen * 100);
+    distanceInput.value = cm;
+    if (distanceValue) distanceValue.innerText = cm;
     distanceInput.oninput = () => {
-        const cm = Number(distanceInput.value);
-        if (distanceValue) distanceValue.innerText = cm;
-        simulation.setDistance(cm / 100);
+        const val = Number(distanceInput.value);
+        if (distanceValue) distanceValue.innerText = val;
+        simulation.setDistance(val / 100.0);
     };
 }
 
-// animation loop
 const animate = () => {
     simulation.update();
     if (screenViewCanvas && screenViewCtx) simulation.drawScreenView(screenViewCtx, screenViewCanvas.width, screenViewCanvas.height);
