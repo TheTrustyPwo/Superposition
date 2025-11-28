@@ -14,7 +14,7 @@ import { i2h, interpolate, w2h } from "../utils/color.js";
   Change VISUAL_ANGLE_GAIN below to exaggerate spacing.
 */
 
-const VISUAL_ANGLE_GAIN = 5.0;   // ★★★ exaggerate diffraction angle
+const VISUAL_ANGLE_GAIN = 15.0;   // ★★★ exaggerate diffraction angle
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 600, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
