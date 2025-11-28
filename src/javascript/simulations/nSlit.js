@@ -46,7 +46,7 @@ class GratingFFTSimulation {
 
   // realistic px -> m mapping (2 µm per px)
   get xpx2m() {
-    return 2e-6;
+    return 0.25e-6;
   }
 
   // recompute geometry, grating helpers, aperture and arrays
