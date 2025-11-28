@@ -1,17 +1,20 @@
-// simulations/nSlit.js
 // FFT Fraunhofer grating simulation using the project's Grating (named export).
-// Exports: GratingFFTSimulation
 
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
 /*
-  Notes:
-  - Uses two Grating instances:
-    * gratingAperture: physical slitWidth used to build aperture for FFT.
-    * gratingVisual: visual slitWidth (larger) used only for drawing the slit line.
-  - Pixel scale xpx2m is 2e-6 m/px (2 µm per pixel) — tuned so distance & density changes are visible.
+  Fringe spacing traditionally is:
+      Δx ≈ D λ / d
+
+  For d ≈ 1–2 µm (as in 600 slits/mm), fringe spacing is tiny.
+  To make the simulation *visible*, this version applies a tunable
+  visualization scale to the angular spread.
+
+  Change VISUAL_ANGLE_GAIN below to exaggerate spacing.
 */
+
+const VISUAL_ANGLE_GAIN = 5.0;   // ★★★ exaggerate diffraction angle
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 600, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -19,21 +22,20 @@ class GratingFFTSimulation {
     this.c = ctx;
 
     // physics params
-    this.density = Number(density);        // slits per mm
-    this.wavelength = Number(wavelength);  // meters
-    this.physicalSlitWidth = Number(slitWidth); // meters (used for aperture)
-    this.distanceToScreen = Math.max(1.0, Math.min(2.0, Number(distanceToScreen))); // meters
+    this.density = Number(density);        
+    this.wavelength = Number(wavelength);  
+    this.physicalSlitWidth = Number(slitWidth);
+    this.distanceToScreen = Math.max(1.0, Math.min(2.0, Number(distanceToScreen)));
 
     // visual params
-    this.visualSlitFactor = 2.2; // multiply physical slit width by this for visual gaps
-    this.beamFraction = 0.5; // illuminated region is half canvas width
+    this.visualSlitFactor = 2.2;
+    this.beamFraction = 0.5;
 
     // FFT params
-    this.fftSize = 16384; // reduce to 8192/4096 on slow devices
+    this.fftSize = 16384;
     this.fftRe = null;
     this.fftIm = null;
 
-    // time step (for any animated effects)
     this.t = 0;
     this.dt = 1 / 60;
 
@@ -44,14 +46,15 @@ class GratingFFTSimulation {
     this.resize();
   }
 
-  // realistic px -> m mapping (2 µm per px)
+  // px → m
   get xpx2m() {
-    return 0.25e-6;
+    return 2e-6;  // 2 µm per pixel
   }
 
-  // recompute geometry, grating helpers, aperture and arrays
+  /* ----------------------------------
+     Resize / rebuild aperture
+  ------------------------------------- */
   resize() {
-    // small top preview region
     this.screen = {
       x: Math.round(this.cvs.width / 2),
       y: Math.round(0.25 * this.cvs.height),
@@ -62,12 +65,12 @@ class GratingFFTSimulation {
     this.gratingY = Math.round(this.cvs.height * 0.9);
     this.gratingX = Math.round(this.cvs.width / 2);
 
-    // illuminated width in px (half canvas)
+    // illuminated width = half canvas
     this.illuminatedWidthPx = Math.round(this.cvs.width * this.beamFraction);
 
-    // build two grating objects:
-    // - gratingAperture uses the physical slit width for aperture building
-    // - gratingVisual uses a slightly larger slit width so gaps remain visible at high density
+    // two gratings:
+    // A: physical slit width for FFT
+    // B: slightly larger for visual gaps
     this.gratingAperture = new Grating(
       this.cvs,
       this.c,
@@ -78,7 +81,7 @@ class GratingFFTSimulation {
       this.physicalSlitWidth
     );
 
-    const visualSlitWidth = Math.max(this.physicalSlitWidth, this.physicalSlitWidth * this.visualSlitFactor);
+    const visualSlitW = Math.max(this.physicalSlitWidth, this.physicalSlitWidth * this.visualSlitFactor);
     this.gratingVisual = new Grating(
       this.cvs,
       this.c,
@@ -86,10 +89,9 @@ class GratingFFTSimulation {
       this.gratingY,
       this.illuminatedWidthPx,
       this.density,
-      visualSlitWidth
+      visualSlitW
     );
 
-    // allocate FFT arrays and build aperture
     this.fftRe = new Float32Array(this.fftSize);
     this.fftIm = new Float32Array(this.fftSize);
     this.aperture = this.gratingAperture.buildAperture(this.fftSize, this.xpx2m);
@@ -98,22 +100,24 @@ class GratingFFTSimulation {
     this.screenIntensity = null;
   }
 
-  /* -----------------------------
-     In-place radix-2 FFT (Cooley-Tukey)
-     ----------------------------- */
+  /* ----------------------------------
+     FFT (radix-2)
+  ------------------------------------- */
   fftComplex(real, imag) {
     const n = real.length;
-    // bit-reversal
+
+    // bit reversal
     for (let i = 1, j = 0; i < n; i++) {
       let bit = n >> 1;
       for (; j & bit; bit >>= 1) j ^= bit;
       j ^= bit;
       if (i < j) {
-        let tr = real[i]; real[i] = real[j]; real[j] = tr;
-        let ti = imag[i]; imag[i] = imag[j]; imag[j] = ti;
+        [real[i], real[j]] = [real[j], real[i]];
+        [imag[i], imag[j]] = [imag[j], imag[i]];
       }
     }
 
+    // butterflies
     for (let size = 2; size <= n; size <<= 1) {
       const half = size >> 1;
       const step = n / size;
@@ -122,19 +126,24 @@ class GratingFFTSimulation {
           const k = j * step;
           const angle = -2 * Math.PI * k / n;
           const wr = Math.cos(angle), wi = Math.sin(angle);
-          const off = i + j, off2 = off + half;
-          const xr = wr * real[off2] - wi * imag[off2];
-          const xi = wr * imag[off2] + wi * real[off2];
-          real[off2] = real[off] - xr;
-          imag[off2] = imag[off] - xi;
-          real[off] += xr;
-          imag[off] += xi;
+          const i1 = i + j;
+          const i2 = i1 + half;
+
+          const xr = wr * real[i2] - wi * imag[i2];
+          const xi = wr * imag[i2] + wi * real[i2];
+
+          real[i2] = real[i1] - xr;
+          imag[i2] = imag[i1] - xi;
+          real[i1] += xr;
+          imag[i1] += xi;
         }
       }
     }
   }
 
-  // compute normalized power spectrum (magnitude squared) and center-shift
+  /* ----------------------------------
+     Spectrum computation
+  ------------------------------------- */
   computeSpec() {
     this.fftRe.set(this.aperture);
     this.fftIm.fill(0);
@@ -143,93 +152,111 @@ class GratingFFTSimulation {
 
     const N = this.fftSize;
     const spec = new Float32Array(N);
+
     for (let i = 0; i < N; i++) {
-      const mag = this.fftRe[i] * this.fftRe[i] + this.fftIm[i] * this.fftIm[i];
-      // shift so DC is in the middle
+      const m = this.fftRe[i] * this.fftRe[i] + this.fftIm[i] * this.fftIm[i];
       const j = (i + N/2) & (N - 1);
-      spec[j] = mag;
+      spec[j] = m;
     }
-    // normalize
+
     let max = 0;
-    for (let i = 0; i < N; i++) if (spec[i] > max) max = spec[i];
+    for (let v of spec) if (v > max) max = v;
+
     if (max > 0) for (let i = 0; i < N; i++) spec[i] /= max;
+
     return spec;
   }
 
-  // map spectrum bins to screen pixels using sin(theta) mapping and distance to screen
+  /* ----------------------------------
+     Map FFT → screen pixels with ANGLE GAIN
+  ------------------------------------- */
   fftToScreen(spec) {
     const N = spec.length;
     const apertureMeters = this.illuminatedWidthPx * this.xpx2m;
-    const screenIntensity = new Float32Array(this.cvs.width);
-    screenIntensity.fill(0);
+
+    const screen = new Float32Array(this.cvs.width);
+    screen.fill(0);
 
     for (let k = 0; k < N; k++) {
-      const fx = (k - N/2) / apertureMeters;      // cycles per meter
-      const sinTheta = fx * this.wavelength;      // sinθ = λ · fx
+      const fx = (k - N/2) / apertureMeters;
+      const sinTheta = fx * this.wavelength;
       if (Math.abs(sinTheta) > 1) continue;
-      const theta = Math.asin(sinTheta);
-      // map to pixel x: tan(theta) * D / (m per px)
-      const x = Math.round(this.cvs.width/2 + Math.tan(theta) * this.distanceToScreen / this.xpx2m);
-      if (x >= 0 && x < this.cvs.width) screenIntensity[x] += spec[k];
+
+      let theta = Math.asin(sinTheta);
+
+      // ★★★ exaggerate visually
+      theta *= VISUAL_ANGLE_GAIN;
+
+      const x = Math.round(
+        this.cvs.width/2 +
+        Math.tan(theta) * this.distanceToScreen / this.xpx2m
+      );
+
+      if (x >= 0 && x < this.cvs.width) screen[x] += spec[k];
     }
 
-    // normalize screen intensity
     let max = 0;
-    for (let i = 0; i < screenIntensity.length; i++) if (screenIntensity[i] > max) max = screenIntensity[i];
-    if (max > 0) for (let i = 0; i < screenIntensity.length; i++) screenIntensity[i] /= max;
-    return screenIntensity;
+    for (let v of screen) if (v > max) max = v;
+    if (max > 0) for (let i = 0; i < screen.length; i++) screen[i] /= max;
+
+    return screen;
   }
 
-  /* -----------------------------
-     Main update / draw
-     ----------------------------- */
+  /* ----------------------------------
+     FRAME UPDATE
+  ------------------------------------- */
   update = () => {
     this.t += this.dt;
 
     if (this.redraw) {
-      // clear canvas
       this.c.clearRect(0, 0, this.cvs.width, this.cvs.height);
 
-      // draw visual slit line (uses larger visual slit width so gaps remain visible)
+      // Draw grating
       this.gratingVisual.draw(this.xpx2m);
 
-      // rebuild aperture and compute spectrum
+      // Compute diffraction pattern
       this.aperture = this.gratingAperture.buildAperture(this.fftSize, this.xpx2m);
       const spec = this.computeSpec();
       this.screenIntensity = this.fftToScreen(spec);
 
-      // top intensity plot
       this.drawIntensityPlot(spec);
-
-      // bottom screen slice
       this.drawScreenSlice(this.screenIntensity);
 
       this.redraw = false;
     }
 
-    // draw aesthetic Fraunhofer "fan" between grating and screen (fast)
+    // Draw Fraunhofer fan
     this.renderWaveFan();
   };
 
+  /* ----------------------------------
+     INTENSITY PLOT (top)
+  ------------------------------------- */
   drawIntensityPlot(spec) {
     const ctx = this.c;
     const topY = this.screen.y - 5;
+
     ctx.beginPath();
     ctx.lineWidth = 2;
     ctx.strokeStyle = i2h(this.color);
+
     const N = spec.length;
     for (let x = 0; x < this.cvs.width; x++) {
       const idx = Math.floor((x / this.cvs.width) * N);
       const v = spec[idx] || 0;
       const y = topY - v * (this.cvs.height * 0.18);
-      if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     }
     ctx.stroke();
   }
 
+  /* ----------------------------------
+     SCREEN SLICE (bottom)
+  ------------------------------------- */
   drawScreenSlice(screenIntensity) {
     const ctx = this.c;
     const baseY = this.gratingY + 10;
+
     ctx.save();
     ctx.strokeStyle = "#ffffff";
     ctx.lineWidth = 2;
@@ -240,70 +267,75 @@ class GratingFFTSimulation {
     ctx.restore();
 
     for (let x = 0; x < this.cvs.width; x++) {
-      const v = screenIntensity[x] || 0;
-      const h = Math.round(v * (this.cvs.height * 0.45));
+      const v = screenIntensity[x];
+      const h = Math.round(v * this.cvs.height * 0.45);
       if (h <= 0) continue;
+
       for (let y = 0; y < h; y += 3) {
         const alpha = Math.min(1, 0.3 + 0.7 * (y / h));
-        this.c.globalAlpha = alpha;
-        this.c.fillStyle = this.color;
-        this.c.fillRect(x, baseY + 2 + y, 1, 2);
-      }
-    }
-    this.c.globalAlpha = 1;
-  }
-
-  // simple Fraunhofer fan for middle region (aesthetic)
-  renderWaveFan() {
-    if (!this.screenIntensity) return;
-    const ctx = this.c;
-    const top = this.screen.y + 10;
-    const bottom = this.gratingY - 10;
-    const height = bottom - top;
-    if (height <= 0) return;
-
-    const slices = 28;
-    for (let s = 0; s < slices; s++) {
-      const frac = s / (slices - 1);
-      const y = Math.round(top + frac * height);
-      const att = 1 - 0.9 * frac;
-      for (let x = 0; x < this.cvs.width; x += 4) {
-        const v = this.screenIntensity[x] || 0;
-        if (v < 0.01) continue;
-        ctx.globalAlpha = v * att * 0.9;
+        ctx.globalAlpha = alpha;
         ctx.fillStyle = this.color;
-        ctx.fillRect(x, y, 3, 3);
+        ctx.fillRect(x, baseY + 2 + y, 1, 2);
       }
     }
     ctx.globalAlpha = 1;
   }
 
-  // preview canvas (screen-view) — called from sim6.js
+  /* ----------------------------------
+     FRAUNHOFER WAVE FAN (middle)
+  ------------------------------------- */
+  renderWaveFan() {
+    if (!this.screenIntensity) return;
+
+    const ctx = this.c;
+    const top = this.screen.y + 10;
+    const bottom = this.gratingY - 10;
+    const height = bottom - top;
+
+    const slices = 32;
+    for (let s = 0; s < slices; s++) {
+      const frac = s / (slices - 1);
+      const y = Math.round(top + frac * height);
+
+      const att = 1 - 0.8 * frac;
+      for (let x = 0; x < this.cvs.width; x += 3) {
+        const v = this.screenIntensity[x] || 0;
+        if (v < 0.01) continue;
+
+        ctx.globalAlpha = v * att * 0.8;
+        ctx.fillStyle = this.color;
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  /* ----------------------------------
+     PREVIEW CANVAS
+  ------------------------------------- */
   drawScreenView = (screenCtx, width, height) => {
     if (!this.screenIntensity) {
       const spec = this.computeSpec();
       this.screenIntensity = this.fftToScreen(spec);
     }
+
     screenCtx.clearRect(0, 0, width, height);
     for (let x = 0; x < width; x++) {
       const idx = Math.floor((x / width) * this.cvs.width);
       const v = this.screenIntensity[idx] || 0;
-      const color = interpolate(0, this.color, v);
-      screenCtx.fillStyle = color;
+      screenCtx.fillStyle = interpolate(0, this.color, v);
       screenCtx.fillRect(x, 0, 1, height);
     }
   };
 
-  /* -----------------------------
-     UI setters
-     ----------------------------- */
+  /* ----------------------------------
+     UI SETTERS
+  ------------------------------------- */
   setDensity = (density) => {
     this.density = Number(density);
-    // update both gratings
     this.gratingAperture.density = this.density;
     this.gratingVisual.density = this.density;
-    // rebuild aperture
-    this.aperture = this.gratingAperture.buildAperture(this.fftSize, this.xpx2m);
     this.redraw = true;
   };
 
@@ -314,8 +346,7 @@ class GratingFFTSimulation {
   };
 
   setDistance = (distanceMeters) => {
-    const d = Math.max(1.0, Math.min(2.0, Number(distanceMeters)));
-    this.distanceToScreen = d;
+    this.distanceToScreen = Math.max(1.0, Math.min(2.0, Number(distanceMeters)));
     this.redraw = true;
   };
 }
