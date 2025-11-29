@@ -1,47 +1,47 @@
-// FFT Fraunhofer grating simulation using the project's Grating (named export).
+// simulations/nSlit.js
+// Grating-only FFT Fraunhofer simulation (grating mode).
+// Exports: GratingFFTSimulation
 
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
 /*
-  This file includes:
-   - VISUAL_ANGLE_GAIN to exaggerate angular spread (set to 12 = extreme)
-   - px->m scale tightened to 0.25 µm/px (strong tightening)
-   - 1D gaussian blur to widen narrow FFT peaks so they become visible
-   - gamma compression to brighten sidelobes
-   - order markers to show where theoretical maxima should lie
-   - aesthetic Fraunhofer fan restored
+  Visualization tuning:
+    - VISUAL_ANGLE_GAIN amplifies theta for visibility (keeps relative ordering)
+    - COMPRESS scales physical y = D*tan(theta) down to fit canvas (0.15 chosen)
+    - xpx2m maps pixels -> meters (0.25 µm/px)
 */
 
-const VISUAL_ANGLE_GAIN = 12.0; // extreme visual exaggeration
+const VISUAL_ANGLE_GAIN = 12.0; // visual exaggeration of theta
+const COMPRESS = 0.15;          // compress physical y by this factor to bring orders on-screen
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 600, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
     this.cvs = cvs;
     this.c = ctx;
 
-    // physics params
-    this.density = Number(density);        // slits per mm
-    this.wavelength = Number(wavelength);  // meters
-    this.physicalSlitWidth = Number(slitWidth); // meters
-    this.distanceToScreen = Math.max(1.0, Math.min(2.0, Number(distanceToScreen))); // meters
+    // physical parameters
+    this.density = Number(density);           // slits per mm
+    this.wavelength = Number(wavelength);     // m
+    this.physicalSlitWidth = Number(slitWidth);// m
+    this.distanceToScreen = Math.max(1.0, Math.min(2.0, Number(distanceToScreen))); // m
 
-    // visual params
-    this.visualSlitFactor = 2.2; // visual gap factor
-    this.beamFraction = 0.5; // illuminated region is half canvas width
+    // visual helpers
+    this.visualSlitFactor = 2.2; // enlarge visual gaps
+    this.beamFraction = 0.5;     // illuminated width fraction of canvas
 
     // FFT params
-    this.fftSize = 16384; // large for resolution; lower if performance issues
+    this.fftSize = 16384; // change down if needed for perf
     this.fftRe = null;
     this.fftIm = null;
 
-    // animation / update
+    // animation
     this.t = 0;
     this.dt = 1 / 60;
 
     // rendering tweaks
-    this.intensityGamma = 0.6; // brighten sidelobes: v -> v^gamma (gamma < 1)
-    this.blurSigmaPx = 2.0;    // gaussian blur sigma in pixels for screen intensity
+    this.intensityGamma = 0.6; // brighten sidelobes
+    this.blurSigmaPx = 2.0;    // gaussian blur sigma (px)
 
     this.color = w2h(this.wavelength);
     this.redraw = true;
@@ -50,27 +50,29 @@ class GratingFFTSimulation {
     this.resize();
   }
 
-  // px -> meters mapping. Set to 0.25 µm/px (strong tightening)
+  // px -> m mapping: strong tightening (0.25 µm per px)
   get xpx2m() {
     return 0.25e-6;
   }
 
   resize() {
-    // preview region
+    // preview region coordinates
     this.screen = {
       x: Math.round(this.cvs.width / 2),
       y: Math.round(0.25 * this.cvs.height),
       w: Math.round(this.cvs.width * 0.95)
     };
 
-    // grating positions
+    // grating position
     this.gratingY = Math.round(this.cvs.height * 0.9);
     this.gratingX = Math.round(this.cvs.width / 2);
 
-    // illuminated width (half canvas)
+    // illuminated width in px
     this.illuminatedWidthPx = Math.round(this.cvs.width * this.beamFraction);
 
-    // two Grating objects: aperture (physical) and visual (larger gaps)
+    // construct two gratings:
+    // - gratingAperture: physical slit width used to build aperture for FFT
+    // - gratingVisual: slightly larger visual slit width for visible gaps
     this.gratingAperture = new Grating(
       this.cvs,
       this.c,
@@ -92,6 +94,7 @@ class GratingFFTSimulation {
       visualSlitW
     );
 
+    // allocate FFT arrays and build aperture
     this.fftRe = new Float32Array(this.fftSize);
     this.fftIm = new Float32Array(this.fftSize);
     this.aperture = this.gratingAperture.buildAperture(this.fftSize, this.xpx2m);
@@ -127,10 +130,8 @@ class GratingFFTSimulation {
           const angle = -2 * Math.PI * k / n;
           const wr = Math.cos(angle), wi = Math.sin(angle);
           const off = i + j, off2 = off + half;
-
           const xr = wr * real[off2] - wi * imag[off2];
           const xi = wr * imag[off2] + wi * real[off2];
-
           real[off2] = real[off] - xr;
           imag[off2] = imag[off] - xi;
           real[off] += xr;
@@ -141,7 +142,7 @@ class GratingFFTSimulation {
   }
 
   /* -----------------------------
-     compute spectrum (power) and normalize
+     Compute normalized power spectrum
      ----------------------------- */
   computeSpec() {
     this.fftRe.set(this.aperture);
@@ -151,6 +152,7 @@ class GratingFFTSimulation {
 
     const N = this.fftSize;
     const spec = new Float32Array(N);
+
     for (let i = 0; i < N; i++) {
       const mag = this.fftRe[i] * this.fftRe[i] + this.fftIm[i] * this.fftIm[i];
       const j = (i + N / 2) & (N - 1);
@@ -166,38 +168,43 @@ class GratingFFTSimulation {
   }
 
   /* -----------------------------
-     Map spectrum bins → screen pixels
-     with VISUAL_ANGLE_GAIN applied to theta
+     Map spectrum bins to screen with angle gain + compression
      ----------------------------- */
   fftToScreen(spec) {
     const N = spec.length;
     const apertureMeters = this.illuminatedWidthPx * this.xpx2m;
 
-    const screenIntensity = new Float32Array(this.cvs.width);
-    screenIntensity.fill(0);
+    const screen = new Float32Array(this.cvs.width);
+    screen.fill(0);
 
     for (let k = 0; k < N; k++) {
       const fx = (k - N / 2) / apertureMeters; // cycles per meter
-      const sinTheta = fx * this.wavelength;   // sinθ = λ · fx
+      const sinTheta = fx * this.wavelength;   // sinθ = λ·fx
       if (Math.abs(sinTheta) > 1) continue;
       let theta = Math.asin(sinTheta);
 
-      // apply visualization gain (extreme)
+      // visual exaggeration of angle
       theta *= VISUAL_ANGLE_GAIN;
 
-      const x = Math.round(this.cvs.width / 2 + Math.tan(theta) * this.distanceToScreen / this.xpx2m);
-      if (x >= 0 && x < this.cvs.width) screenIntensity[x] += spec[k];
+      // physical y on screen: D * tan(theta)
+      // then compress it to fit canvas: * COMPRESS
+      const physicalY = this.distanceToScreen * Math.tan(theta);
+      const compressedY = physicalY * COMPRESS;
+
+      const x = Math.round(this.cvs.width / 2 + compressedY / this.xpx2m);
+      if (x >= 0 && x < this.cvs.width) screen[x] += spec[k];
     }
 
     // normalize
     let max = 0;
-    for (let i = 0; i < screenIntensity.length; i++) if (screenIntensity[i] > max) max = screenIntensity[i];
-    if (max > 0) for (let i = 0; i < screenIntensity.length; i++) screenIntensity[i] /= max;
-    return screenIntensity;
+    for (let i = 0; i < screen.length; i++) if (screen[i] > max) max = screen[i];
+    if (max > 0) for (let i = 0; i < screen.length; i++) screen[i] /= max;
+
+    return screen;
   }
 
   /* -----------------------------
-     1D Gaussian blur (simple, CPU-bound but small kernel)
+     1D Gaussian blur to widen narrow peaks
      ----------------------------- */
   blur1D(array, sigmaPx = 2.0) {
     const radius = Math.ceil(sigmaPx * 3);
@@ -226,7 +233,7 @@ class GratingFFTSimulation {
   }
 
   /* -----------------------------
-     Draw vertical markers for theoretical orders (diagnostic)
+     Draw vertical markers for theoretical orders
      ----------------------------- */
   drawOrderMarkers(maxM = 8) {
     const ctx = this.c;
@@ -238,14 +245,16 @@ class GratingFFTSimulation {
     ctx.font = "12px Arial";
     ctx.textAlign = "left";
 
-    const d = 1 / (this.density * 1e3); // center-to-center spacing in meters
+    const d = 1 / (this.density * 1e3); // meters
 
     for (let m = 1; m <= maxM; m++) {
       const sinTheta = (m * this.wavelength) / d;
       if (Math.abs(sinTheta) >= 1) break;
       let theta = Math.asin(sinTheta);
       theta *= VISUAL_ANGLE_GAIN;
-      const x = Math.round(this.cvs.width / 2 + Math.tan(theta) * this.distanceToScreen / this.xpx2m);
+      const physicalY = this.distanceToScreen * Math.tan(theta);
+      const compressedY = physicalY * COMPRESS;
+      const x = Math.round(this.cvs.width / 2 + compressedY / this.xpx2m);
       if (x < 0 || x > this.cvs.width) continue;
       ctx.beginPath();
       ctx.moveTo(x, this.screen.y - 18);
@@ -258,7 +267,7 @@ class GratingFFTSimulation {
   }
 
   /* -----------------------------
-     Update / render loop
+     Main update loop
      ----------------------------- */
   update = () => {
     this.t += this.dt;
@@ -266,17 +275,17 @@ class GratingFFTSimulation {
     if (this.redraw) {
       this.c.clearRect(0, 0, this.cvs.width, this.cvs.height);
 
-      // visual grating line (larger visual gaps)
+      // draw visual grating line
       this.gratingVisual.draw(this.xpx2m);
 
-      // rebuild aperture and compute spec
+      // compute aperture & spectrum
       this.aperture = this.gratingAperture.buildAperture(this.fftSize, this.xpx2m);
       const spec = this.computeSpec();
 
-      // map to screen (raw)
+      // raw mapping
       let screen = this.fftToScreen(spec);
 
-      // blur narrow spikes so peaks are visible on-screen
+      // blur narrow spikes
       screen = this.blur1D(screen, this.blurSigmaPx);
 
       // gamma brighten small sidelobes
@@ -284,25 +293,26 @@ class GratingFFTSimulation {
         screen[i] = Math.pow(screen[i], this.intensityGamma);
       }
 
-      // normalize again after processing
+      // normalize again
       let max = 0;
       for (let v of screen) if (v > max) max = v;
       if (max > 0) for (let i = 0; i < screen.length; i++) screen[i] /= max;
 
       this.screenIntensity = screen;
 
-      // draw top intensity plot (use processed spec with gamma for visibility)
+      // draw intensity plot (top)
       this.drawIntensityPlot(spec);
-      // draw order markers (diagnostic)
+
+      // draw order markers for diagnosis
       this.drawOrderMarkers(10);
 
-      // draw bottom screen slice (processed screenIntensity)
+      // bottom screen slice
       this.drawScreenSlice(this.screenIntensity);
 
       this.redraw = false;
     }
 
-    // draw middle Fraunhofer fan (aesthetic)
+    // aesthetic Fraunhofer fan
     this.renderWaveFan();
   };
 
@@ -317,7 +327,7 @@ class GratingFFTSimulation {
     for (let x = 0; x < this.cvs.width; x++) {
       const idx = Math.floor((x / this.cvs.width) * N);
       let v = spec[idx] || 0;
-      v = Math.pow(v, this.intensityGamma); // brighten for visibility
+      v = Math.pow(v, this.intensityGamma);
       const y = topY - v * (this.cvs.height * 0.18);
       if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
@@ -350,7 +360,6 @@ class GratingFFTSimulation {
     ctx.globalAlpha = 1;
   }
 
-  // simple Fraunhofer fan between grating and screen (aesthetic)
   renderWaveFan() {
     if (!this.screenIntensity) return;
     const ctx = this.c;
@@ -375,7 +384,7 @@ class GratingFFTSimulation {
     ctx.globalAlpha = 1;
   }
 
-  // preview canvas used by sim6.js
+  // preview view used by sim6.js
   drawScreenView = (screenCtx, width, height) => {
     if (!this.screenIntensity) {
       const spec = this.computeSpec();
