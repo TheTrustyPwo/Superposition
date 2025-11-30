@@ -414,18 +414,35 @@ class GratingFFTSimulation {
   /* ---------------------------
      drawScreenView (preview)
      --------------------------- */
-  drawScreenView = (screenCtx, width, height) => {
-    if (!this.screenIntensity) {
-      this.computeProcessedIntensity();
-    }
-    screenCtx.clearRect(0, 0, width, height);
+  drawScreenView(ctx, width, height) {
+    ctx.clearRect(0, 0, width, height);
+
+    // draw intensity (already normalized & equal maxima)
+    ctx.strokeStyle = "lime";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    const mid = height - 2;   // draw intensity near bottom
     for (let x = 0; x < width; x++) {
-      const idx = Math.floor((x / width) * this.cvs.width);
-      const v = this.screenIntensity[idx] || 0;
-      screenCtx.fillStyle = interpolate(0, this.color, v);
-      screenCtx.fillRect(x, 0, 1, height);
+        const t = x / width;
+        const I = this.intensityArray[Math.floor(t * (this.intensityArray.length - 1))];
+        const y = mid - I * (height * 0.9);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
     }
-  };
+    ctx.stroke();
+
+    // ===============================
+    // WHITE SCREEN LINE (ONLY THIS)
+    // ===============================
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 2);
+    ctx.lineTo(width, 2);
+    ctx.stroke();
+}
+
 
   /* ---------------------------
      Main update loop
