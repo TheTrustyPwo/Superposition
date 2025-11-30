@@ -1,7 +1,3 @@
-// simulations/nSlit.js
-// Grating-only FFT Fraunhofer simulation with connect-the-maxima envelope (Option C).
-// Exports: GratingFFTSimulation
-
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
@@ -309,40 +305,13 @@ class GratingFFTSimulation {
   }
 
   /* ---------------------------
-     Baseline (white) — *moved below slits*
-     We'll draw this below the slit line so it does not overlap the slits visually.
-     --------------------------- */
-  drawWhiteBaseline() {
-    const ctx = this.c;
-    // baseline slightly below the slits (slits at gratingY), so baseline at gratingY + 6
-    const baselineY = this.gratingY + 6;
-    ctx.save();
-    ctx.strokeStyle = "#FFFFFF";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(0, baselineY);
-    ctx.lineTo(this.cvs.width, baselineY);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  /* ---------------------------
      Draw the dotted/light separator just above the screen area,
      then render the actual screen pixels below it.
+     (Removed the separator stroke that overlapped the slits)
      --------------------------- */
   drawScreenSlice(screenIntensity) {
     const ctx = this.c;
     const topOfScreen = this.gratingY + 10; // pixels below the slits
-
-    // light separator (thin grey) at top of screen area
-    ctx.save();
-    ctx.strokeStyle = "#cccccc";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(0, this.gratingY + 4);
-    ctx.lineTo(this.cvs.width, this.gratingY + 4);
-    ctx.stroke();
-    ctx.restore();
 
     // draw intensity pixels/dots under topOfScreen
     for (let x = 0; x < this.cvs.width; x++) {
@@ -413,36 +382,42 @@ class GratingFFTSimulation {
 
   /* ---------------------------
      drawScreenView (preview)
+     - guard against missing intensity and compute if needed
+     - show single white screen line at top of preview
      --------------------------- */
   drawScreenView(ctx, width, height) {
+    // ensure processed intensity available
+    if (!this.screenIntensity || !this.screenIntensity.length) {
+      // compute it safely (this will also set this.screenIntensity)
+      this.computeProcessedIntensity();
+    }
+
     ctx.clearRect(0, 0, width, height);
 
-    // draw intensity (already normalized & equal maxima)
+    const N = this.screenIntensity.length;
+    // draw intensity (lime) near bottom of preview
     ctx.strokeStyle = "lime";
     ctx.lineWidth = 2;
     ctx.beginPath();
-
-    const mid = height - 2;   // draw intensity near bottom
+    const mid = height - 2;
     for (let x = 0; x < width; x++) {
-        const t = x / width;
-        const I = this.intensityArray[Math.floor(t * (this.intensityArray.length - 1))];
-        const y = mid - I * (height * 0.9);
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      const t = x / (width - 1);
+      const idx = Math.floor(t * (N - 1));
+      const I = this.screenIntensity[idx] || 0;
+      const y = mid - I * (height * 0.9);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     }
     ctx.stroke();
 
-    // ===============================
-    // WHITE SCREEN LINE (ONLY THIS)
-    // ===============================
+    // single white screen line at very top of preview
     ctx.strokeStyle = "white";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(0, 2);
     ctx.lineTo(width, 2);
     ctx.stroke();
-}
-
+  }
 
   /* ---------------------------
      Main update loop
@@ -454,7 +429,7 @@ class GratingFFTSimulation {
       // clear canvas
       this.c.clearRect(0, 0, this.cvs.width, this.cvs.height);
 
-      // draw the visual slit line first
+      // draw the visual slit line first (unchanged)
       this.gratingVisual.draw(this.xpx2m);
 
       // compute intensity
@@ -463,9 +438,6 @@ class GratingFFTSimulation {
       // set alias
       this.screenIntensity = screen;
       this.intensity = screen;
-
-      // draw baseline below slits (so slits are not covered)
-      this.drawWhiteBaseline();
 
       // build connect-the-maxima envelope (smoothed)
       const envelope = this.buildMaximaEnvelope(screen);
@@ -479,7 +451,7 @@ class GratingFFTSimulation {
       // draw maxima markers (white)
       this.drawMaximaMarkers(screen, 10);
 
-      // draw screen area (dotted bright pixels) below baseline
+      // draw screen area (dotted bright pixels) below the slits
       this.drawScreenSlice(screen);
 
       this.redraw = false;
