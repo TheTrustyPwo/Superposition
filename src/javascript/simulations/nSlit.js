@@ -1,10 +1,14 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-//newwwww
+/*
+  Modified to show discrete diffraction orders as dots of light
+  - Intensity profile shows peaks for each order
+  - Screen view shows bright spots instead of continuous distribution
+*/
 
 class GratingFFTSimulation {
-  constructor(cvs, ctx, density = 600, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
+  constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
     this.cvs = cvs;
     this.c = ctx;
 
@@ -173,7 +177,7 @@ class GratingFFTSimulation {
     this.diffractionOrders = this.calculateDiffractionOrders();
     
     // Apply density effect: higher density = wider spacing
-    const densityFactor = this.density / 300; // normalized to 300 lines/mm baseline
+    const densityFactor = this.density / 700; // normalized to 700 lines/mm baseline
     
     // Apply distance effect: farther = wider spacing
     const distanceFactor = this.distanceToScreen / 1.5;
@@ -229,23 +233,27 @@ class GratingFFTSimulation {
     const ctx = this.c;
     const topY = this.screen.y - 5;
     
-    // Draw discrete peaks instead of continuous line
+    // Draw white envelope curve
     ctx.lineWidth = 2;
-    ctx.strokeStyle = i2h(this.color);
+    ctx.strokeStyle = '#ffffff';
+    ctx.globalAlpha = 0.6;
     
-    // Draw envelope
     ctx.beginPath();
-    const N = spec.length;
-    for (let x = 0; x < this.cvs.width; x++) {
-      const idx = Math.floor((x / this.cvs.width) * N);
-      const v = spec[idx] || 0;
-      const y = topY - v * (this.cvs.height * 0.18);
-      if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    for (let i = 0; i < this.diffractionOrders.length; i++) {
+      const order = this.diffractionOrders[i];
+      const x = order.x;
+      const intensity = order.intensity;
+      const y = topY - intensity * (this.cvs.height * 0.18);
+      
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     }
     ctx.stroke();
+    ctx.globalAlpha = 1;
     
-    // Draw sharp peaks at order positions
+    // Draw discrete peaks in color
     ctx.lineWidth = 3;
+    ctx.strokeStyle = i2h(this.color);
     for (const order of this.diffractionOrders) {
       const x = order.x;
       const intensity = order.intensity;
