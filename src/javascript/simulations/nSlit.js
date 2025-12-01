@@ -1,11 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-/*
-  Modified to show discrete diffraction orders as dots of light
-  - Intensity profile shows peaks for each order
-  - Screen view shows bright spots instead of continuous distribution
-*/
+// heh
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -321,6 +317,17 @@ class GratingFFTSimulation {
     const height = gratingY - screenY;
     if (height <= 0) return;
 
+    // Convert hex color to rgba for proper transparency
+    const hexToRgba = (hex, alpha) => {
+      // Ensure hex is a string
+      const hexStr = typeof hex === 'string' ? hex : String(hex);
+      const cleanHex = hexStr.startsWith('#') ? hexStr : '#' + hexStr;
+      const r = parseInt(cleanHex.slice(1, 3), 16);
+      const g = parseInt(cleanHex.slice(3, 5), 16);
+      const b = parseInt(cleanHex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
+
     // Draw wave rays from grating to each order on screen
     ctx.save();
     
@@ -341,14 +348,6 @@ class GratingFFTSimulation {
           targetX,
           screenY
         );
-        
-        // Convert hex color to rgba for proper transparency
-        const hexToRgba = (hex, alpha) => {
-          const r = parseInt(hex.slice(1, 3), 16);
-          const g = parseInt(hex.slice(3, 5), 16);
-          const b = parseInt(hex.slice(5, 7), 16);
-          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-        };
         
         gradient.addColorStop(0, hexToRgba(this.color, 0)); // transparent at grating
         gradient.addColorStop(0.3, hexToRgba(this.color, intensity * 0.4));
