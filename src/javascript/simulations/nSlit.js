@@ -1,11 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-/*
-  Modified to show discrete diffraction orders as dots of light
-  - Intensity profile shows peaks for each order
-  - Screen view shows bright spots instead of continuous distribution
-*/
+// ily please work
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -43,9 +39,13 @@ class GratingFFTSimulation {
   }
 
   resize() {
+    // Calculate screen position based on distance
+    // Distance: 1.0m (100cm) = halfway down (0.5), 2.0m (200cm) = quarter down (0.25)
+    const screenYFraction = 0.5 - (this.distanceToScreen - 1.0) * 0.25;
+    
     this.screen = {
       x: Math.round(this.cvs.width / 2),
-      y: Math.round(0.25 * this.cvs.height),
+      y: Math.round(screenYFraction * this.cvs.height),
       w: Math.round(this.cvs.width * 0.95)
     };
 
@@ -239,10 +239,10 @@ class GratingFFTSimulation {
     const ctx = this.c;
     const screenY = this.screen.y;
     
-    // Draw horizontal screen line
+    // Draw horizontal screen line (thicker now for draggability)
     ctx.save();
     ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 4; // Increased from 2 to 4 for better visibility and dragging
     ctx.beginPath();
     ctx.moveTo(0, screenY);
     ctx.lineTo(this.cvs.width, screenY);
@@ -346,34 +346,7 @@ class GratingFFTSimulation {
   }
 
   renderWaveFan() {
-    if (!this.diffractionOrders || this.diffractionOrders.length === 0) return;
-    const ctx = this.c;
-    const screenY = this.screen.y;
-    const gratingY = this.gratingY;
-    const height = gratingY - screenY;
-    if (height <= 0) return;
-
-    // Draw straight colored lines from grating to each maxima
-    ctx.save();
-    
-    for (const order of this.diffractionOrders) {
-      const targetX = order.x;
-      const intensity = order.intensity;
-      if (intensity < 0.05) continue;
-      
-      // Draw single straight line in wavelength color
-      ctx.strokeStyle = i2h(this.color);
-      ctx.lineWidth = 2;
-      ctx.globalAlpha = 0.6 * intensity;
-      
-      ctx.beginPath();
-      ctx.moveTo(this.gratingX, gratingY);
-      ctx.lineTo(targetX, screenY);
-      ctx.stroke();
-    }
-    
-    ctx.restore();
-    ctx.globalAlpha = 1;
+    // Lines removed - no visual connection between grating and maxima
   }
 
   // Screen view shows discrete bright dots with width variation
