@@ -1,7 +1,11 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// fire
+/*
+  Modified to show discrete diffraction orders as dots of light
+  - Intensity profile shows peaks for each order
+  - Screen view shows bright spots instead of continuous distribution
+*/
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -180,9 +184,9 @@ class GratingFFTSimulation {
     // Apply density effect: higher density = wider spacing
     const densityFactor = this.density / 700; // normalized to 700 lines/mm baseline
     
-    // Apply distance effect: farther = wider spacing (toned down)
-    // Scale from 1.0 to 2.0 meters -> factor from 0.85 to 1.15 (30% range instead of 2x)
-    const distanceFactor = 0.85 + (this.distanceToScreen - 1.0) * 0.3;
+    // Apply distance effect: farther = wider spacing (very subtle - only 10% range)
+    // Scale from 1.0 to 2.0 meters -> factor from 0.95 to 1.05 (10% range)
+    const distanceFactor = 0.95 + (this.distanceToScreen - 1.0) * 0.1;
     
     for (const order of this.diffractionOrders) {
       // Adjust position based on density and distance
@@ -245,7 +249,22 @@ class GratingFFTSimulation {
     ctx.stroke();
     ctx.restore();
     
-    // Draw smooth dotted white envelope curve using sinc-like envelope
+    // Draw discrete peaks in wavelength color FIRST (so envelope goes over them)
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = i2h(this.color);
+    const maxHeight = this.cvs.height * 0.18;
+    for (const order of this.diffractionOrders) {
+      const x = order.x;
+      const intensity = order.intensity;
+      const h = intensity * maxHeight;
+      
+      ctx.beginPath();
+      ctx.moveTo(x, screenY);
+      ctx.lineTo(x, screenY - h);
+      ctx.stroke();
+    }
+    
+    // Draw smooth dotted white envelope curve OVER the peaks
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#ffffff';
     ctx.globalAlpha = 0.7;
@@ -253,9 +272,14 @@ class GratingFFTSimulation {
     
     ctx.beginPath();
     
-    // Create smooth envelope curve using continuous function
+    // Create smooth envelope curve that goes through each peak
     const centerX = this.cvs.width / 2;
-    const maxHeight = this.cvs.height * 0.18;
+    
+    // Find the leftmost and rightmost orders to determine range
+    const xPositions = this.diffractionOrders.map(o => o.x);
+    const minX = Math.min(...xPositions);
+    const maxX = Math.max(...xPositions);
+    const range = maxX - minX;
     
     // Sample points along the width
     const numPoints = 200;
@@ -264,22 +288,10 @@ class GratingFFTSimulation {
     for (let i = 0; i < numPoints; i++) {
       const x = (i / (numPoints - 1)) * this.cvs.width;
       
-      // Calculate envelope intensity using sinc-like function
-      // sinc(x) = sin(x)/x pattern for diffraction envelope
-      const dx = (x - centerX) / (this.cvs.width * 0.3); // normalize distance
-      let envelopeIntensity;
-      
-      if (Math.abs(dx) < 0.01) {
-        envelopeIntensity = 1; // At center
-      } else {
-        // Sinc-squared envelope (single-slit diffraction pattern)
-        const sincArg = Math.PI * dx * 2;
-        const sincValue = Math.sin(sincArg) / sincArg;
-        envelopeIntensity = sincValue * sincValue;
-      }
-      
-      // Apply exponential falloff for better visual
-      envelopeIntensity *= Math.exp(-Math.abs(dx) * 0.8);
+      // Calculate envelope intensity that passes through all peaks
+      // Use a Gaussian-like envelope centered at middle
+      const dx = (x - centerX) / (range * 0.6); // normalize by the actual spread of orders
+      const envelopeIntensity = Math.exp(-dx * dx);
       
       const y = screenY - envelopeIntensity * maxHeight;
       
@@ -294,20 +306,6 @@ class GratingFFTSimulation {
     ctx.stroke();
     ctx.setLineDash([]); // Reset to solid line
     ctx.globalAlpha = 1;
-    
-    // Draw discrete peaks in wavelength color
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = i2h(this.color);
-    for (const order of this.diffractionOrders) {
-      const x = order.x;
-      const intensity = order.intensity;
-      const h = intensity * maxHeight;
-      
-      ctx.beginPath();
-      ctx.moveTo(x, screenY);
-      ctx.lineTo(x, screenY - h);
-      ctx.stroke();
-    }
   }
 
   drawScreenSlice(screenIntensity) {
