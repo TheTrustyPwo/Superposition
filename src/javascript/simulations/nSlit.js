@@ -7,8 +7,6 @@ import { i2h, interpolate, w2h } from "../utils/color.js";
   - Screen view shows bright spots instead of continuous distribution
 */
 
-// claude my pookie
-
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
     this.cvs = cvs;
@@ -343,9 +341,18 @@ class GratingFFTSimulation {
           targetX,
           screenY
         );
-        gradient.addColorStop(0, this.color + '00'); // transparent at grating
-        gradient.addColorStop(0.3, this.color + Math.floor(intensity * 100).toString(16).padStart(2, '0'));
-        gradient.addColorStop(1, this.color + Math.floor(intensity * 200).toString(16).padStart(2, '0'));
+        
+        // Convert hex color to rgba for proper transparency
+        const hexToRgba = (hex, alpha) => {
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        
+        gradient.addColorStop(0, hexToRgba(this.color, 0)); // transparent at grating
+        gradient.addColorStop(0.3, hexToRgba(this.color, intensity * 0.4));
+        gradient.addColorStop(1, hexToRgba(this.color, intensity * 0.8));
         
         ctx.strokeStyle = gradient;
         ctx.lineWidth = 1.5;
