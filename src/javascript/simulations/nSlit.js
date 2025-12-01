@@ -1,11 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-/*
-  Modified to show discrete diffraction orders as dots of light
-  - Intensity profile shows peaks for each order
-  - Screen view shows bright spots instead of continuous distribution
-*/
+// yay
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
