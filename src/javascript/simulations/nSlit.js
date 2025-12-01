@@ -7,6 +7,8 @@ import { i2h, interpolate, w2h } from "../utils/color.js";
   - Screen view shows bright spots instead of continuous distribution
 */
 
+// claude my pookie
+
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
     this.cvs = cvs;
@@ -231,7 +233,17 @@ class GratingFFTSimulation {
 
   drawIntensityPlot(spec) {
     const ctx = this.c;
-    const topY = this.screen.y - 5;
+    const screenY = this.screen.y;
+    
+    // Draw horizontal screen line
+    ctx.save();
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, screenY);
+    ctx.lineTo(this.cvs.width, screenY);
+    ctx.stroke();
+    ctx.restore();
     
     // Draw white envelope curve
     ctx.lineWidth = 2;
@@ -243,7 +255,7 @@ class GratingFFTSimulation {
       const order = this.diffractionOrders[i];
       const x = order.x;
       const intensity = order.intensity;
-      const y = topY - intensity * (this.cvs.height * 0.18);
+      const y = screenY - intensity * (this.cvs.height * 0.18);
       
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
@@ -260,8 +272,8 @@ class GratingFFTSimulation {
       const h = intensity * (this.cvs.height * 0.18);
       
       ctx.beginPath();
-      ctx.moveTo(x, topY);
-      ctx.lineTo(x, topY - h);
+      ctx.moveTo(x, screenY);
+      ctx.lineTo(x, screenY - h);
       ctx.stroke();
     }
   }
@@ -306,34 +318,74 @@ class GratingFFTSimulation {
   renderWaveFan() {
     if (!this.diffractionOrders || this.diffractionOrders.length === 0) return;
     const ctx = this.c;
-    const top = this.screen.y + 10;
-    const bottom = this.gratingY - 10;
-    const height = bottom - top;
+    const screenY = this.screen.y;
+    const gratingY = this.gratingY;
+    const height = gratingY - screenY;
     if (height <= 0) return;
 
-    const slices = 28;
+    // Draw wave rays from grating to each order on screen
+    ctx.save();
+    
+    for (const order of this.diffractionOrders) {
+      const targetX = order.x;
+      const intensity = order.intensity;
+      if (intensity < 0.05) continue;
+      
+      // Draw multiple rays to create wave-like appearance
+      const numRays = 3;
+      for (let r = 0; r < numRays; r++) {
+        const offset = (r - 1) * 2; // spread rays slightly
+        
+        // Create gradient for the ray
+        const gradient = ctx.createLinearGradient(
+          this.gratingX,
+          gratingY,
+          targetX,
+          screenY
+        );
+        gradient.addColorStop(0, this.color + '00'); // transparent at grating
+        gradient.addColorStop(0.3, this.color + Math.floor(intensity * 100).toString(16).padStart(2, '0'));
+        gradient.addColorStop(1, this.color + Math.floor(intensity * 200).toString(16).padStart(2, '0'));
+        
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1.5;
+        ctx.globalAlpha = 0.4 * intensity;
+        
+        ctx.beginPath();
+        ctx.moveTo(this.gratingX + offset, gratingY);
+        ctx.lineTo(targetX + offset, screenY);
+        ctx.stroke();
+      }
+    }
+    
+    // Add dotted wave pattern along the rays
+    const slices = 40;
     for (let s = 0; s < slices; s++) {
       const frac = s / (slices - 1);
-      const y = Math.round(top + frac * height);
-      const att = 1 - 0.9 * frac;
+      const y = Math.round(screenY + frac * height);
+      const att = 0.8 - 0.6 * frac; // fade from screen to grating
       
-      // Draw rays to each order
       for (const order of this.diffractionOrders) {
-        const x = Math.round(order.x);
+        const targetX = order.x;
         const v = order.intensity;
-        if (v < 0.01) continue;
+        if (v < 0.05) continue;
         
-        // Draw a few pixels around the ray
-        for (let dx = -2; dx <= 2; dx++) {
+        // Interpolate x position along the ray
+        const x = Math.round(targetX + (this.gratingX - targetX) * frac);
+        
+        // Draw dots to create wave appearance
+        for (let dx = -1; dx <= 1; dx++) {
           const xPos = x + dx;
           if (xPos >= 0 && xPos < this.cvs.width) {
-            ctx.globalAlpha = v * att * 0.8 * (1 - Math.abs(dx) / 3);
+            ctx.globalAlpha = v * att * 0.6;
             ctx.fillStyle = this.color;
-            ctx.fillRect(xPos, y, 1, 3);
+            ctx.fillRect(xPos, y, 2, 2);
           }
         }
       }
     }
+    
+    ctx.restore();
     ctx.globalAlpha = 1;
   }
 
@@ -385,6 +437,7 @@ class GratingFFTSimulation {
   setDistance = (distanceMeters) => {
     const d = Math.max(1.0, Math.min(2.0, Number(distanceMeters)));
     this.distanceToScreen = d;
+    this.resize(); // Call resize to recalculate screen position
     this.redraw = true;
   };
 }
