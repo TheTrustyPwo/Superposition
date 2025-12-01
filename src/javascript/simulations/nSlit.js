@@ -1,11 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-/*
-  Modified to show discrete diffraction orders as dots of light
-  - Intensity profile shows peaks for each order
-  - Screen view shows bright spots instead of continuous distribution
-*/
+// fire
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -184,8 +180,9 @@ class GratingFFTSimulation {
     // Apply density effect: higher density = wider spacing
     const densityFactor = this.density / 700; // normalized to 700 lines/mm baseline
     
-    // Apply distance effect: farther = wider spacing
-    const distanceFactor = this.distanceToScreen / 1.5;
+    // Apply distance effect: farther = wider spacing (toned down)
+    // Scale from 1.0 to 2.0 meters -> factor from 0.85 to 1.15 (30% range instead of 2x)
+    const distanceFactor = 0.85 + (this.distanceToScreen - 1.0) * 0.3;
     
     for (const order of this.diffractionOrders) {
       // Adjust position based on density and distance
