@@ -1,7 +1,11 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// heh
+/*
+  Modified to show discrete diffraction orders as dots of light
+  - Intensity profile shows peaks for each order
+  - Screen view shows bright spots instead of continuous distribution
+*/
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -129,7 +133,7 @@ class GratingFFTSimulation {
   }
 
   // Calculate discrete diffraction orders using simplified approach
-  // Always show at least 3 orders (center + first order on each side)
+  // Peak width depends on number of slits
   calculateDiffractionOrders() {
     const d = 1e-3 / this.density; // grating spacing in meters
     const orders = [];
@@ -156,8 +160,13 @@ class GratingFFTSimulation {
       // Intensity envelope - gradually decrease with order
       const intensity = Math.exp(-Math.abs(m) * 0.3);
       
+      // Peak width depends on number of slits (more slits = narrower peaks)
+      // Width is inversely proportional to number of illuminated slits
+      const effectiveSlits = this.illuminatedWidthPx / (1000 / this.density); // approximate number of slits
+      const peakWidth = Math.max(5, 30 / Math.sqrt(effectiveSlits)); // narrower with more slits
+      
       if (xPos >= -50 && xPos < this.cvs.width + 50) {
-        orders.push({ order: m, x: xPos, intensity: intensity });
+        orders.push({ order: m, x: xPos, intensity: intensity, width: peakWidth });
       }
     }
     
@@ -182,7 +191,7 @@ class GratingFFTSimulation {
       // Adjust position based on density and distance
       const adjustedX = this.cvs.width/2 + (order.x - this.cvs.width/2) * densityFactor * distanceFactor;
       
-      const width = 15; // Width of each peak in pixels
+      const width = order.width; // Use calculated width based on number of slits
       for (let dx = -width*2; dx <= width*2; dx++) {
         const x = Math.round(adjustedX + dx);
         if (x >= 0 && x < this.cvs.width) {
@@ -239,25 +248,40 @@ class GratingFFTSimulation {
     ctx.stroke();
     ctx.restore();
     
-    // Draw white envelope curve
+    // Draw smooth dotted white envelope curve
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#ffffff';
-    ctx.globalAlpha = 0.6;
+    ctx.globalAlpha = 0.7;
+    ctx.setLineDash([5, 5]); // Create dotted line
     
     ctx.beginPath();
-    for (let i = 0; i < this.diffractionOrders.length; i++) {
-      const order = this.diffractionOrders[i];
-      const x = order.x;
-      const intensity = order.intensity;
-      const y = screenY - intensity * (this.cvs.height * 0.18);
+    
+    // Create smooth curve through all order peaks using quadratic curves
+    if (this.diffractionOrders.length > 0) {
+      const firstOrder = this.diffractionOrders[0];
+      const firstY = screenY - firstOrder.intensity * (this.cvs.height * 0.18);
+      ctx.moveTo(firstOrder.x, firstY);
       
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+      for (let i = 0; i < this.diffractionOrders.length - 1; i++) {
+        const current = this.diffractionOrders[i];
+        const next = this.diffractionOrders[i + 1];
+        
+        const currentY = screenY - current.intensity * (this.cvs.height * 0.18);
+        const nextY = screenY - next.intensity * (this.cvs.height * 0.18);
+        
+        // Control point is midway between peaks
+        const cpX = (current.x + next.x) / 2;
+        const cpY = (currentY + nextY) / 2;
+        
+        ctx.quadraticCurveTo(cpX, cpY, next.x, nextY);
+      }
     }
+    
     ctx.stroke();
+    ctx.setLineDash([]); // Reset to solid line
     ctx.globalAlpha = 1;
     
-    // Draw discrete peaks in color
+    // Draw discrete peaks in wavelength color
     ctx.lineWidth = 3;
     ctx.strokeStyle = i2h(this.color);
     for (const order of this.diffractionOrders) {
@@ -284,12 +308,12 @@ class GratingFFTSimulation {
     ctx.stroke();
     ctx.restore();
 
-    // Draw discrete bright spots
+    // Draw discrete bright spots with width based on number of slits
     for (const order of this.diffractionOrders) {
       const x = Math.round(order.x);
       const v = order.intensity;
       const h = Math.round(v * (this.cvs.height * 0.45));
-      const width = 8; // Width of each spot
+      const width = Math.round(order.width); // Use calculated width
       
       if (h > 0) {
         for (let dx = -width; dx <= width; dx++) {
@@ -317,9 +341,8 @@ class GratingFFTSimulation {
     const height = gratingY - screenY;
     if (height <= 0) return;
 
-    // Convert hex color to rgba for proper transparency
+    // Convert wavelength color to rgba for proper transparency
     const hexToRgba = (hex, alpha) => {
-      // Ensure hex is a string
       const hexStr = typeof hex === 'string' ? hex : String(hex);
       const cleanHex = hexStr.startsWith('#') ? hexStr : '#' + hexStr;
       const r = parseInt(cleanHex.slice(1, 3), 16);
@@ -341,7 +364,7 @@ class GratingFFTSimulation {
       for (let r = 0; r < numRays; r++) {
         const offset = (r - 1) * 2; // spread rays slightly
         
-        // Create gradient for the ray
+        // Create gradient for the ray using wavelength color
         const gradient = ctx.createLinearGradient(
           this.gratingX,
           gratingY,
@@ -364,7 +387,7 @@ class GratingFFTSimulation {
       }
     }
     
-    // Add dotted wave pattern along the rays
+    // Add dotted wave pattern along the rays in wavelength color
     const slices = 40;
     for (let s = 0; s < slices; s++) {
       const frac = s / (slices - 1);
@@ -379,12 +402,12 @@ class GratingFFTSimulation {
         // Interpolate x position along the ray
         const x = Math.round(targetX + (this.gratingX - targetX) * frac);
         
-        // Draw dots to create wave appearance
+        // Draw dots in wavelength color
         for (let dx = -1; dx <= 1; dx++) {
           const xPos = x + dx;
           if (xPos >= 0 && xPos < this.cvs.width) {
             ctx.globalAlpha = v * att * 0.6;
-            ctx.fillStyle = this.color;
+            ctx.fillStyle = this.color; // Use wavelength color
             ctx.fillRect(xPos, y, 2, 2);
           }
         }
@@ -395,7 +418,7 @@ class GratingFFTSimulation {
     ctx.globalAlpha = 1;
   }
 
-  // Screen view shows discrete bright dots
+  // Screen view shows discrete bright dots with width variation
   drawScreenView = (screenCtx, width, height) => {
     if (!this.diffractionOrders) {
       const spec = this.computeSpec();
@@ -406,11 +429,11 @@ class GratingFFTSimulation {
     screenCtx.fillStyle = '#000000';
     screenCtx.fillRect(0, 0, width, height);
     
-    // Draw each order as a bright vertical stripe
+    // Draw each order as a bright vertical stripe with variable width
     for (const order of this.diffractionOrders) {
       const xScreen = (order.x / this.cvs.width) * width;
       const intensity = order.intensity;
-      const spotWidth = Math.max(2, width * 0.015); // Responsive width
+      const spotWidth = Math.max(2, (order.width / this.cvs.width) * width * 2); // Scale width to screen view
       
       for (let dx = -spotWidth; dx <= spotWidth; dx++) {
         const x = Math.round(xScreen + dx);
