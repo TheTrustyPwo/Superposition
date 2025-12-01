@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// yay
+// yip
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -337,17 +337,7 @@ class GratingFFTSimulation {
     const height = gratingY - screenY;
     if (height <= 0) return;
 
-    // Convert wavelength color to rgba for proper transparency
-    const hexToRgba = (hex, alpha) => {
-      const hexStr = typeof hex === 'string' ? hex : String(hex);
-      const cleanHex = hexStr.startsWith('#') ? hexStr : '#' + hexStr;
-      const r = parseInt(cleanHex.slice(1, 3), 16);
-      const g = parseInt(cleanHex.slice(3, 5), 16);
-      const b = parseInt(cleanHex.slice(5, 7), 16);
-      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    };
-
-    // Draw wave rays from grating to each order on screen
+    // Draw straight colored lines from grating to each maxima
     ctx.save();
     
     for (const order of this.diffractionOrders) {
@@ -355,65 +345,21 @@ class GratingFFTSimulation {
       const intensity = order.intensity;
       if (intensity < 0.05) continue;
       
-      // Draw multiple rays to create wave-like appearance
-      const numRays = 3;
-      for (let r = 0; r < numRays; r++) {
-        const offset = (r - 1) * 2; // spread rays slightly
-        
-        // Create gradient for the ray using wavelength color
-        const gradient = ctx.createLinearGradient(
-          this.gratingX,
-          gratingY,
-          targetX,
-          screenY
-        );
-        
-        gradient.addColorStop(0, hexToRgba(this.color, 0)); // transparent at grating
-        gradient.addColorStop(0.3, hexToRgba(this.color, intensity * 0.4));
-        gradient.addColorStop(1, hexToRgba(this.color, intensity * 0.8));
-        
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = 1.5;
-        ctx.globalAlpha = 0.4 * intensity;
-        
-        ctx.beginPath();
-        ctx.moveTo(this.gratingX + offset, gratingY);
-        ctx.lineTo(targetX + offset, screenY);
-        ctx.stroke();
-      }
-    }
-    
-    // Add dotted wave pattern along the rays in wavelength color
-    const slices = 40;
-    for (let s = 0; s < slices; s++) {
-      const frac = s / (slices - 1);
-      const y = Math.round(screenY + frac * height);
-      const att = 0.8 - 0.6 * frac; // fade from screen to grating
+      // Draw single straight line in wavelength color
+      ctx.strokeStyle = i2h(this.color);
+      ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.6 * intensity;
       
-      for (const order of this.diffractionOrders) {
-        const targetX = order.x;
-        const v = order.intensity;
-        if (v < 0.05) continue;
-        
-        // Interpolate x position along the ray
-        const x = Math.round(targetX + (this.gratingX - targetX) * frac);
-        
-        // Draw dots in wavelength color
-        for (let dx = -1; dx <= 1; dx++) {
-          const xPos = x + dx;
-          if (xPos >= 0 && xPos < this.cvs.width) {
-            ctx.globalAlpha = v * att * 0.6;
-            ctx.fillStyle = this.color; // Use wavelength color
-            ctx.fillRect(xPos, y, 2, 2);
-          }
-        }
-      }
+      ctx.beginPath();
+      ctx.moveTo(this.gratingX, gratingY);
+      ctx.lineTo(targetX, screenY);
+      ctx.stroke();
     }
     
     ctx.restore();
     ctx.globalAlpha = 1;
   }
-
+  
   // Screen view shows discrete bright dots with width variation
   drawScreenView = (screenCtx, width, height) => {
     if (!this.diffractionOrders) {
