@@ -1,7 +1,11 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// yip
+/*
+  Modified to show discrete diffraction orders as dots of light
+  - Intensity profile shows peaks for each order
+  - Screen view shows bright spots instead of continuous distribution
+*/
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -244,7 +248,7 @@ class GratingFFTSimulation {
     ctx.stroke();
     ctx.restore();
     
-    // Draw smooth dotted white envelope curve
+    // Draw smooth dotted white envelope curve using sinc-like envelope
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#ffffff';
     ctx.globalAlpha = 0.7;
@@ -252,24 +256,41 @@ class GratingFFTSimulation {
     
     ctx.beginPath();
     
-    // Create smooth curve through all order peaks using quadratic curves
-    if (this.diffractionOrders.length > 0) {
-      const firstOrder = this.diffractionOrders[0];
-      const firstY = screenY - firstOrder.intensity * (this.cvs.height * 0.18);
-      ctx.moveTo(firstOrder.x, firstY);
+    // Create smooth envelope curve using continuous function
+    const centerX = this.cvs.width / 2;
+    const maxHeight = this.cvs.height * 0.18;
+    
+    // Sample points along the width
+    const numPoints = 200;
+    let started = false;
+    
+    for (let i = 0; i < numPoints; i++) {
+      const x = (i / (numPoints - 1)) * this.cvs.width;
       
-      for (let i = 0; i < this.diffractionOrders.length - 1; i++) {
-        const current = this.diffractionOrders[i];
-        const next = this.diffractionOrders[i + 1];
-        
-        const currentY = screenY - current.intensity * (this.cvs.height * 0.18);
-        const nextY = screenY - next.intensity * (this.cvs.height * 0.18);
-        
-        // Control point is midway between peaks
-        const cpX = (current.x + next.x) / 2;
-        const cpY = (currentY + nextY) / 2;
-        
-        ctx.quadraticCurveTo(cpX, cpY, next.x, nextY);
+      // Calculate envelope intensity using sinc-like function
+      // sinc(x) = sin(x)/x pattern for diffraction envelope
+      const dx = (x - centerX) / (this.cvs.width * 0.3); // normalize distance
+      let envelopeIntensity;
+      
+      if (Math.abs(dx) < 0.01) {
+        envelopeIntensity = 1; // At center
+      } else {
+        // Sinc-squared envelope (single-slit diffraction pattern)
+        const sincArg = Math.PI * dx * 2;
+        const sincValue = Math.sin(sincArg) / sincArg;
+        envelopeIntensity = sincValue * sincValue;
+      }
+      
+      // Apply exponential falloff for better visual
+      envelopeIntensity *= Math.exp(-Math.abs(dx) * 0.8);
+      
+      const y = screenY - envelopeIntensity * maxHeight;
+      
+      if (!started) {
+        ctx.moveTo(x, y);
+        started = true;
+      } else {
+        ctx.lineTo(x, y);
       }
     }
     
@@ -283,7 +304,7 @@ class GratingFFTSimulation {
     for (const order of this.diffractionOrders) {
       const x = order.x;
       const intensity = order.intensity;
-      const h = intensity * (this.cvs.height * 0.18);
+      const h = intensity * maxHeight;
       
       ctx.beginPath();
       ctx.moveTo(x, screenY);
@@ -359,7 +380,7 @@ class GratingFFTSimulation {
     ctx.restore();
     ctx.globalAlpha = 1;
   }
-  
+
   // Screen view shows discrete bright dots with width variation
   drawScreenView = (screenCtx, width, height) => {
     if (!this.diffractionOrders) {
