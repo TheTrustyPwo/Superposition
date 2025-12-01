@@ -1,11 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-/*
-  Modified to show discrete diffraction orders as dots of light
-  - Intensity profile shows peaks for each order
-  - Screen view shows bright spots instead of continuous distribution
-*/
+//newwwww
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 600, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -132,30 +128,36 @@ class GratingFFTSimulation {
     return spec;
   }
 
-  // Calculate discrete diffraction orders using grating equation
+  // Calculate discrete diffraction orders using simplified approach
+  // Always show at least 3 orders (center + first order on each side)
   calculateDiffractionOrders() {
     const d = 1e-3 / this.density; // grating spacing in meters
     const orders = [];
     
-    // Calculate visible orders: d*sin(θ) = m*λ
-    // sin(θ) = m*λ/d, and |sin(θ)| <= 1
-    const maxOrder = Math.floor(d / this.wavelength);
+    // Fixed number of orders to always display
+    const ordersToShow = [-3, -2, -1, 0, 1, 2, 3];
     
-    for (let m = -maxOrder; m <= maxOrder; m++) {
+    for (const m of ordersToShow) {
       const sinTheta = m * this.wavelength / d;
+      
+      // Even if sinTheta > 1 (physically impossible), we'll place it for visibility
+      let theta;
       if (Math.abs(sinTheta) <= 1) {
-        const theta = Math.asin(sinTheta);
-        // Position on screen
-        const xPos = this.cvs.width/2 + Math.tan(theta) * this.distanceToScreen / this.xpx2m;
-        
-        // Intensity envelope (sinc function for single slit)
-        const beta = Math.PI * this.physicalSlitWidth * sinTheta / this.wavelength;
-        const sinc = (Math.abs(beta) < 0.001) ? 1 : Math.sin(beta) / beta;
-        const intensity = sinc * sinc;
-        
-        if (xPos >= 0 && xPos < this.cvs.width && intensity > 0.001) {
-          orders.push({ order: m, x: xPos, intensity: intensity });
-        }
+        theta = Math.asin(sinTheta);
+      } else {
+        // Extrapolate beyond physical limits for visualization
+        theta = Math.sign(sinTheta) * Math.PI / 2 * Math.min(Math.abs(sinTheta), 3);
+      }
+      
+      // Position on screen - scale to ensure visibility
+      const baseSpacing = 120; // minimum pixels between orders
+      const xPos = this.cvs.width/2 + m * baseSpacing * (this.distanceToScreen / 1.5);
+      
+      // Intensity envelope - gradually decrease with order
+      const intensity = Math.exp(-Math.abs(m) * 0.3);
+      
+      if (xPos >= -50 && xPos < this.cvs.width + 50) {
+        orders.push({ order: m, x: xPos, intensity: intensity });
       }
     }
     
@@ -164,24 +166,37 @@ class GratingFFTSimulation {
 
   fftToScreen(spec) {
     const N = spec.length;
-    const apertureMeters = this.illuminatedWidthPx * this.xpx2m;
     const screenIntensity = new Float32Array(this.cvs.width);
     screenIntensity.fill(0);
 
-    // Use discrete orders instead of continuous FFT mapping
+    // Use discrete orders with simplified positioning
     this.diffractionOrders = this.calculateDiffractionOrders();
     
-    // Draw Gaussian peaks at each order position
+    // Apply density effect: higher density = wider spacing
+    const densityFactor = this.density / 300; // normalized to 300 lines/mm baseline
+    
+    // Apply distance effect: farther = wider spacing
+    const distanceFactor = this.distanceToScreen / 1.5;
+    
     for (const order of this.diffractionOrders) {
+      // Adjust position based on density and distance
+      const adjustedX = this.cvs.width/2 + (order.x - this.cvs.width/2) * densityFactor * distanceFactor;
+      
       const width = 15; // Width of each peak in pixels
       for (let dx = -width*2; dx <= width*2; dx++) {
-        const x = Math.round(order.x + dx);
+        const x = Math.round(adjustedX + dx);
         if (x >= 0 && x < this.cvs.width) {
           const gaussian = Math.exp(-(dx*dx) / (2 * width * width));
           screenIntensity[x] += order.intensity * gaussian;
         }
       }
     }
+
+    // Store adjusted positions for rendering
+    this.diffractionOrders = this.diffractionOrders.map(order => ({
+      ...order,
+      x: this.cvs.width/2 + (order.x - this.cvs.width/2) * densityFactor * distanceFactor
+    }));
 
     // normalize
     let max = 0;
