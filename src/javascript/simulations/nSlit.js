@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// ily please work
+// revision number 5000
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -271,51 +271,51 @@ class GratingFFTSimulation {
     const envelopeWidthFactor = 1.0 + (this.distanceToScreen - 1.0) * 0.4;
     const envelopeWidth = this.cvs.width * 0.3 * envelopeWidthFactor;
     
-    // Draw discrete peaks as curves (Gaussian shapes) in wavelength color FIRST
+    // Draw one continuous wave that connects all peaks
     ctx.lineWidth = 2;
     ctx.strokeStyle = i2h(this.color);
     ctx.fillStyle = i2h(this.color);
     
-    for (const order of this.diffractionOrders) {
-      const centerX = order.x;
+    // Create continuous intensity wave
+    ctx.beginPath();
+    ctx.moveTo(0, screenY);
+    
+    const numSamples = this.cvs.width * 2; // High resolution for smooth curve
+    let yValues = [];
+    
+    for (let i = 0; i <= numSamples; i++) {
+      const x = (i / numSamples) * this.cvs.width;
+      let totalIntensity = 0;
       
-      // Calculate envelope intensity at this x position
-      const dx = (centerX - this.cvs.width / 2) / envelopeWidth;
-      const envelopeIntensity = Math.exp(-dx * dx);
-      
-      // Peak height matches envelope
-      const peakHeight = envelopeIntensity * maxHeight;
-      
-      // Draw curved peak using the order's width
-      const peakWidth = order.width * 2; // Drawing width for the curve
-      
-      ctx.beginPath();
-      ctx.moveTo(centerX - peakWidth, screenY);
-      
-      // Sample points to create smooth Gaussian curve
-      const numSamples = 30;
-      for (let i = 0; i <= numSamples; i++) {
-        const t = i / numSamples;
-        const x = centerX - peakWidth + t * (2 * peakWidth);
-        const distFromCenter = x - centerX;
-        
-        // Gaussian curve for this peak
+      // Sum contribution from all orders at this x position
+      for (const order of this.diffractionOrders) {
+        const distFromCenter = x - order.x;
         const gaussian = Math.exp(-(distFromCenter * distFromCenter) / (2 * order.width * order.width));
-        const y = screenY - gaussian * peakHeight;
         
-        ctx.lineTo(x, y);
+        // Calculate envelope intensity at order position
+        const dx = (order.x - this.cvs.width / 2) / envelopeWidth;
+        const envelopeIntensity = Math.exp(-dx * dx);
+        
+        totalIntensity += gaussian * envelopeIntensity;
       }
       
-      ctx.lineTo(centerX + peakWidth, screenY);
-      
-      // Fill the curve with semi-transparent color
-      ctx.globalAlpha = 0.3;
-      ctx.fill();
-      
-      // Stroke the outline
-      ctx.globalAlpha = 1.0;
-      ctx.stroke();
+      const y = screenY - totalIntensity * maxHeight;
+      yValues.push(y);
+      ctx.lineTo(x, y);
     }
+    
+    // Complete the shape back to baseline
+    ctx.lineTo(this.cvs.width, screenY);
+    ctx.lineTo(0, screenY);
+    ctx.closePath();
+    
+    // Fill with semi-transparent color
+    ctx.globalAlpha = 0.3;
+    ctx.fill();
+    
+    // Stroke the outline
+    ctx.globalAlpha = 1.0;
+    ctx.stroke();
     
     // Draw smooth dotted white envelope curve OVER the peaks
     ctx.lineWidth = 2;
@@ -325,14 +325,8 @@ class GratingFFTSimulation {
     
     ctx.beginPath();
     
-    // Create smooth envelope curve that goes through each peak
+    // Create smooth envelope curve that goes through peak maxima
     const centerX = this.cvs.width / 2;
-    
-    // Find the leftmost and rightmost orders to determine range
-    const xPositions = this.diffractionOrders.map(o => o.x);
-    const minX = Math.min(...xPositions);
-    const maxX = Math.max(...xPositions);
-    const range = maxX - minX;
     
     // Sample points along the width
     const numPoints = 200;
@@ -342,7 +336,6 @@ class GratingFFTSimulation {
       const x = (i / (numPoints - 1)) * this.cvs.width;
       
       // Calculate envelope intensity using distance-dependent width
-      // Use a Gaussian-like envelope centered at middle
       const dx = (x - centerX) / envelopeWidth;
       const envelopeIntensity = Math.exp(-dx * dx);
       
