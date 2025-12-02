@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// change wavelength 
+// ily please work
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -260,14 +260,23 @@ class GratingFFTSimulation {
     ctx.stroke();
     ctx.restore();
     
+    // Calculate maxHeight
+    const maxHeight = this.cvs.height * 0.18;
+    
     // Draw discrete peaks in wavelength color FIRST (so envelope goes over them)
     ctx.lineWidth = 3;
     ctx.strokeStyle = i2h(this.color);
-    const maxHeight = this.cvs.height * 0.18;
+    
     for (const order of this.diffractionOrders) {
       const x = order.x;
-      const intensity = order.intensity;
-      const h = intensity * maxHeight;
+      
+      // Calculate envelope intensity at this x position to match it exactly
+      const centerX = this.cvs.width / 2;
+      const dx = (x - centerX) / (this.cvs.width * 0.3);
+      const envelopeIntensity = Math.exp(-dx * dx);
+      
+      // Use envelope intensity directly for height
+      const h = envelopeIntensity * maxHeight;
       
       ctx.beginPath();
       ctx.moveTo(x, screenY);
@@ -301,7 +310,7 @@ class GratingFFTSimulation {
       
       // Calculate envelope intensity that passes through all peaks
       // Use a Gaussian-like envelope centered at middle
-      const dx = (x - centerX) / (range * 0.6); // normalize by the actual spread of orders
+      const dx = (x - centerX) / (this.cvs.width * 0.3); // normalize by the actual spread of orders
       const envelopeIntensity = Math.exp(-dx * dx);
       
       const y = screenY - envelopeIntensity * maxHeight;
