@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// works :)
+// I think I'm being extra but yes please work 
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -32,6 +32,7 @@ class GratingFFTSimulation {
     this.diffractionOrders = []; // Store discrete orders
 
     this.resize();
+    this.setupDragHandlers();
   }
 
   get xpx2m() {
@@ -139,7 +140,7 @@ class GratingFFTSimulation {
     const orders = [];
     
     // Fixed number of orders to always display
-    const ordersToShow = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
+    const ordersToShow = [-3, -2, -1, 0, 1, 2, 3];
     
     for (const m of ordersToShow) {
       const sinTheta = m * this.wavelength / d;
@@ -425,6 +426,25 @@ class GratingFFTSimulation {
     const d = Math.max(1.0, Math.min(2.0, Number(distanceMeters)));
     this.distanceToScreen = d;
     this.resize(); // Call resize to recalculate screen position
+    this.redraw = true;
+  };
+
+  setupDragHandlers = () => {
+    // Set min and max Y bounds for the screen
+    this.screen.minY = Math.round(this.cvs.height * 0.25); // 2.0m (farthest)
+    this.screen.maxY = Math.round(this.cvs.height * 0.75); // 1.0m (closest)
+  };
+
+  mouseMove = (event, x, y) => {
+    const prevY = this.screen.y;
+    this.screen.y = Math.max(Math.min(y, this.screen.maxY), this.screen.minY);
+    if (prevY === this.screen.y) return;
+    
+    // Update distance based on new Y position
+    // Y from maxY (0.75*height) = 1.0m to minY (0.25*height) = 2.0m
+    const fraction = (this.screen.maxY - this.screen.y) / (this.screen.maxY - this.screen.minY);
+    this.distanceToScreen = 1.0 + fraction * 1.0;
+    
     this.redraw = true;
   };
 }
