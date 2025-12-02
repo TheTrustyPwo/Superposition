@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// ily please work
+// yay
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -133,7 +133,7 @@ class GratingFFTSimulation {
   }
 
   // Calculate discrete diffraction orders using simplified approach
-  // Peak width depends on number of slits
+  // Peak width depends on number of slits and distance
   calculateDiffractionOrders() {
     const d = 1e-3 / this.density; // grating spacing in meters
     const orders = [];
@@ -158,12 +158,29 @@ class GratingFFTSimulation {
       const xPos = this.cvs.width/2 + m * baseSpacing * (this.distanceToScreen / 1.5);
       
       // Intensity envelope - gradually decrease with order
-      const intensity = Math.exp(-Math.abs(m) * 0.3);
+      const baseIntensity = Math.exp(-Math.abs(m) * 0.3);
       
-      // Peak width depends on number of slits (more slits = narrower peaks)
-      // Width is inversely proportional to number of illuminated slits
-      const effectiveSlits = this.illuminatedWidthPx / (1000 / this.density); // approximate number of slits
-      const peakWidth = Math.max(5, 30 / Math.sqrt(effectiveSlits)); // narrower with more slits
+      // Calculate envelope intensity for this position (for height adjustment)
+      const centerX = this.cvs.width / 2;
+      const dx = (xPos - centerX) / (this.cvs.width * 0.3);
+      const envelopeIntensity = Math.exp(-dx * dx);
+      
+      // Adjust intensity for orders 2+ to match envelope
+      let intensity;
+      if (Math.abs(m) >= 2) {
+        // Scale to match envelope height
+        intensity = envelopeIntensity;
+      } else {
+        intensity = baseIntensity;
+      }
+      
+      // Peak width depends on:
+      // 1. Number of slits (more slits = narrower peaks)
+      // 2. Distance (farther = wider peaks due to diffraction spreading)
+      const effectiveSlits = this.illuminatedWidthPx / (1000 / this.density);
+      const slitFactor = 30 / Math.sqrt(effectiveSlits);
+      const distanceFactor = Math.pow(this.distanceToScreen / 1.5, 0.5); // sqrt relationship
+      const peakWidth = Math.max(5, slitFactor * distanceFactor);
       
       if (xPos >= -50 && xPos < this.cvs.width + 50) {
         orders.push({ order: m, x: xPos, intensity: intensity, width: peakWidth });
