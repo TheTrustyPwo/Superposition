@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// I think I'm being extra but yes please work 
+// ily please work
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -271,24 +271,49 @@ class GratingFFTSimulation {
     const envelopeWidthFactor = 1.0 + (this.distanceToScreen - 1.0) * 0.4;
     const envelopeWidth = this.cvs.width * 0.3 * envelopeWidthFactor;
     
-    // Draw discrete peaks in wavelength color FIRST (so envelope goes over them)
-    ctx.lineWidth = 3;
+    // Draw discrete peaks as curves (Gaussian shapes) in wavelength color FIRST
+    ctx.lineWidth = 2;
     ctx.strokeStyle = i2h(this.color);
+    ctx.fillStyle = i2h(this.color);
     
     for (const order of this.diffractionOrders) {
-      const x = order.x;
+      const centerX = order.x;
       
-      // Calculate envelope intensity at this x position to match it exactly
-      const centerX = this.cvs.width / 2;
-      const dx = (x - centerX) / envelopeWidth;
+      // Calculate envelope intensity at this x position
+      const dx = (centerX - this.cvs.width / 2) / envelopeWidth;
       const envelopeIntensity = Math.exp(-dx * dx);
       
-      // Use envelope intensity directly for height
-      const h = envelopeIntensity * maxHeight;
+      // Peak height matches envelope
+      const peakHeight = envelopeIntensity * maxHeight;
+      
+      // Draw curved peak using the order's width
+      const peakWidth = order.width * 2; // Drawing width for the curve
       
       ctx.beginPath();
-      ctx.moveTo(x, screenY);
-      ctx.lineTo(x, screenY - h);
+      ctx.moveTo(centerX - peakWidth, screenY);
+      
+      // Sample points to create smooth Gaussian curve
+      const numSamples = 30;
+      for (let i = 0; i <= numSamples; i++) {
+        const t = i / numSamples;
+        const x = centerX - peakWidth + t * (2 * peakWidth);
+        const distFromCenter = x - centerX;
+        
+        // Gaussian curve for this peak
+        const gaussian = Math.exp(-(distFromCenter * distFromCenter) / (2 * order.width * order.width));
+        const y = screenY - gaussian * peakHeight;
+        
+        ctx.lineTo(x, y);
+      }
+      
+      ctx.lineTo(centerX + peakWidth, screenY);
+      
+      // Fill the curve with semi-transparent color
+      ctx.globalAlpha = 0.3;
+      ctx.fill();
+      
+      // Stroke the outline
+      ctx.globalAlpha = 1.0;
       ctx.stroke();
     }
     
