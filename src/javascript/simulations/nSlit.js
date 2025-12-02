@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// worked!!!
+// works :)
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -263,6 +263,13 @@ class GratingFFTSimulation {
     // Calculate maxHeight
     const maxHeight = this.cvs.height * 0.18;
     
+    // Calculate envelope width factor based on distance
+    // Physics: envelope width ∝ λL/a (wavelength × distance / slit width)
+    // Farther distance → wider envelope (subtle but visible)
+    // Scale from distance 1.0m to 2.0m → width factor from 1.0 to 1.4
+    const envelopeWidthFactor = 1.0 + (this.distanceToScreen - 1.0) * 0.4;
+    const envelopeWidth = this.cvs.width * 0.3 * envelopeWidthFactor;
+    
     // Draw discrete peaks in wavelength color FIRST (so envelope goes over them)
     ctx.lineWidth = 3;
     ctx.strokeStyle = i2h(this.color);
@@ -272,7 +279,7 @@ class GratingFFTSimulation {
       
       // Calculate envelope intensity at this x position to match it exactly
       const centerX = this.cvs.width / 2;
-      const dx = (x - centerX) / (this.cvs.width * 0.3);
+      const dx = (x - centerX) / envelopeWidth;
       const envelopeIntensity = Math.exp(-dx * dx);
       
       // Use envelope intensity directly for height
@@ -308,9 +315,9 @@ class GratingFFTSimulation {
     for (let i = 0; i < numPoints; i++) {
       const x = (i / (numPoints - 1)) * this.cvs.width;
       
-      // Calculate envelope intensity that passes through all peaks
+      // Calculate envelope intensity using distance-dependent width
       // Use a Gaussian-like envelope centered at middle
-      const dx = (x - centerX) / (this.cvs.width * 0.3); // normalize by the actual spread of orders
+      const dx = (x - centerX) / envelopeWidth;
       const envelopeIntensity = Math.exp(-dx * dx);
       
       const y = screenY - envelopeIntensity * maxHeight;
