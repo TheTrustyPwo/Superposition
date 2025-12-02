@@ -9,7 +9,7 @@ Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\l
 <canvas id="nSlit" width="1000" height="600"></canvas>
 
 <div class="density">
-    <input type="range" min="700" max="2000" step="10" value="1000" class="slider" id="densityInput">
+    <input type="range" min="700" max="1400" step="10" value="1000" class="slider" id="densityInput">
     Lines per mm: <span id="densityValue">1000</span> lines/mm
 </div>
 
