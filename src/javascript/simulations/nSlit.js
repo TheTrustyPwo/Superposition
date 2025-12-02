@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// ily please work
+// worked!!!
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -139,7 +139,7 @@ class GratingFFTSimulation {
     const orders = [];
     
     // Fixed number of orders to always display
-    const ordersToShow = [-3, -2, -1, 0, 1, 2, 3];
+    const ordersToShow = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
     
     for (const m of ordersToShow) {
       const sinTheta = m * this.wavelength / d;
