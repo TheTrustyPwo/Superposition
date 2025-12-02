@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// yay
+// ily please work
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -157,30 +157,21 @@ class GratingFFTSimulation {
       const baseSpacing = 120; // minimum pixels between orders
       const xPos = this.cvs.width/2 + m * baseSpacing * (this.distanceToScreen / 1.5);
       
-      // Intensity envelope - gradually decrease with order
-      const baseIntensity = Math.exp(-Math.abs(m) * 0.3);
-      
-      // Calculate envelope intensity for this position (for height adjustment)
+      // Calculate envelope intensity for this position - ALL orders touch envelope
       const centerX = this.cvs.width / 2;
       const dx = (xPos - centerX) / (this.cvs.width * 0.3);
       const envelopeIntensity = Math.exp(-dx * dx);
       
-      // Adjust intensity for orders 2+ to match envelope
-      let intensity;
-      if (Math.abs(m) >= 2) {
-        // Scale to match envelope height
-        intensity = envelopeIntensity;
-      } else {
-        intensity = baseIntensity;
-      }
+      // All orders match envelope height
+      const intensity = envelopeIntensity;
       
       // Peak width depends on:
-      // 1. Number of slits (more slits = narrower peaks)
-      // 2. Distance (farther = wider peaks due to diffraction spreading)
+      // 1. Number of slits (more slits = narrower peaks) - increased sensitivity
+      // 2. Distance (farther = wider peaks due to diffraction spreading) - increased sensitivity
       const effectiveSlits = this.illuminatedWidthPx / (1000 / this.density);
-      const slitFactor = 30 / Math.sqrt(effectiveSlits);
-      const distanceFactor = Math.pow(this.distanceToScreen / 1.5, 0.5); // sqrt relationship
-      const peakWidth = Math.max(5, slitFactor * distanceFactor);
+      const slitFactor = 50 / Math.sqrt(effectiveSlits); // Increased from 30 for more pronounced effect
+      const distanceFactor = Math.pow(this.distanceToScreen / 1.0, 1.2); // Increased exponent and adjusted baseline for more visible change
+      const peakWidth = Math.max(3, slitFactor * distanceFactor);
       
       if (xPos >= -50 && xPos < this.cvs.width + 50) {
         orders.push({ order: m, x: xPos, intensity: intensity, width: peakWidth });
