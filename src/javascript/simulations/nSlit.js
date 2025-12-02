@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// ily please work
+// change wavelength 
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -154,7 +154,10 @@ class GratingFFTSimulation {
       }
       
       // Position on screen - scale to ensure visibility
-      const baseSpacing = 120; // minimum pixels between orders
+      // Spacing depends on wavelength: longer wavelength = wider spacing
+      // Using 500nm as baseline wavelength
+      const wavelengthFactor = this.wavelength / 500e-9;
+      const baseSpacing = 120 * wavelengthFactor; // spacing scales with wavelength
       const xPos = this.cvs.width/2 + m * baseSpacing * (this.distanceToScreen / 1.5);
       
       // Calculate envelope intensity for this position - ALL orders touch envelope
