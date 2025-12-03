@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// please work fingers crossed
+// fingers crossed part two
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -322,8 +322,8 @@ class GratingFFTSimulation {
         const peakControlX2 = currentPeak.x + spacing * 0.5;
         const peakControlY2 = screenY - currentPeak.height * 0.5;
         
-        // Curve down from peak
-        ctx.bezierCurveTo(peakControlX1, peakControlY1, peakControlX2, peakControlY2, midX, screenY);
+        // Curve down from peak to midpoint (slightly below line for rounded trough)
+        ctx.bezierCurveTo(peakControlX1, peakControlY1, peakControlX2, peakControlY2, midX, screenY + 5);
         
         // Create extremely smooth rounded trough - control points extend far horizontally
         const troughControlX1 = midX + spacing * 0.15;
