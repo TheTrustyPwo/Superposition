@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// praying please work 
+// thanks for working we finetuning now
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -303,46 +303,43 @@ class GratingFFTSimulation {
       const nextPeak = peaks[i + 1];
       
       if (i === 0) {
-        // Curve up to first peak
+        // Curve up to first peak with rounded top
         const controlX1 = startX + (currentPeak.x - startX) * 0.3;
         const controlY1 = screenY;
-        const controlX2 = currentPeak.x - (currentPeak.x - startX) * 0.3;
-        const controlY2 = screenY - currentPeak.height;
+        const controlX2 = currentPeak.x - (currentPeak.x - startX) * 0.4;
+        const controlY2 = screenY - currentPeak.height * 0.3;
         ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, currentPeak.x, screenY - currentPeak.height);
       }
       
       if (nextPeak) {
-        // Wave down and back up to next peak
         const midX = (currentPeak.x + nextPeak.x) / 2;
-        const valleyDepth = Math.min(currentPeak.height, nextPeak.height) * 0.2; // Dip to 20% of smaller peak
         
-        // Control points for smooth wave
-        const controlX1 = currentPeak.x + (midX - currentPeak.x) * 0.5;
-        const controlY1 = screenY - currentPeak.height * 0.6;
+        // Create rounded peak top - curve past the peak slightly
+        const peakControlX1 = currentPeak.x + (midX - currentPeak.x) * 0.15;
+        const peakControlY1 = screenY - currentPeak.height;
         
-        const controlX2 = midX - (midX - currentPeak.x) * 0.3;
-        const controlY2 = screenY - valleyDepth;
+        const peakControlX2 = currentPeak.x + (midX - currentPeak.x) * 0.35;
+        const peakControlY2 = screenY - currentPeak.height * 0.7;
         
-        // Curve down to valley
-        ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, midX, screenY - valleyDepth);
+        // Curve down from peak with rounded top
+        ctx.bezierCurveTo(peakControlX1, peakControlY1, peakControlX2, peakControlY2, midX, screenY);
         
-        // Control points for upward curve
-        const controlX3 = midX + (nextPeak.x - midX) * 0.3;
-        const controlY3 = screenY - valleyDepth;
+        // Curve up to next peak with rounded top
+        const controlX3 = midX + (nextPeak.x - midX) * 0.35;
+        const controlY3 = screenY - nextPeak.height * 0.3;
         
-        const controlX4 = nextPeak.x - (nextPeak.x - midX) * 0.5;
-        const controlY4 = screenY - nextPeak.height * 0.6;
+        const controlX4 = nextPeak.x - (nextPeak.x - midX) * 0.15;
+        const controlY4 = screenY - nextPeak.height;
         
-        // Curve up to next peak
-        ctx.bezierCurveTo(controlX3, controlY3, controlX4, controlY4, nextPeak.x, screenY - nextPeak.height);
+        ctx.bezierCurveTo(midX, screenY, controlX3, controlY3, nextPeak.x, screenY - nextPeak.height);
       }
     }
     
-    // Curve down from last peak to baseline
+    // Curve down from last peak to baseline with rounded top
     const lastPeak = peaks[peaks.length - 1];
     const endX = Math.min(this.cvs.width, lastPeak.x + 100);
-    const controlX1 = lastPeak.x + (endX - lastPeak.x) * 0.3;
-    const controlY1 = screenY - lastPeak.height;
+    const controlX1 = lastPeak.x + (endX - lastPeak.x) * 0.4;
+    const controlY1 = screenY - lastPeak.height * 0.3;
     const controlX2 = endX - (endX - lastPeak.x) * 0.3;
     const controlY2 = screenY;
     ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, endX, screenY);
