@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// fingers crossed part two
+// pleeeeaaaaase more dark mode = less bugs
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -329,8 +329,8 @@ class GratingFFTSimulation {
         const troughControlX1 = midX + spacing * 0.15;
         const troughControlY1 = screenY + 5; // Slightly below the line for rounder approach
         
-        const troughControlX2 = nextPeak.x - spacing * 0.33;
-        const troughControlY2 = screenY + 3; // Also slightly below for smoother arrival
+        const troughControlX2 = nextPeak.x - spacing * 0.4; // Extended further left for more gradual curve
+        const troughControlY2 = screenY - nextPeak.height * 0.3; // Higher control point for rounder approach
         
         // Curve up to next peak
         ctx.bezierCurveTo(troughControlX1, troughControlY1, troughControlX2, troughControlY2, nextPeak.x, screenY - nextPeak.height);
