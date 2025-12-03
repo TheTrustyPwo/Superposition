@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// revision number 5000
+// revision number 50001
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -271,37 +271,58 @@ class GratingFFTSimulation {
     const envelopeWidthFactor = 1.0 + (this.distanceToScreen - 1.0) * 0.4;
     const envelopeWidth = this.cvs.width * 0.3 * envelopeWidthFactor;
     
-    // Draw one continuous wave that connects all peaks
+    // Calculate intensities at maxima positions
+    const maxima = this.diffractionOrders.map(order => {
+      const dx = (order.x - this.cvs.width / 2) / envelopeWidth;
+      const envelopeIntensity = Math.exp(-dx * dx);
+      return {
+        x: order.x,
+        intensity: envelopeIntensity
+      };
+    });
+    
+    // Draw one continuous wave using spline interpolation through maxima
     ctx.lineWidth = 2;
     ctx.strokeStyle = i2h(this.color);
     ctx.fillStyle = i2h(this.color);
     
-    // Create continuous intensity wave
     ctx.beginPath();
     ctx.moveTo(0, screenY);
     
-    const numSamples = this.cvs.width * 2; // High resolution for smooth curve
-    let yValues = [];
+    // Generate smooth curve through maxima using cardinal spline
+    const tension = 0.5; // Controls curve smoothness
+    const numSegments = 50; // Points between each maximum
     
-    for (let i = 0; i <= numSamples; i++) {
-      const x = (i / numSamples) * this.cvs.width;
-      let totalIntensity = 0;
+    for (let i = 0; i < maxima.length - 1; i++) {
+      const p0 = maxima[Math.max(0, i - 1)];
+      const p1 = maxima[i];
+      const p2 = maxima[i + 1];
+      const p3 = maxima[Math.min(maxima.length - 1, i + 2)];
       
-      // Sum contribution from all orders at this x position
-      for (const order of this.diffractionOrders) {
-        const distFromCenter = x - order.x;
-        const gaussian = Math.exp(-(distFromCenter * distFromCenter) / (2 * order.width * order.width));
+      for (let t = 0; t <= numSegments; t++) {
+        const norm_t = t / numSegments;
         
-        // Calculate envelope intensity at order position
-        const dx = (order.x - this.cvs.width / 2) / envelopeWidth;
-        const envelopeIntensity = Math.exp(-dx * dx);
+        // Cardinal spline interpolation
+        const t2 = norm_t * norm_t;
+        const t3 = t2 * norm_t;
         
-        totalIntensity += gaussian * envelopeIntensity;
+        const x = 0.5 * (
+          (2 * p1.x) +
+          (-p0.x + p2.x) * norm_t +
+          (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+          (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3
+        );
+        
+        const intensity = 0.5 * (
+          (2 * p1.intensity) +
+          (-p0.intensity + p2.intensity) * norm_t +
+          (2 * p0.intensity - 5 * p1.intensity + 4 * p2.intensity - p3.intensity) * t2 +
+          (-p0.intensity + 3 * p1.intensity - 3 * p2.intensity + p3.intensity) * t3
+        );
+        
+        const y = screenY - Math.max(0, intensity) * maxHeight;
+        ctx.lineTo(x, y);
       }
-      
-      const y = screenY - totalIntensity * maxHeight;
-      yValues.push(y);
-      ctx.lineTo(x, y);
     }
     
     // Complete the shape back to baseline
