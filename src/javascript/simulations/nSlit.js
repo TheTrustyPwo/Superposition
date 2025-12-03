@@ -1,7 +1,8 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// version 50002
+// version 50005
+
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
     this.cvs = cvs;
@@ -296,44 +297,42 @@ class GratingFFTSimulation {
     const startX = Math.max(0, leftmost.x - 100);
     ctx.moveTo(startX, screenY);
     
-    // Draw smooth oscillating curve through each peak
+    // Draw smooth sinusoidal curve through each peak
     for (let i = 0; i < peaks.length; i++) {
       const currentPeak = peaks[i];
       const nextPeak = peaks[i + 1];
       
       if (i === 0) {
-        // Curve up to first peak with very rounded top
-        const controlX1 = startX + (currentPeak.x - startX) * 0.4;
-        const controlY1 = screenY - currentPeak.height * 0.1;
-        const controlX2 = currentPeak.x - (currentPeak.x - startX) * 0.25;
-        const controlY2 = screenY - currentPeak.height * 0.85;
+        // Curve up to first peak with smooth sinusoidal shape
+        const controlX1 = startX + (currentPeak.x - startX) * 0.33;
+        const controlY1 = screenY - currentPeak.height * 0.05;
+        const controlX2 = startX + (currentPeak.x - startX) * 0.67;
+        const controlY2 = screenY - currentPeak.height * 0.95;
         ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, currentPeak.x, screenY - currentPeak.height);
       }
       
       if (nextPeak) {
         const midX = (currentPeak.x + nextPeak.x) / 2;
+        const spacing = nextPeak.x - currentPeak.x;
         
-        // Create very rounded peak top - extend control points horizontally
-        const peakControlX1 = currentPeak.x + (midX - currentPeak.x) * 0.25;
-        const peakControlY1 = screenY - currentPeak.height;
+        // Create extremely smooth rounded peak - control points extend far horizontally
+        const peakControlX1 = currentPeak.x + spacing * 0.33;
+        const peakControlY1 = screenY - currentPeak.height * 0.98;
         
-        const peakControlX2 = currentPeak.x + (midX - currentPeak.x) * 0.5;
+        const peakControlX2 = currentPeak.x + spacing * 0.5;
         const peakControlY2 = screenY - currentPeak.height * 0.5;
         
-        // Curve down from peak with very rounded top
+        // Curve down from peak
         ctx.bezierCurveTo(peakControlX1, peakControlY1, peakControlX2, peakControlY2, midX, screenY);
         
-        // Create very rounded trough - extend control points horizontally
-        const troughControlX1 = midX + (nextPeak.x - midX) * 0.25;
-        const troughControlY1 = screenY;
+        // Create extremely smooth rounded trough - control points extend far horizontally
+        const troughControlX1 = midX + spacing * 0.17;
+        const troughControlY1 = screenY * 1.0;
         
-        const troughControlX2 = midX + (nextPeak.x - midX) * 0.5;
-        const troughControlY2 = screenY - nextPeak.height * 0.5;
+        const troughControlX2 = nextPeak.x - spacing * 0.33;
+        const troughControlY2 = screenY - nextPeak.height * 0.05;
         
-        // Curve up to next peak with very rounded trough
-        const controlX4 = nextPeak.x - (nextPeak.x - midX) * 0.25;
-        const controlY4 = screenY - nextPeak.height;
-        
+        // Curve up to next peak
         ctx.bezierCurveTo(troughControlX1, troughControlY1, troughControlX2, troughControlY2, nextPeak.x, screenY - nextPeak.height);
       }
     }
