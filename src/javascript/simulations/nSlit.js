@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// revision number 50001
+// praying please work 
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -271,63 +271,84 @@ class GratingFFTSimulation {
     const envelopeWidthFactor = 1.0 + (this.distanceToScreen - 1.0) * 0.4;
     const envelopeWidth = this.cvs.width * 0.3 * envelopeWidthFactor;
     
-    // Calculate intensities at maxima positions
-    const maxima = this.diffractionOrders.map(order => {
+    // Calculate peak heights based on envelope
+    const peaks = this.diffractionOrders.map(order => {
       const dx = (order.x - this.cvs.width / 2) / envelopeWidth;
       const envelopeIntensity = Math.exp(-dx * dx);
       return {
         x: order.x,
-        intensity: envelopeIntensity
+        height: envelopeIntensity * maxHeight,
+        order: order.order
       };
     });
     
-    // Draw one continuous wave using spline interpolation through maxima
+    // Sort peaks by x position
+    peaks.sort((a, b) => a.x - b.x);
+    
+    // Draw wavy curve connecting all peaks
     ctx.lineWidth = 2;
     ctx.strokeStyle = i2h(this.color);
     ctx.fillStyle = i2h(this.color);
     
     ctx.beginPath();
-    ctx.moveTo(0, screenY);
     
-    // Generate smooth curve through maxima using cardinal spline
-    const tension = 0.5; // Controls curve smoothness
-    const numSegments = 50; // Points between each maximum
+    // Start from the left edge at baseline
+    const leftmost = peaks[0];
+    const startX = Math.max(0, leftmost.x - 100);
+    ctx.moveTo(startX, screenY);
     
-    for (let i = 0; i < maxima.length - 1; i++) {
-      const p0 = maxima[Math.max(0, i - 1)];
-      const p1 = maxima[i];
-      const p2 = maxima[i + 1];
-      const p3 = maxima[Math.min(maxima.length - 1, i + 2)];
+    // Draw smooth oscillating curve through each peak
+    for (let i = 0; i < peaks.length; i++) {
+      const currentPeak = peaks[i];
+      const nextPeak = peaks[i + 1];
       
-      for (let t = 0; t <= numSegments; t++) {
-        const norm_t = t / numSegments;
+      if (i === 0) {
+        // Curve up to first peak
+        const controlX1 = startX + (currentPeak.x - startX) * 0.3;
+        const controlY1 = screenY;
+        const controlX2 = currentPeak.x - (currentPeak.x - startX) * 0.3;
+        const controlY2 = screenY - currentPeak.height;
+        ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, currentPeak.x, screenY - currentPeak.height);
+      }
+      
+      if (nextPeak) {
+        // Wave down and back up to next peak
+        const midX = (currentPeak.x + nextPeak.x) / 2;
+        const valleyDepth = Math.min(currentPeak.height, nextPeak.height) * 0.2; // Dip to 20% of smaller peak
         
-        // Cardinal spline interpolation
-        const t2 = norm_t * norm_t;
-        const t3 = t2 * norm_t;
+        // Control points for smooth wave
+        const controlX1 = currentPeak.x + (midX - currentPeak.x) * 0.5;
+        const controlY1 = screenY - currentPeak.height * 0.6;
         
-        const x = 0.5 * (
-          (2 * p1.x) +
-          (-p0.x + p2.x) * norm_t +
-          (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
-          (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3
-        );
+        const controlX2 = midX - (midX - currentPeak.x) * 0.3;
+        const controlY2 = screenY - valleyDepth;
         
-        const intensity = 0.5 * (
-          (2 * p1.intensity) +
-          (-p0.intensity + p2.intensity) * norm_t +
-          (2 * p0.intensity - 5 * p1.intensity + 4 * p2.intensity - p3.intensity) * t2 +
-          (-p0.intensity + 3 * p1.intensity - 3 * p2.intensity + p3.intensity) * t3
-        );
+        // Curve down to valley
+        ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, midX, screenY - valleyDepth);
         
-        const y = screenY - Math.max(0, intensity) * maxHeight;
-        ctx.lineTo(x, y);
+        // Control points for upward curve
+        const controlX3 = midX + (nextPeak.x - midX) * 0.3;
+        const controlY3 = screenY - valleyDepth;
+        
+        const controlX4 = nextPeak.x - (nextPeak.x - midX) * 0.5;
+        const controlY4 = screenY - nextPeak.height * 0.6;
+        
+        // Curve up to next peak
+        ctx.bezierCurveTo(controlX3, controlY3, controlX4, controlY4, nextPeak.x, screenY - nextPeak.height);
       }
     }
     
-    // Complete the shape back to baseline
-    ctx.lineTo(this.cvs.width, screenY);
-    ctx.lineTo(0, screenY);
+    // Curve down from last peak to baseline
+    const lastPeak = peaks[peaks.length - 1];
+    const endX = Math.min(this.cvs.width, lastPeak.x + 100);
+    const controlX1 = lastPeak.x + (endX - lastPeak.x) * 0.3;
+    const controlY1 = screenY - lastPeak.height;
+    const controlX2 = endX - (endX - lastPeak.x) * 0.3;
+    const controlY2 = screenY;
+    ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, endX, screenY);
+    
+    // Complete the shape back to start
+    ctx.lineTo(startX, screenY);
     ctx.closePath();
     
     // Fill with semi-transparent color
