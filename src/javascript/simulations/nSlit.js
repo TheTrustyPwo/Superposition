@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// pleeeeaaaaase more dark mode = less bugs
+// this is a last ditch attempt please
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -303,37 +303,37 @@ class GratingFFTSimulation {
       const nextPeak = peaks[i + 1];
       
       if (i === 0) {
-        // Curve up to first peak with smooth sinusoidal shape
-        const controlX1 = startX + (currentPeak.x - startX) * 0.33;
-        const controlY1 = screenY - currentPeak.height * 0.05;
-        const controlX2 = startX + (currentPeak.x - startX) * 0.67;
-        const controlY2 = screenY - currentPeak.height * 0.95;
+        // Sharp rise to first peak
+        const controlX1 = startX + (currentPeak.x - startX) * 0.7;
+        const controlY1 = screenY;
+        const controlX2 = currentPeak.x - (currentPeak.x - startX) * 0.1;
+        const controlY2 = screenY - currentPeak.height * 0.9;
         ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, currentPeak.x, screenY - currentPeak.height);
       }
       
       if (nextPeak) {
-        const midX = (currentPeak.x + nextPeak.x) / 2;
         const spacing = nextPeak.x - currentPeak.x;
+        const midX = (currentPeak.x + nextPeak.x) / 2;
         
-        // Create extremely smooth rounded peak - control points extend far horizontally
-        const peakControlX1 = currentPeak.x + spacing * 0.33;
-        const peakControlY1 = screenY - currentPeak.height * 0.98;
+        // Sharp descent from peak - control points create steep drop
+        const descendControlX1 = currentPeak.x + spacing * 0.1;
+        const descendControlY1 = screenY - currentPeak.height * 0.9;
         
-        const peakControlX2 = currentPeak.x + spacing * 0.5;
-        const peakControlY2 = screenY - currentPeak.height * 0.5;
+        const descendControlX2 = midX - spacing * 0.15;
+        const descendControlY2 = screenY + 2; // Slightly below for rounding
         
-        // Curve down from peak to midpoint (slightly below line for rounded trough)
-        ctx.bezierCurveTo(peakControlX1, peakControlY1, peakControlX2, peakControlY2, midX, screenY + 5);
+        // Go down to baseline at midpoint
+        ctx.bezierCurveTo(descendControlX1, descendControlY1, descendControlX2, descendControlY2, midX, screenY);
         
-        // Create extremely smooth rounded trough - control points extend far horizontally
-        const troughControlX1 = midX + spacing * 0.15;
-        const troughControlY1 = screenY + 5; // Slightly below the line for rounder approach
+        // Sharp ascent to next peak - control points create steep rise with slight rounding
+        const ascentControlX1 = midX + spacing * 0.15;
+        const ascentControlY1 = screenY + 2; // Slightly below for rounding
         
-        const troughControlX2 = nextPeak.x - spacing * 0.4; // Extended further left for more gradual curve
-        const troughControlY2 = screenY - nextPeak.height * 0.3; // Higher control point for rounder approach
+        const ascentControlX2 = nextPeak.x - spacing * 0.1;
+        const ascentControlY2 = screenY - nextPeak.height * 0.9;
         
         // Curve up to next peak
-        ctx.bezierCurveTo(troughControlX1, troughControlY1, troughControlX2, troughControlY2, nextPeak.x, screenY - nextPeak.height);
+        ctx.bezierCurveTo(ascentControlX1, ascentControlY1, ascentControlX2, ascentControlY2, nextPeak.x, screenY - nextPeak.height);
       }
     }
     
