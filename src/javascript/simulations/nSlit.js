@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// this has to work or the next time will be like a week ++ later 
+// gahhhh this is truly ast before I leave 
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -140,7 +140,7 @@ class GratingFFTSimulation {
     const orders = [];
     
     // Fixed number of orders to always display
-    const ordersToShow = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
+    const ordersToShow = [-8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8];
     
     for (const m of ordersToShow) {
       const sinTheta = m * this.wavelength / d;
@@ -303,43 +303,28 @@ class GratingFFTSimulation {
       const nextPeak = peaks[i + 1];
       
       if (i === 0) {
-        // Sharp rise to first peak
-        const controlX1 = startX + (currentPeak.x - startX) * 0.7;
+        // Sharp rise approaching first peak
+        const approachX = currentPeak.x - spacing * 0.15;
+        const controlX1 = startX + (approachX - startX) * 0.7;
         const controlY1 = screenY;
-        const controlX2 = currentPeak.x - (currentPeak.x - startX) * 0.2;
-        const controlY2 = screenY - currentPeak.height * 0.7;
-        ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, currentPeak.x, screenY - currentPeak.height);
+        const controlX2 = approachX - (approachX - startX) * 0.1;
+        const controlY2 = screenY - currentPeak.height * 0.85;
+        ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, approachX, screenY - currentPeak.height * 0.95);
+        
+        // Rounded peak top
+        const peakControlX1 = currentPeak.x - spacing * 0.08;
+        const peakControlY1 = screenY - currentPeak.height * 1.02; // Go slightly above for roundness
+        const peakControlX2 = currentPeak.x + spacing * 0.08;
+        const peakControlY2 = screenY - currentPeak.height * 1.02;
+        ctx.bezierCurveTo(peakControlX1, peakControlY1, peakControlX2, peakControlY2, currentPeak.x + spacing * 0.15, screenY - currentPeak.height * 0.95);
       }
       
       if (nextPeak) {
         const spacing = nextPeak.x - currentPeak.x;
         const midX = (currentPeak.x + nextPeak.x) / 2;
         
-        // Create rounded peak top with two curves
-        const peakRadius = spacing * 0.12; // Width of rounded top
-        
-        // Left side of rounded peak
-        const peakLeftX = currentPeak.x - peakRadius;
-        const peakLeftControlX = currentPeak.x - peakRadius * 0.5;
-        const peakLeftControlY = screenY - currentPeak.height;
-        ctx.bezierCurveTo(
-          peakLeftControlX, peakLeftControlY,
-          currentPeak.x - peakRadius * 0.3, screenY - currentPeak.height,
-          currentPeak.x, screenY - currentPeak.height
-        );
-        
-        // Right side of rounded peak
-        const peakRightX = currentPeak.x + peakRadius;
-        const peakRightControlX = currentPeak.x + peakRadius * 0.5;
-        const peakRightControlY = screenY - currentPeak.height;
-        ctx.bezierCurveTo(
-          currentPeak.x + peakRadius * 0.3, screenY - currentPeak.height,
-          peakRightControlX, peakRightControlY,
-          peakRightX, screenY - currentPeak.height * 0.98
-        );
-        
-        // Descent from peak to trough
-        const descendControlX1 = currentPeak.x + spacing * 0.25;
+        // Descent from peak
+        const descendControlX1 = currentPeak.x + spacing * 0.22;
         const descendControlY1 = screenY - currentPeak.height * 0.7;
         
         const descendControlX2 = midX - spacing * 0.1;
@@ -347,14 +332,22 @@ class GratingFFTSimulation {
         
         ctx.bezierCurveTo(descendControlX1, descendControlY1, descendControlX2, descendControlY2, midX, screenY);
         
-        // Ascent from trough to next peak
+        // Ascent approaching next peak
+        const nextApproachX = nextPeak.x - spacing * 0.15;
         const ascentControlX1 = midX + spacing * 0.1;
         const ascentControlY1 = screenY;
         
-        const ascentControlX2 = nextPeak.x - spacing * 0.2;
-        const ascentControlY2 = screenY - nextPeak.height * 0.7;
+        const ascentControlX2 = nextApproachX - spacing * 0.1;
+        const ascentControlY2 = screenY - nextPeak.height * 0.85;
         
-        ctx.bezierCurveTo(ascentControlX1, ascentControlY1, ascentControlX2, ascentControlY2, nextPeak.x - peakRadius, screenY - nextPeak.height * 0.98);
+        ctx.bezierCurveTo(ascentControlX1, ascentControlY1, ascentControlX2, ascentControlY2, nextApproachX, screenY - nextPeak.height * 0.95);
+        
+        // Rounded peak top for next peak
+        const nextPeakControlX1 = nextPeak.x - spacing * 0.08;
+        const nextPeakControlY1 = screenY - nextPeak.height * 1.02;
+        const nextPeakControlX2 = nextPeak.x + spacing * 0.08;
+        const nextPeakControlY2 = screenY - nextPeak.height * 1.02;
+        ctx.bezierCurveTo(nextPeakControlX1, nextPeakControlY1, nextPeakControlX2, nextPeakControlY2, nextPeak.x + spacing * 0.15, screenY - nextPeak.height * 0.95);
       }
     }
     
