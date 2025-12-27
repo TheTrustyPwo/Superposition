@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// gahhhh this is truly ast before I leave 
+// oml how am I not done with this
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -140,7 +140,7 @@ class GratingFFTSimulation {
     const orders = [];
     
     // Fixed number of orders to always display
-    const ordersToShow = [-8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8];
+    const ordersToShow = [-3, -2, -1, 0, 1, 2, 3];
     
     for (const m of ordersToShow) {
       const sinTheta = m * this.wavelength / d;
@@ -303,8 +303,11 @@ class GratingFFTSimulation {
       const nextPeak = peaks[i + 1];
       
       if (i === 0) {
+        // Calculate spacing for first peak
+        const firstSpacing = nextPeak ? (nextPeak.x - currentPeak.x) : (currentPeak.x - startX);
+        
         // Sharp rise approaching first peak
-        const approachX = currentPeak.x - spacing * 0.15;
+        const approachX = currentPeak.x - firstSpacing * 0.15;
         const controlX1 = startX + (approachX - startX) * 0.7;
         const controlY1 = screenY;
         const controlX2 = approachX - (approachX - startX) * 0.1;
@@ -312,11 +315,11 @@ class GratingFFTSimulation {
         ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, approachX, screenY - currentPeak.height * 0.95);
         
         // Rounded peak top
-        const peakControlX1 = currentPeak.x - spacing * 0.08;
+        const peakControlX1 = currentPeak.x - firstSpacing * 0.08;
         const peakControlY1 = screenY - currentPeak.height * 1.02; // Go slightly above for roundness
-        const peakControlX2 = currentPeak.x + spacing * 0.08;
+        const peakControlX2 = currentPeak.x + firstSpacing * 0.08;
         const peakControlY2 = screenY - currentPeak.height * 1.02;
-        ctx.bezierCurveTo(peakControlX1, peakControlY1, peakControlX2, peakControlY2, currentPeak.x + spacing * 0.15, screenY - currentPeak.height * 0.95);
+        ctx.bezierCurveTo(peakControlX1, peakControlY1, peakControlX2, peakControlY2, currentPeak.x + firstSpacing * 0.15, screenY - currentPeak.height * 0.95);
       }
       
       if (nextPeak) {
