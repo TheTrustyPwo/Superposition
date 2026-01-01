@@ -29,9 +29,9 @@ Only transverse waves and longitudinal waves are covered in the A-level H2 Physi
 <br> 
 Comparison between transverse and longitudinal waves: <br> 
 *image goes here*
-<br> 
+<br> <br>
 
-3. Mode of Motion
+Mode of Motion 
 
 | Type of Wave | Explanation |
 |---|---|
