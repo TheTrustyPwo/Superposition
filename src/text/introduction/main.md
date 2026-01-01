@@ -39,12 +39,15 @@ Comparison between transverse and longitudinal waves: <br>
 | Standing | - Stores energy, does not transfer energy <br> - Overall wave does not move <br> - Each point has different amplitude <br> - Has nodes and antinodes <br> - Only nodes and antinodes are in phase |
 
 ### Wave terms 
-1. The *phase* is the state of the wave in its cycle while the phase difference represents the difference in cycle between two waves. 
-2. The *wavelength* is the distance travelled for it to complete one cycle.
-3. The *period* is the time taken for the wave to travel one wavelength.
-4. The *crest* and *trough* represent the points of maximum and minimum displacement of the wave. The particle is also momentarily at rest at these locations.
-5. The *rest* or *equilibrium position* is the point of which the particle would be without any disturbances.
 
+| Term | Definition | 
+|---|---| 
+| Amplitude | Maximum displacement of a particle from its equilibrium position | 
+| Period | The time taken by a particle to make one complete oscillation or by a source to produce one complete cycle of wave | 
+| Frequency | Number of complete oscillations made by a particle or number of cycles of wave produced by a source in one second | 
+| Phase | Usually measured in degrees or radians, refers to the current position of a wave cycle relative to a reference point | 
+| Wavelength | Distance between two consecutive points in phase | 
+| Wave speed | Distance travelled per second by a wave profile| 
 
 ## Key Formulae Summary:
 
