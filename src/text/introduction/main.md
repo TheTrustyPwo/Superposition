@@ -15,6 +15,7 @@ The two most studied waves in classical physics as well as in H2 physics are mec
 | Mechanical | - Defined as the oscillation of matter, therefore it transfers energy through a physical medium <br> - The material must have inertia and elasticity, so the maximum displacement of the material is not far from the position of equilibrium <br> - 3 types of mechanical waves: transverse waves, longitudinal waves and surface waves <br> - *Examples: sound waves, oscillating string* | 
 | Electromagnetic (EM) | - Produced by a changing electric field that induces a changing magnetic field or vice versa <br> - Electric field and magnetic field are perpendicular to each other <br> - Can travel through a vacuum (no medium) at the speed of light, 3.00 $\times$ 10<sup>8</sup> m s<sup>-1</sup> <br> - *Examples: x-ray, gamma ray, visible light* <br> <img src="em.png" width="500px"> |
 
+<br>
 Only transverse waves and longitudinal waves are covered in the A-level H2 Physics syllabus. 
 
 | Type of Wave | Explanation |
@@ -22,18 +23,19 @@ Only transverse waves and longitudinal waves are covered in the A-level H2 Physi
 | Transverse | - Oscillates perpendicular to the direction of propagation of the wave <br> - Has crests (peaks) and troughs (valleys) <br> - *Examples: electromagnetic (EM) waves, water waves* | 
 | Longitudinal | - Oscillates parallel to the direction of propagation of the wave <br> - Has compressions (regions of high pressure) and rarefactions (regions of low pressure) <br> - *Examples: sound waves* | 
 | Surface | - Propagates along the boundary between two different materials (for example: water waves* occur on the boundary between liquid and gas) <br> - Consists of Love waves (transverse motion) or Rayleigh waves (transverse and longitudinal motion) <br> - *Examples: ocean waves, seismic waves* | 
+
 **Water waves are a combination of transverse, longitudinal and surface waves, but is not a Rayleigh wave as water particles move in circular paths while Rayleigh waves move in elliptical paths*
 
-3. Mode of Motion
-    1. Progressive Waves (Traveling Waves):
-        - Progressive waves move continuously through the medium, transferring energy from one point to another.
-        - These waves can be either longitudinal or transverse.
-        - An example of a progressive wave is a wave moving along a string where the disturbance travels from one end to the other.
+<br> 
+Comparison between transverse and longitudinal waves: <br> 
+*image goes here*
+<br> 
 
-    2. Stationary Waves (Standing Waves):
-        - Stationary waves are formed by the superposition of two waves of the same frequency and amplitude traveling in opposite directions.
-        - Unlike progressive waves, stationary waves do not transfer energy from one point to another. Instead, they create fixed points called nodes (points of no displacement) and antinodes (points of maximum displacement).
-        - Examples include the vibrations of a guitar string or the air columns in a pipe.
+3. Mode of Motion
+| Type of Wave | Explanation |
+|---|---|
+| Progressive | - Transfers energy, does not store energy <br> - Propagates through a medium <br> - All points have the same maximum amplitude <br> - Does not have nodes (amplitude = 0 at all times) or antinodes (amplitude = maximum displacement at all times) <br> - Points exactly a wavelength apart are in phase | 
+| Standing | - Stores energy, does not transfer energy <br> - Overall wave does not move <br> - Each point has different amplitude <br> - Has nodes and antinodes <br> - Only nodes and antinodes are in phase |
 
 ### Wave terms 
 1. The *phase* is the state of the wave in its cycle while the phase difference represents the difference in cycle between two waves. 
