@@ -15,7 +15,7 @@ The two most studied waves in classical physics as well as in H2 physics are mec
 | Type of Wave | Explanation | 
 |---|---|
 | Mechanical | - Defined as the oscillation of matter, therefore it transfers energy through a physical medium <br> - The material must have inertia and elasticity, so the maximum displacement of the material is not far from the position of equilibrium <br> - 3 types of mechanical waves: transverse waves, longitudinal waves and surface waves <br> - *Examples: sound waves, oscillating string* | 
-| Electromagnetic (EM) | - Produced by a changing electric field that induces a changing magnetic field or vice versa <br> - Electric field and magnetic field are perpendicular to each other <br> - Can travel through a vacuum (no medium) at the speed of light, 3.00 $\times$ 10<sup>8</sup> m s<sup>-1</sup> <br> - *Examples: x-ray, gamma ray, visible light* <br> <img src="em.png" width="500px"> |
+| Electromagnetic (EM) | - Produced by a changing electric field that induces a changing magnetic field or vice versa <br> - Electric field and magnetic field are perpendicular to each other <br> - Can travel through a vacuum (no medium) at the speed of light, 3.00 $\times$ 10<sup>8</sup> m s<sup>-1</sup> <br> - *Examples: x-ray, gamma ray, visible light* <br> <img src="intro1.png" width="500px"> |
 
 2. Direction of Oscillation
 
@@ -23,15 +23,15 @@ Only transverse waves and longitudinal waves are covered in the A-level H2 Physi
 
 | Type of Wave | Explanation |
 |---|---| 
-| Transverse | - Oscillates perpendicular to the direction of propagation of the wave <br> - Has crests (peaks) and troughs (valleys) <br> - *Examples: electromagnetic (EM) waves, water waves* | 
-| Longitudinal | - Oscillates parallel to the direction of propagation of the wave <br> - Has compressions (regions of high pressure) and rarefactions (regions of low pressure) <br> - *Examples: sound waves* | 
-| Surface | - Propagates along the boundary between two different materials (for example: water waves* occur on the boundary between liquid and gas) <br> - Consists of Love waves (transverse motion) or Rayleigh waves (transverse and longitudinal motion) <br> - *Examples: ocean waves, seismic waves* | 
+| Transverse | - Oscillates perpendicular to the direction of propagation of the wave <br> - Has crests (peaks) and troughs (valleys) <br> - *Examples: electromagnetic (EM) waves, water waves* <br> <img src="intro2.png">| 
+| Longitudinal | - Oscillates parallel to the direction of propagation of the wave <br> - Has compressions (regions of high pressure) and rarefactions (regions of low pressure) <br> - *Examples: sound waves* <br> <img src="intro3.png"> | 
+| Surface | - Propagates along the boundary between two different materials (for example: water waves* occur on the boundary between liquid and gas) <br> - Consists of Love waves (transverse motion) or Rayleigh waves (transverse and longitudinal motion) <br> - *Examples: ocean waves, seismic waves* <br> <img src="intro4.png"> | 
 
 **Water waves are a combination of transverse, longitudinal and surface waves, but is not a Rayleigh wave as water particles move in circular paths while Rayleigh waves move in elliptical paths*
 
 <br> 
 Comparison between transverse and longitudinal waves: <br> 
-*image goes here*
+<img src="intro5.png">
 <br> <br>
 
 3. Mode of Motion 
