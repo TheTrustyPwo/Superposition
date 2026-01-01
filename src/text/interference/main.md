@@ -62,7 +62,7 @@ Interference shares many similarities with diffraction. But if so what makes it 
     - Maxima:<br>
     $d\sin\theta = m\lambda \quad$
 
-### Differece in Pattern
+### Difference in Pattern
 - **Diffraction** <br>
 <img src="diffraction.png" alt="Description" width="500px" height="500px">
 
