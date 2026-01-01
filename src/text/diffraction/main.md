@@ -109,7 +109,7 @@ where:
     Distance (cm): <span id="distanceValue">200</span> cm
 </div>
 
-<script type="module" src="../javascript/sim6.js"></script>
+<script type="module" src="../../javascript/sim6.js"></script>
 
 
 ### Resolving Power and Rayleigh's Criterion
