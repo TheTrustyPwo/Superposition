@@ -62,6 +62,7 @@ Distributed under the GNU GPLv3 License. See `LICENSE.txt` for more information.
 * [TheTrustyPwo](https://github.com/TheTrustyPwo)
 * [LukePng](https://github.com/LukePng)
 * [flop-ping-fish](https://github.com/flop-ping-fish)
+* [k3nnaaa](https://github.com/k3nnaaa)
 
 Project Link: [https://github.com/TheTrustyPwo/Superposition](https://github.com/TheTrustyPwo/Superposition)
 
