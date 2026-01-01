@@ -4,7 +4,7 @@ Before getting into the technicalities and specifics of diffraction and interfer
 ## What are waves?
   
 ### Definition of a wave
-A wave is a propagating dynamic disturbance (change from equilibrium) of one or more quantities. A wave transfers energy from one point to another without transferring the medium of the wave. <br>
+A wave is a propagating dynamic disturbance (change from equilibrium) of one or more quantities. A wave transfers energy from one point to another without transferring the medium of the wave. <br> <br>
 *For example, sound is produced through the oscillations of air molecules (waves). The sound energy is transferred from the source to the listener’s ear, but the air molecules are not.*
 
 ### Wave Classifications
