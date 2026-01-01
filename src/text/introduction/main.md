@@ -7,19 +7,12 @@ Before getting into the technicalities and specifics of diffraction and interfer
 A wave is a propagating dynamic disturbance (change from equilibrium) of one or more quantities. A wave transfers energy from one point to another without transferring the medium of the wave. <br>
 *For example, sound is produced through the oscillations of air molecules (waves). The sound energy is transferred from the source to the listener’s ear, but the air molecules are not.*
 
-### Wave classification
-Can be classified by nature [EM wave, mechanical wave], direction of oscillation [longitudinal, transverse] as well as mode of motion [progressive, stationary]
+### Wave Classifications
+The two most studied waves in classical physics as well as in H2 physics are mechanical waves and electromagnetic waves.
 
-1. Nature of Wave
-    1. Electromagnetic (EM) Waves:
-        - These waves do not require a medium to propagate and can travel through a vacuum.
-        - They consist of oscillating electric and magnetic fields that are perpendicular to each other and to the direction of wave propagation.
-        - Examples include light waves, radio waves, X-rays, and gamma rays.
-
-    2. Mechanical Waves:
-        - These waves require a medium (solid, liquid, or gas) to travel through.
-        - The wave propagates by causing the particles of the medium to oscillate.
-        - Examples include sound waves, water waves, and seismic waves.
+| Type of Wave | Explanation | 
+|---|---|
+| Mechanical | - Defined as the oscillation of matter, therefore it transfers energy through a physical medium <br> - The material must have inertia ad elasticity, so the maximum displacement of the material is not far from the position of equilibrium <br> - 3 types of mechanical waves: transverse waves, longitudinal waves and surface waves <br> *Examples: sound waves, oscillating string* | 
 
 2. Direction of Oscillation
     1. Longitudinal Waves:
