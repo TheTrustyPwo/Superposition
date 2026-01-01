@@ -8,6 +8,8 @@ A wave is a propagating dynamic disturbance (change from equilibrium) of one or 
 *For example, sound is produced through the oscillations of air molecules (waves). The sound energy is transferred from the source to the listener’s ear, but the air molecules are not.*
 
 ### Wave Classifications
+1. Nature of Wave
+
 The two most studied waves in classical physics as well as in H2 physics are mechanical waves and electromagnetic waves.
 
 | Type of Wave | Explanation | 
@@ -16,6 +18,8 @@ The two most studied waves in classical physics as well as in H2 physics are mec
 | Electromagnetic (EM) | - Produced by a changing electric field that induces a changing magnetic field or vice versa <br> - Electric field and magnetic field are perpendicular to each other <br> - Can travel through a vacuum (no medium) at the speed of light, 3.00 $\times$ 10<sup>8</sup> m s<sup>-1</sup> <br> - *Examples: x-ray, gamma ray, visible light* <br> <img src="em.png" width="500px"> |
 
 <br>
+2. Direction of Oscillation
+
 Only transverse waves and longitudinal waves are covered in the A-level H2 Physics syllabus. 
 
 | Type of Wave | Explanation |
@@ -31,7 +35,7 @@ Comparison between transverse and longitudinal waves: <br>
 *image goes here*
 <br> <br>
 
-Mode of Motion 
+3. Mode of Motion 
 
 | Type of Wave | Explanation |
 |---|---|
