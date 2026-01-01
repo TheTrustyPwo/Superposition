@@ -71,7 +71,7 @@ $$
 where T is the period of the wave (the time it takes for one complete oscillation).
 
 3. Wavelength <br>
-Wavelength $\lambda\$ is the distance between two consecutive points in phase on the wave (e.g., crest to crest, trough to trough):
+Wavelength $\lambda$ is the distance between two consecutive points in phase on the wave (e.g., crest to crest, trough to trough):
 
 $$
 \lambda = \frac{v}{f}
