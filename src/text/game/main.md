@@ -7,7 +7,7 @@ If your answer is yes, click onto the link below and you will be redirected to a
 ### Test after website access 
 <a href = "https://docs.google.com/forms/d/e/1FAIpQLSfB_kHzC6qRh0aZAl2Nm4pWItIcq69un9Dm2mwXAzLKz-1rZw/viewform?usp=dialog"> Link to form </a> 
 
-### Quizzes
+## Quizzes
 If you are stuck, feel free to use our simulations for help!
 
 ### Level 1 Quiz (Easy) 
