@@ -32,6 +32,7 @@ Comparison between transverse and longitudinal waves: <br>
 <br> 
 
 3. Mode of Motion
+
 | Type of Wave | Explanation |
 |---|---|
 | Progressive | - Transfers energy, does not store energy <br> - Propagates through a medium <br> - All points have the same maximum amplitude <br> - Does not have nodes (amplitude = 0 at all times) or antinodes (amplitude = maximum displacement at all times) <br> - Points exactly a wavelength apart are in phase | 
