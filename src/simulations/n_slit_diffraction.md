@@ -25,4 +25,4 @@ Number of Fringes in the Central Maximum of the Diffraction Envelope: $2 \left\l
 
 <script type="module" src="../javascript/sim6.js"></script>
 
-Note: Intensity profile is normalized to the maximum intensity.
+Note: Pattern is not to scale, maximas closer together so change is observable 
