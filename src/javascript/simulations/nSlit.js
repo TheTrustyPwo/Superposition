@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// phew this finally works
+// ily please work
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -140,7 +140,7 @@ class GratingFFTSimulation {
     const orders = [];
     
     // Fixed number of orders to always display
-    const ordersToShow = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
+    const ordersToShow = [-3, -2, -1, 0, 1, 2, 3];
     
     for (const m of ordersToShow) {
       const sinTheta = m * this.wavelength / d;
@@ -254,7 +254,7 @@ class GratingFFTSimulation {
     // Draw horizontal screen line (thicker now for draggability)
     ctx.save();
     ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 4; // Increased from 2 to 4 for better visibility and dragging
+    ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(0, screenY);
     ctx.lineTo(this.cvs.width, screenY);
@@ -265,16 +265,36 @@ class GratingFFTSimulation {
     const maxHeight = this.cvs.height * 0.18;
     
     // Calculate envelope width factor based on distance
-    // Physics: envelope width ∝ λL/a (wavelength × distance / slit width)
-    // Farther distance → wider envelope (subtle but visible)
-    // Scale from distance 1.0m to 2.0m → width factor from 1.0 to 1.4
     const envelopeWidthFactor = 1.0 + (this.distanceToScreen - 1.0) * 0.4;
     const envelopeWidth = this.cvs.width * 0.3 * envelopeWidthFactor;
     
-    // Calculate peak heights based on envelope
+    // Single-slit diffraction envelope function
+    // This creates the main lobe and side lobes
+    const singleSlitEnvelope = (x) => {
+      const centerX = this.cvs.width / 2;
+      const dx = (x - centerX) / envelopeWidth;
+      
+      // Single slit diffraction: sinc^2 function approximated with multiple lobes
+      const mainLobe = Math.exp(-dx * dx * 2); // Narrower main lobe
+      
+      // Add side lobes (smaller envelopes on each side)
+      const lobeSpacing = 1.5; // Distance between lobe centers
+      const lobeWidth = 0.6; // Width of side lobes
+      
+      // Left side lobes
+      const leftLobe1 = 0.047 * Math.exp(-Math.pow((dx + lobeSpacing) / lobeWidth, 2));
+      const leftLobe2 = 0.016 * Math.exp(-Math.pow((dx + 2 * lobeSpacing) / lobeWidth, 2));
+      
+      // Right side lobes
+      const rightLobe1 = 0.047 * Math.exp(-Math.pow((dx - lobeSpacing) / lobeWidth, 2));
+      const rightLobe2 = 0.016 * Math.exp(-Math.pow((dx - 2 * lobeSpacing) / lobeWidth, 2));
+      
+      return mainLobe + leftLobe1 + leftLobe2 + rightLobe1 + rightLobe2;
+    };
+    
+    // Calculate peak heights based on new envelope with side lobes
     const peaks = this.diffractionOrders.map(order => {
-      const dx = (order.x - this.cvs.width / 2) / envelopeWidth;
-      const envelopeIntensity = Math.exp(-dx * dx);
+      const envelopeIntensity = singleSlitEnvelope(order.x);
       return {
         x: order.x,
         height: envelopeIntensity * maxHeight,
@@ -282,8 +302,11 @@ class GratingFFTSimulation {
       };
     });
     
+    // Filter out peaks that are too small to see
+    const visiblePeaks = peaks.filter(p => p.height > maxHeight * 0.01);
+    
     // Sort peaks by x position
-    peaks.sort((a, b) => a.x - b.x);
+    visiblePeaks.sort((a, b) => a.x - b.x);
     
     // Draw wavy curve connecting all peaks
     ctx.lineWidth = 2;
@@ -293,14 +316,14 @@ class GratingFFTSimulation {
     ctx.beginPath();
     
     // Start from the left edge at baseline
-    const leftmost = peaks[0];
+    const leftmost = visiblePeaks[0];
     const startX = Math.max(0, leftmost.x - 100);
     ctx.moveTo(startX, screenY);
     
     // Draw smooth sinusoidal curve through each peak
-    for (let i = 0; i < peaks.length; i++) {
-      const currentPeak = peaks[i];
-      const nextPeak = peaks[i + 1];
+    for (let i = 0; i < visiblePeaks.length; i++) {
+      const currentPeak = visiblePeaks[i];
+      const nextPeak = visiblePeaks[i + 1];
       
       if (i === 0) {
         // Calculate spacing for first peak
@@ -355,7 +378,7 @@ class GratingFFTSimulation {
     }
     
     // Curve down from last peak to baseline with rounded top
-    const lastPeak = peaks[peaks.length - 1];
+    const lastPeak = visiblePeaks[visiblePeaks.length - 1];
     const endX = Math.min(this.cvs.width, lastPeak.x + 100);
     const controlX1 = lastPeak.x + (endX - lastPeak.x) * 0.4;
     const controlY1 = screenY - lastPeak.height * 0.3;
@@ -375,28 +398,21 @@ class GratingFFTSimulation {
     ctx.globalAlpha = 1.0;
     ctx.stroke();
     
-    // Draw smooth dotted white envelope curve OVER the peaks
+    // Draw smooth dotted white envelope curve OVER the peaks showing side lobes
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#ffffff';
     ctx.globalAlpha = 0.7;
-    ctx.setLineDash([5, 5]); // Create dotted line
+    ctx.setLineDash([5, 5]);
     
     ctx.beginPath();
     
-    // Create smooth envelope curve that goes through peak maxima
     const centerX = this.cvs.width / 2;
-    
-    // Sample points along the width
-    const numPoints = 200;
+    const numPoints = 400;
     let started = false;
     
     for (let i = 0; i < numPoints; i++) {
       const x = (i / (numPoints - 1)) * this.cvs.width;
-      
-      // Calculate envelope intensity using distance-dependent width
-      const dx = (x - centerX) / envelopeWidth;
-      const envelopeIntensity = Math.exp(-dx * dx);
-      
+      const envelopeIntensity = singleSlitEnvelope(x);
       const y = screenY - envelopeIntensity * maxHeight;
       
       if (!started) {
@@ -408,7 +424,7 @@ class GratingFFTSimulation {
     }
     
     ctx.stroke();
-    ctx.setLineDash([]); // Reset to solid line
+    ctx.setLineDash([]);
     ctx.globalAlpha = 1;
   }
 
