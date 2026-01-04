@@ -140,7 +140,7 @@ class GratingFFTSimulation {
     const orders = [];
     
     // Fixed number of orders to always display
-    const ordersToShow = [-3, -2, -1, 0, 1, 2, 3];
+    const ordersToShow = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
     
     for (const m of ordersToShow) {
       const sinTheta = m * this.wavelength / d;
