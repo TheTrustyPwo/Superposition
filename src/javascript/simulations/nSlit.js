@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// ahhhh please I got deadlines to meet
+// okay trust 
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -140,7 +140,7 @@ class GratingFFTSimulation {
     const orders = [];
     
     // Fixed number of orders to always display
-    const ordersToShow = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
+    const ordersToShow = [-3, -2, -1, 0, 1, 2, 3];
     
     for (const m of ordersToShow) {
       const sinTheta = m * this.wavelength / d;
@@ -271,32 +271,33 @@ class GratingFFTSimulation {
     // Single-slit diffraction envelope function with distinct lobes
     const singleSlitEnvelope = (x) => {
       const centerX = this.cvs.width / 2;
-      const dx = (x - centerX) / envelopeWidth;
+      const normalizedX = (x - centerX) / envelopeWidth;
       
-      // Main lobe - VERY NARROW, only covers about 3-4 peaks
-      const mainLobe = Math.exp(-dx * dx * 8); // Very narrow main lobe
+      // Use sinc function to create proper zeros between lobes
+      // sinc(x) = sin(πx)/(πx), and intensity is sinc²(x)
+      const beta = normalizedX * 3.5; // Scale factor to control lobe width
       
-      // Side lobes positioned to create distinct separate curves
-      const lobeSpacing = 0.85; // Distance between lobe centers
-      const lobeWidth = 0.3; // Narrow side lobes
+      let sincValue;
+      if (Math.abs(beta) < 0.001) {
+        sincValue = 1; // Limit as beta approaches 0
+      } else {
+        sincValue = Math.sin(Math.PI * beta) / (Math.PI * beta);
+      }
       
-      // Left side lobes - 50% of main amplitude
-      const leftLobe1 = 0.5 * Math.exp(-Math.pow((dx + lobeSpacing) / lobeWidth, 2));
-      const leftLobe2 = 0.35 * Math.exp(-Math.pow((dx + 2 * lobeSpacing) / lobeWidth, 2));
+      // Square the sinc to get intensity, and scale to get proper side lobe heights
+      let intensity = sincValue * sincValue;
       
-      // Right side lobes - 50% of main amplitude  
-      const rightLobe1 = 0.5 * Math.exp(-Math.pow((dx - lobeSpacing) / lobeWidth, 2));
-      const rightLobe2 = 0.35 * Math.exp(-Math.pow((dx - 2 * lobeSpacing) / lobeWidth, 2));
+      // Scale to make side lobes about 50% of main lobe
+      // Natural sinc² gives ~4.5% for first side lobe, so we boost it
+      if (Math.abs(beta) > 1.0 && Math.abs(beta) < 2.0) {
+        // First side lobes
+        intensity *= 11; // Boost to ~50%
+      } else if (Math.abs(beta) >= 2.0 && Math.abs(beta) < 3.0) {
+        // Second side lobes  
+        intensity *= 8; // Boost to ~35%
+      }
       
-      // Smooth transitions between lobes - add small connecting valleys
-      const valley1Left = 0.02 * Math.exp(-Math.pow((dx + lobeSpacing * 0.5) / 0.15, 2));
-      const valley1Right = 0.02 * Math.exp(-Math.pow((dx - lobeSpacing * 0.5) / 0.15, 2));
-      const valley2Left = 0.02 * Math.exp(-Math.pow((dx + lobeSpacing * 1.5) / 0.15, 2));
-      const valley2Right = 0.02 * Math.exp(-Math.pow((dx - lobeSpacing * 1.5) / 0.15, 2));
-      
-      // Sum all contributions for smooth curve that touches baseline between lobes
-      return mainLobe + leftLobe1 + leftLobe2 + rightLobe1 + rightLobe2 + 
-             valley1Left + valley1Right + valley2Left + valley2Right;
+      return Math.max(0, intensity);
     };
     
     // Calculate peak heights based on new envelope with side lobes
