@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// life is neverending trauma on god this needs to be okay by like tues 
+// ahhhh please I got deadlines to meet
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -277,19 +277,26 @@ class GratingFFTSimulation {
       const mainLobe = Math.exp(-dx * dx * 8); // Very narrow main lobe
       
       // Side lobes positioned to create distinct separate curves
-      const lobeSpacing = 0.9; // Distance between lobe centers
-      const lobeWidth = 0.35; // Narrow side lobes
+      const lobeSpacing = 0.85; // Distance between lobe centers
+      const lobeWidth = 0.3; // Narrow side lobes
       
-      // Left side lobes - 75% of main amplitude
-      const leftLobe1 = 0.75 * Math.exp(-Math.pow((dx + lobeSpacing) / lobeWidth, 2));
-      const leftLobe2 = 0.56 * Math.exp(-Math.pow((dx + 2 * lobeSpacing) / lobeWidth, 2)); // 75% of leftLobe1
+      // Left side lobes - 50% of main amplitude
+      const leftLobe1 = 0.5 * Math.exp(-Math.pow((dx + lobeSpacing) / lobeWidth, 2));
+      const leftLobe2 = 0.35 * Math.exp(-Math.pow((dx + 2 * lobeSpacing) / lobeWidth, 2));
       
-      // Right side lobes - 75% of main amplitude  
-      const rightLobe1 = 0.75 * Math.exp(-Math.pow((dx - lobeSpacing) / lobeWidth, 2));
-      const rightLobe2 = 0.56 * Math.exp(-Math.pow((dx - 2 * lobeSpacing) / lobeWidth, 2)); // 75% of rightLobe1
+      // Right side lobes - 50% of main amplitude  
+      const rightLobe1 = 0.5 * Math.exp(-Math.pow((dx - lobeSpacing) / lobeWidth, 2));
+      const rightLobe2 = 0.35 * Math.exp(-Math.pow((dx - 2 * lobeSpacing) / lobeWidth, 2));
       
-      // Return max of all lobes to create distinct separated peaks
-      return Math.max(mainLobe, leftLobe1, leftLobe2, rightLobe1, rightLobe2);
+      // Smooth transitions between lobes - add small connecting valleys
+      const valley1Left = 0.02 * Math.exp(-Math.pow((dx + lobeSpacing * 0.5) / 0.15, 2));
+      const valley1Right = 0.02 * Math.exp(-Math.pow((dx - lobeSpacing * 0.5) / 0.15, 2));
+      const valley2Left = 0.02 * Math.exp(-Math.pow((dx + lobeSpacing * 1.5) / 0.15, 2));
+      const valley2Right = 0.02 * Math.exp(-Math.pow((dx - lobeSpacing * 1.5) / 0.15, 2));
+      
+      // Sum all contributions for smooth curve that touches baseline between lobes
+      return mainLobe + leftLobe1 + leftLobe2 + rightLobe1 + rightLobe2 + 
+             valley1Left + valley1Right + valley2Left + valley2Right;
     };
     
     // Calculate peak heights based on new envelope with side lobes
