@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// okay trust 
+// gogogogo
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -140,7 +140,7 @@ class GratingFFTSimulation {
     const orders = [];
     
     // Fixed number of orders to always display
-    const ordersToShow = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
+    const ordersToShow = [-3, -2, -1, 0, 1, 2, 3];
     
     for (const m of ordersToShow) {
       const sinTheta = m * this.wavelength / d;
@@ -275,7 +275,7 @@ class GratingFFTSimulation {
       
       // Use sinc function to create proper zeros between lobes
       // sinc(x) = sin(πx)/(πx), and intensity is sinc²(x)
-      const beta = normalizedX * 3.5; // Scale factor to control lobe width
+      const beta = normalizedX * 1.8; // Reduced from 3.5 to make lobes much wider
       
       let sincValue;
       if (Math.abs(beta) < 0.001) {
