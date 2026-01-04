@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// in this edit the side lobes should finally be visible in the default 
+// life is neverending trauma on god this needs to be okay by like tues 
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -268,28 +268,28 @@ class GratingFFTSimulation {
     const envelopeWidthFactor = 1.0 + (this.distanceToScreen - 1.0) * 0.4;
     const envelopeWidth = this.cvs.width * 0.3 * envelopeWidthFactor;
     
-    // Single-slit diffraction envelope function
-    // This creates the main lobe and side lobes
+    // Single-slit diffraction envelope function with distinct lobes
     const singleSlitEnvelope = (x) => {
       const centerX = this.cvs.width / 2;
       const dx = (x - centerX) / envelopeWidth;
       
-      // Single slit diffraction: sinc^2 function approximated with multiple lobes
-      const mainLobe = Math.exp(-dx * dx * 4); // Much narrower main lobe (increased from 2 to 4)
+      // Main lobe - VERY NARROW, only covers about 3-4 peaks
+      const mainLobe = Math.exp(-dx * dx * 8); // Very narrow main lobe
       
-      // Add side lobes (smaller envelopes on each side) - INCREASED INTENSITY
-      const lobeSpacing = 1.2; // Reduced spacing to bring lobes closer
-      const lobeWidth = 0.5; // Narrower side lobes
+      // Side lobes positioned to create distinct separate curves
+      const lobeSpacing = 0.9; // Distance between lobe centers
+      const lobeWidth = 0.35; // Narrow side lobes
       
-      // Left side lobes - MUCH MORE VISIBLE
-      const leftLobe1 = 0.15 * Math.exp(-Math.pow((dx + lobeSpacing) / lobeWidth, 2)); // Increased from 0.047
-      const leftLobe2 = 0.08 * Math.exp(-Math.pow((dx + 2 * lobeSpacing) / lobeWidth, 2)); // Increased from 0.016
+      // Left side lobes - 75% of main amplitude
+      const leftLobe1 = 0.75 * Math.exp(-Math.pow((dx + lobeSpacing) / lobeWidth, 2));
+      const leftLobe2 = 0.56 * Math.exp(-Math.pow((dx + 2 * lobeSpacing) / lobeWidth, 2)); // 75% of leftLobe1
       
-      // Right side lobes - MUCH MORE VISIBLE
-      const rightLobe1 = 0.15 * Math.exp(-Math.pow((dx - lobeSpacing) / lobeWidth, 2)); // Increased from 0.047
-      const rightLobe2 = 0.08 * Math.exp(-Math.pow((dx - 2 * lobeSpacing) / lobeWidth, 2)); // Increased from 0.016
+      // Right side lobes - 75% of main amplitude  
+      const rightLobe1 = 0.75 * Math.exp(-Math.pow((dx - lobeSpacing) / lobeWidth, 2));
+      const rightLobe2 = 0.56 * Math.exp(-Math.pow((dx - 2 * lobeSpacing) / lobeWidth, 2)); // 75% of rightLobe1
       
-      return mainLobe + leftLobe1 + leftLobe2 + rightLobe1 + rightLobe2;
+      // Return max of all lobes to create distinct separated peaks
+      return Math.max(mainLobe, leftLobe1, leftLobe2, rightLobe1, rightLobe2);
     };
     
     // Calculate peak heights based on new envelope with side lobes
