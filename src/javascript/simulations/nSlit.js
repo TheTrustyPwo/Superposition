@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// ily please work
+// in this edit the side lobes should finally be visible in the default 
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -275,19 +275,19 @@ class GratingFFTSimulation {
       const dx = (x - centerX) / envelopeWidth;
       
       // Single slit diffraction: sinc^2 function approximated with multiple lobes
-      const mainLobe = Math.exp(-dx * dx * 2); // Narrower main lobe
+      const mainLobe = Math.exp(-dx * dx * 4); // Much narrower main lobe (increased from 2 to 4)
       
-      // Add side lobes (smaller envelopes on each side)
-      const lobeSpacing = 1.5; // Distance between lobe centers
-      const lobeWidth = 0.6; // Width of side lobes
+      // Add side lobes (smaller envelopes on each side) - INCREASED INTENSITY
+      const lobeSpacing = 1.2; // Reduced spacing to bring lobes closer
+      const lobeWidth = 0.5; // Narrower side lobes
       
-      // Left side lobes
-      const leftLobe1 = 0.047 * Math.exp(-Math.pow((dx + lobeSpacing) / lobeWidth, 2));
-      const leftLobe2 = 0.016 * Math.exp(-Math.pow((dx + 2 * lobeSpacing) / lobeWidth, 2));
+      // Left side lobes - MUCH MORE VISIBLE
+      const leftLobe1 = 0.15 * Math.exp(-Math.pow((dx + lobeSpacing) / lobeWidth, 2)); // Increased from 0.047
+      const leftLobe2 = 0.08 * Math.exp(-Math.pow((dx + 2 * lobeSpacing) / lobeWidth, 2)); // Increased from 0.016
       
-      // Right side lobes
-      const rightLobe1 = 0.047 * Math.exp(-Math.pow((dx - lobeSpacing) / lobeWidth, 2));
-      const rightLobe2 = 0.016 * Math.exp(-Math.pow((dx - 2 * lobeSpacing) / lobeWidth, 2));
+      // Right side lobes - MUCH MORE VISIBLE
+      const rightLobe1 = 0.15 * Math.exp(-Math.pow((dx - lobeSpacing) / lobeWidth, 2)); // Increased from 0.047
+      const rightLobe2 = 0.08 * Math.exp(-Math.pow((dx - 2 * lobeSpacing) / lobeWidth, 2)); // Increased from 0.016
       
       return mainLobe + leftLobe1 + leftLobe2 + rightLobe1 + rightLobe2;
     };
