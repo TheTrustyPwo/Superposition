@@ -179,7 +179,7 @@ $\delta = (m + \frac{1}{2}) \cdot \lambda$.
 
 ## Key Formulae Summary:
 
-| To find | Formula | 
+| | To find | Formula | 
 |---|---|
 | 1 | Wavelength | $\lambda = 2\pi / k$, <br> where $\lambda$ = wavelength and k is a constant |
 | 2 | Path difference | $\delta = r_2 - r_1$, <br> where $\delta$ is path difference and r is the length of path | 
