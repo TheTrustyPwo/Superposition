@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// idek what to do atp 
+// updates :)
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -305,8 +305,9 @@ class GratingFFTSimulation {
       const envelopeIntensity = singleSlitEnvelope(order.x);
       return {
         x: order.x,
-        height: envelopeIntensity * maxHeight,
-        order: order.order
+        height: envelopeIntensity * maxHeight * 0.98, // Scale to 98% to stay below envelope
+        order: order.order,
+        envelopeHeight: envelopeIntensity * maxHeight // Store full envelope height for comparison
       };
     });
     
