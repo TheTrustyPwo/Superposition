@@ -193,52 +193,6 @@ $\delta = (m + \frac{1}{2}) \cdot \lambda$.
 | 10 | Finding the distance to the bright spots | $y_b = m\frac{L\lambda}{d}$ |
 | 11 | Finding the distance to the dark spots | $y_d = \left(m + \frac{1}{2}\right)\frac{L\lambda}{d}$ |
 
-1. Wavelength <br>
-$\lambda = 2\pi / k$, <br>
-where $\lambda$ = wavelength and k is a constant
-
-
-2. Path Difference <br>
-$\delta = r_2 - r_1$, <br>
-where $\delta$ is path difference and r is the length of path
-
-
-3. Square of Longer Source <br>
-$r_2^2 = r^2 + \left(\frac{d}{2}\right)^2 - 2r\left(\frac{d}{2}\right)\cos\left(\frac{\pi}{2} - \theta\right) = r^2 + \left(\frac{d}{2}\right)^2 + dr\sin\theta$, <br>
-where d is the distance from source to screen
-
-
-4. Square of Shorter Source <br>
-$r_1^2 = r^2 + \left(\frac{d}{2}\right)^2 - 2r\left(\frac{d}{2}\right)\cos\left(\frac{\pi}{2} + \theta\right) = r^2 + \left(\frac{d}{2}\right)^2 - dr\sin\theta$
-
-
-5. Derivation from 3 - 4 <br>
-$(r_2 - r_1)(r_2 + r_1) = 2dr\sin\theta$
-
-
-6. Small distance approximation <br>
-$\delta = r_2 - r_1 \approx d\sin\theta$
-
-
-7. Condition for constructive interference <br>
-$d\sin\theta = m\lambda, \quad m = 0, \pm1, \pm2, \pm3, \ldots \text{ (constructive interference)}$
-
-
-8. Condition for destructive interference <br>
-$d\sin\theta = \left(m + \frac{1}{2}\right)\lambda, \quad m = 0, \pm1, \pm2, \pm3, \ldots \text{ (destructive interference)}$
-
-
-9. Small Angle Approximation <br>
-$\sin\theta \approx \tan\theta = \frac{y}{L}$
-
-
-10. Finding the distance to the bright spots <br>
-$y_b = m\frac{L\lambda}{d}$
-
-
-11. Finding the distance to the dark spots <br>
-$y_d = \left(m + \frac{1}{2}\right)\frac{L\lambda}{d}$
-
 
 ## Enrichment:
 
