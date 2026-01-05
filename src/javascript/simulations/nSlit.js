@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// I got a deadline pleaseeee
+// ssef trust 
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -275,7 +275,7 @@ class GratingFFTSimulation {
       
       // Use sinc function to create proper zeros between lobes
       // sinc(x) = sin(πx)/(πx), and intensity is sinc²(x)
-      const beta = normalizedX * 1.8; // Reduced from 3.5 to make lobes much wider
+      const beta = normalizedX * 1.5; // Reduced from 1.8 to make lobes wider
       
       let sincValue;
       if (Math.abs(beta) < 0.001) {
@@ -572,7 +572,7 @@ class GratingFFTSimulation {
     const singleSlitEnvelope = (x) => {
       const centerX = this.cvs.width / 2;
       const normalizedX = (x - centerX) / envelopeWidth;
-      const beta = normalizedX * 1.8;
+      const beta = normalizedX * 1.5;
       
       let sincValue;
       if (Math.abs(beta) < 0.001) {
