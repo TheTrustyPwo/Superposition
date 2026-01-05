@@ -179,8 +179,8 @@ $\delta = (m + \frac{1}{2}) \cdot \lambda$.
 
 ## Key Formulae Summary:
 
-| | To find | Formula | 
-|---|---|
+| Number | To find | Formula | 
+|---|---|---|
 | 1 | Wavelength | $\lambda = 2\pi / k$, <br> where $\lambda$ = wavelength and k is a constant |
 | 2 | Path difference | $\delta = r_2 - r_1$, <br> where $\delta$ is path difference and r is the length of path | 
 | 3 | Square of Longer Source | $r_2^2 = r^2 + \left(\frac{d}{2}\right)^2 - 2r\left(\frac{d}{2}\right)\cos\left(\frac{\pi}{2} - \theta\right) = r^2 + \left(\frac{d}{2}\right)^2 + dr\sin\theta$, <br> where d is the distance from source to screen |
