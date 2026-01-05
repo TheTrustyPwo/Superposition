@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// updates :)
+// I got a deadline pleaseeee
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -322,12 +322,19 @@ class GratingFFTSimulation {
     ctx.strokeStyle = i2h(this.color);
     ctx.fillStyle = i2h(this.color);
     
+    // First pass: draw the curve, clamping to envelope
     ctx.beginPath();
     
     // Start from the left edge at baseline
     const leftmost = visiblePeaks[0];
     const startX = Math.max(0, leftmost.x - 100);
     ctx.moveTo(startX, screenY);
+    
+    // Helper function to clamp y value to envelope
+    const clampToEnvelope = (x, y) => {
+      const envelopeY = screenY - singleSlitEnvelope(x) * maxHeight;
+      return Math.max(y, envelopeY); // Don't go above envelope (lower y = higher on screen)
+    };
     
     // Draw smooth sinusoidal curve through each peak
     for (let i = 0; i < visiblePeaks.length; i++) {
@@ -338,62 +345,130 @@ class GratingFFTSimulation {
         // Calculate spacing for first peak
         const firstSpacing = nextPeak ? (nextPeak.x - currentPeak.x) : (currentPeak.x - startX);
         
-        // Sharp rise approaching first peak
+        // Sharp rise approaching first peak - sample and clamp points along the curve
         const approachX = currentPeak.x - firstSpacing * 0.06;
-        const controlX1 = startX + (approachX - startX) * 0.7;
-        const controlY1 = screenY;
-        const controlX2 = approachX - (approachX - startX) * 0.1;
-        const controlY2 = screenY - currentPeak.height * 0.85;
-        ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, approachX, screenY - currentPeak.height * 0.95);
+        const numSamples = 20;
         
-        // Rounded peak top - smooth connection
-        const peakControlX1 = currentPeak.x - firstSpacing * 0.03;
-        const peakControlY1 = screenY - currentPeak.height * 1.01;
-        const peakControlX2 = currentPeak.x + firstSpacing * 0.03;
-        const peakControlY2 = screenY - currentPeak.height * 1.01;
-        ctx.bezierCurveTo(peakControlX1, peakControlY1, peakControlX2, peakControlY2, currentPeak.x + firstSpacing * 0.06, screenY - currentPeak.height * 0.95);
+        for (let s = 0; s <= numSamples; s++) {
+          const t = s / numSamples;
+          const x = startX + t * (approachX - startX);
+          
+          // Bezier calculation
+          const controlX1 = startX + (approachX - startX) * 0.7;
+          const controlY1 = screenY;
+          const controlX2 = approachX - (approachX - startX) * 0.1;
+          const controlY2 = screenY - currentPeak.height * 0.85;
+          
+          const mt = 1 - t;
+          const bx = mt*mt*mt*startX + 3*mt*mt*t*controlX1 + 3*mt*t*t*controlX2 + t*t*t*approachX;
+          const by = mt*mt*mt*screenY + 3*mt*mt*t*controlY1 + 3*mt*t*t*controlY2 + t*t*t*(screenY - currentPeak.height * 0.95);
+          
+          const clampedY = clampToEnvelope(bx, by);
+          if (s === 0) ctx.moveTo(bx, clampedY);
+          else ctx.lineTo(bx, clampedY);
+        }
+        
+        // Rounded peak top - sample and clamp
+        const peakStartX = approachX;
+        const peakEndX = currentPeak.x + firstSpacing * 0.06;
+        
+        for (let s = 0; s <= numSamples; s++) {
+          const t = s / numSamples;
+          const peakControlX1 = currentPeak.x - firstSpacing * 0.03;
+          const peakControlY1 = screenY - currentPeak.height * 1.01;
+          const peakControlX2 = currentPeak.x + firstSpacing * 0.03;
+          const peakControlY2 = screenY - currentPeak.height * 1.01;
+          
+          const mt = 1 - t;
+          const bx = mt*mt*mt*peakStartX + 3*mt*mt*t*peakControlX1 + 3*mt*t*t*peakControlX2 + t*t*t*peakEndX;
+          const by = mt*mt*mt*(screenY - currentPeak.height * 0.95) + 3*mt*mt*t*peakControlY1 + 3*mt*t*t*peakControlY2 + t*t*t*(screenY - currentPeak.height * 0.95);
+          
+          const clampedY = clampToEnvelope(bx, by);
+          ctx.lineTo(bx, clampedY);
+        }
       }
       
       if (nextPeak) {
         const spacing = nextPeak.x - currentPeak.x;
         const midX = (currentPeak.x + nextPeak.x) / 2;
+        const numSamples = 20;
         
         // Descent from peak
-        const descendControlX1 = currentPeak.x + spacing * 0.22;
-        const descendControlY1 = screenY - currentPeak.height * 0.7;
-        
-        const descendControlX2 = midX - spacing * 0.1;
-        const descendControlY2 = screenY;
-        
-        ctx.bezierCurveTo(descendControlX1, descendControlY1, descendControlX2, descendControlY2, midX, screenY);
+        const descentStartX = currentPeak.x + spacing * 0.06;
+        for (let s = 0; s <= numSamples; s++) {
+          const t = s / numSamples;
+          const descendControlX1 = currentPeak.x + spacing * 0.22;
+          const descendControlY1 = screenY - currentPeak.height * 0.7;
+          const descendControlX2 = midX - spacing * 0.1;
+          const descendControlY2 = screenY;
+          
+          const mt = 1 - t;
+          const bx = mt*mt*mt*descentStartX + 3*mt*mt*t*descendControlX1 + 3*mt*t*t*descendControlX2 + t*t*t*midX;
+          const by = mt*mt*mt*(screenY - currentPeak.height * 0.95) + 3*mt*mt*t*descendControlY1 + 3*mt*t*t*descendControlY2 + t*t*t*screenY;
+          
+          const clampedY = clampToEnvelope(bx, by);
+          ctx.lineTo(bx, clampedY);
+        }
         
         // Ascent approaching next peak
         const nextApproachX = nextPeak.x - spacing * 0.06;
-        const ascentControlX1 = midX + spacing * 0.1;
-        const ascentControlY1 = screenY;
+        for (let s = 0; s <= numSamples; s++) {
+          const t = s / numSamples;
+          const ascentControlX1 = midX + spacing * 0.1;
+          const ascentControlY1 = screenY;
+          const ascentControlX2 = nextApproachX - spacing * 0.1;
+          const ascentControlY2 = screenY - nextPeak.height * 0.85;
+          
+          const mt = 1 - t;
+          const bx = mt*mt*mt*midX + 3*mt*mt*t*ascentControlX1 + 3*mt*t*t*ascentControlX2 + t*t*t*nextApproachX;
+          const by = mt*mt*mt*screenY + 3*mt*mt*t*ascentControlY1 + 3*mt*t*t*ascentControlY2 + t*t*t*(screenY - nextPeak.height * 0.95);
+          
+          const clampedY = clampToEnvelope(bx, by);
+          ctx.lineTo(bx, clampedY);
+        }
         
-        const ascentControlX2 = nextApproachX - spacing * 0.1;
-        const ascentControlY2 = screenY - nextPeak.height * 0.85;
+        // Rounded peak top for next peak
+        const nextPeakStartX = nextApproachX;
+        const nextPeakEndX = nextPeak.x + spacing * 0.06;
         
-        ctx.bezierCurveTo(ascentControlX1, ascentControlY1, ascentControlX2, ascentControlY2, nextApproachX, screenY - nextPeak.height * 0.95);
-        
-        // Rounded peak top for next peak - smooth connection
-        const nextPeakControlX1 = nextPeak.x - spacing * 0.03;
-        const nextPeakControlY1 = screenY - nextPeak.height * 1.01;
-        const nextPeakControlX2 = nextPeak.x + spacing * 0.03;
-        const nextPeakControlY2 = screenY - nextPeak.height * 1.01;
-        ctx.bezierCurveTo(nextPeakControlX1, nextPeakControlY1, nextPeakControlX2, nextPeakControlY2, nextPeak.x + spacing * 0.06, screenY - nextPeak.height * 0.95);
+        for (let s = 0; s <= numSamples; s++) {
+          const t = s / numSamples;
+          const nextPeakControlX1 = nextPeak.x - spacing * 0.03;
+          const nextPeakControlY1 = screenY - nextPeak.height * 1.01;
+          const nextPeakControlX2 = nextPeak.x + spacing * 0.03;
+          const nextPeakControlY2 = screenY - nextPeak.height * 1.01;
+          
+          const mt = 1 - t;
+          const bx = mt*mt*mt*nextPeakStartX + 3*mt*mt*t*nextPeakControlX1 + 3*mt*t*t*nextPeakControlX2 + t*t*t*nextPeakEndX;
+          const by = mt*mt*mt*(screenY - nextPeak.height * 0.95) + 3*mt*mt*t*nextPeakControlY1 + 3*mt*t*t*nextPeakControlY2 + t*t*t*(screenY - nextPeak.height * 0.95);
+          
+          const clampedY = clampToEnvelope(bx, by);
+          ctx.lineTo(bx, clampedY);
+        }
       }
     }
     
-    // Curve down from last peak to baseline with rounded top
+    // Curve down from last peak to baseline
     const lastPeak = visiblePeaks[visiblePeaks.length - 1];
     const endX = Math.min(this.cvs.width, lastPeak.x + 100);
-    const controlX1 = lastPeak.x + (endX - lastPeak.x) * 0.4;
-    const controlY1 = screenY - lastPeak.height * 0.3;
-    const controlX2 = endX - (endX - lastPeak.x) * 0.3;
-    const controlY2 = screenY;
-    ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, endX, screenY);
+    const lastSpacing = endX - lastPeak.x;
+    const numSamples = 20;
+    
+    const lastDescentStartX = lastPeak.x + lastSpacing * 0.06;
+    for (let s = 0; s <= numSamples; s++) {
+      const t = s / numSamples;
+      const controlX1 = lastPeak.x + (endX - lastPeak.x) * 0.4;
+      const controlY1 = screenY - lastPeak.height * 0.3;
+      const controlX2 = endX - (endX - lastPeak.x) * 0.3;
+      const controlY2 = screenY;
+      
+      const mt = 1 - t;
+      const bx = mt*mt*mt*lastDescentStartX + 3*mt*mt*t*controlX1 + 3*mt*t*t*controlX2 + t*t*t*endX;
+      const by = mt*mt*mt*(screenY - lastPeak.height * 0.95) + 3*mt*mt*t*controlY1 + 3*mt*t*t*controlY2 + t*t*t*screenY;
+      
+      const clampedY = clampToEnvelope(bx, by);
+      ctx.lineTo(bx, clampedY);
+    }
     
     // Complete the shape back to start
     ctx.lineTo(startX, screenY);
