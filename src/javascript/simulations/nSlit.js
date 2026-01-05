@@ -1,7 +1,7 @@
 import { Grating } from "../shared/slit.js";
 import { i2h, interpolate, w2h } from "../utils/color.js";
 
-// gogogogo
+// idek what to do atp 
 
 class GratingFFTSimulation {
   constructor(cvs, ctx, density = 1000, wavelength = 500e-9, slitWidth = 2e-6, distanceToScreen = 2.0) {
@@ -477,7 +477,7 @@ class GratingFFTSimulation {
     // Lines removed - no visual connection between grating and maxima
   }
 
-  // Screen view shows discrete bright dots with width variation
+  // Screen view shows discrete bright dots with width variation AND envelope-based intensity
   drawScreenView = (screenCtx, width, height) => {
     if (!this.diffractionOrders) {
       const spec = this.computeSpec();
@@ -488,18 +488,52 @@ class GratingFFTSimulation {
     screenCtx.fillStyle = '#000000';
     screenCtx.fillRect(0, 0, width, height);
     
-    // Draw each order as a bright vertical stripe with variable width
+    // Calculate envelope width for intensity modulation
+    const envelopeWidthFactor = 1.0 + (this.distanceToScreen - 1.0) * 0.4;
+    const envelopeWidth = this.cvs.width * 0.3 * envelopeWidthFactor;
+    
+    // Single-slit envelope function (same as in drawIntensityPlot)
+    const singleSlitEnvelope = (x) => {
+      const centerX = this.cvs.width / 2;
+      const normalizedX = (x - centerX) / envelopeWidth;
+      const beta = normalizedX * 1.8;
+      
+      let sincValue;
+      if (Math.abs(beta) < 0.001) {
+        sincValue = 1;
+      } else {
+        sincValue = Math.sin(Math.PI * beta) / (Math.PI * beta);
+      }
+      
+      let intensity = sincValue * sincValue;
+      
+      if (Math.abs(beta) > 1.0 && Math.abs(beta) < 2.0) {
+        intensity *= 11;
+      } else if (Math.abs(beta) >= 2.0 && Math.abs(beta) < 3.0) {
+        intensity *= 8;
+      }
+      
+      return Math.max(0, intensity);
+    };
+    
+    // Draw each order as a bright vertical stripe with envelope-modulated intensity
     for (const order of this.diffractionOrders) {
       const xScreen = (order.x / this.cvs.width) * width;
-      const intensity = order.intensity;
-      const spotWidth = Math.max(2, (order.width / this.cvs.width) * width * 2); // Scale width to screen view
+      
+      // Get envelope intensity at this position
+      const envelopeIntensity = singleSlitEnvelope(order.x);
+      
+      // Combine order intensity with envelope intensity
+      const combinedIntensity = envelopeIntensity;
+      
+      const spotWidth = Math.max(2, (order.width / this.cvs.width) * width * 2);
       
       for (let dx = -spotWidth; dx <= spotWidth; dx++) {
         const x = Math.round(xScreen + dx);
         if (x < 0 || x >= width) continue;
         
         const radialFade = 1 - Math.abs(dx) / spotWidth;
-        const alpha = intensity * radialFade;
+        const alpha = combinedIntensity * radialFade;
         
         const color = interpolate(0, this.color, alpha);
         screenCtx.fillStyle = color;
