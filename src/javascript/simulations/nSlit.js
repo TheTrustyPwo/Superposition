@@ -40,8 +40,6 @@ class GratingFFTSimulation {
   }
 
   resize() {
-    // Calculate screen position based on distance
-    // Distance: 1.0m (100cm) = halfway down (0.5), 2.0m (200cm) = quarter down (0.25)
     const screenYFraction = 0.5 - (this.distanceToScreen - 1.0) * 0.25;
     
     this.screen = {
@@ -133,52 +131,26 @@ class GratingFFTSimulation {
     return spec;
   }
 
-  // Calculate discrete diffraction orders using simplified approach
-  // Peak width depends on number of slits and distance
   calculateDiffractionOrders() {
-    const d = 1e-3 / this.density; // grating spacing in meters
     const orders = [];
-    
-    // Fixed number of orders to always display
     const ordersToShow = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
     
     for (const m of ordersToShow) {
-      const sinTheta = m * this.wavelength / d;
-      
-      // Even if sinTheta > 1 (physically impossible), we'll place it for visibility
-      let theta;
-      if (Math.abs(sinTheta) <= 1) {
-        theta = Math.asin(sinTheta);
-      } else {
-        // Extrapolate beyond physical limits for visualization
-        theta = Math.sign(sinTheta) * Math.PI / 2 * Math.min(Math.abs(sinTheta), 3);
-      }
-      
-      // Position on screen - scale to ensure visibility
-      // Spacing depends on wavelength: longer wavelength = wider spacing
-      // Using 500nm as baseline wavelength
       const wavelengthFactor = this.wavelength / 500e-9;
-      const baseSpacing = 120 * wavelengthFactor; // spacing scales with wavelength
+      const baseSpacing = 120 * Math.pow(wavelengthFactor, 0.7);
       const xPos = this.cvs.width/2 + m * baseSpacing * (this.distanceToScreen / 1.5);
       
-      // Calculate envelope intensity for this position - ALL orders touch envelope
       const centerX = this.cvs.width / 2;
       const dx = (xPos - centerX) / (this.cvs.width * 0.3);
       const envelopeIntensity = Math.exp(-dx * dx);
       
-      // All orders match envelope height
-      const intensity = envelopeIntensity;
-      
-      // Peak width depends on:
-      // 1. Number of slits (more slits = narrower peaks) - increased sensitivity
-      // 2. Distance (farther = wider peaks due to diffraction spreading) - increased sensitivity
       const effectiveSlits = this.illuminatedWidthPx / (1000 / this.density);
-      const slitFactor = 50 / Math.sqrt(effectiveSlits); // Increased from 30 for more pronounced effect
-      const distanceFactor = Math.pow(this.distanceToScreen / 1.0, 1.2); // Increased exponent and adjusted baseline for more visible change
-      const peakWidth = Math.max(3, slitFactor * distanceFactor);
+      const slitFactor = 25 / Math.sqrt(effectiveSlits);
+      const distanceFactor = Math.pow(this.distanceToScreen / 1.0, 0.8);
+      const peakWidth = Math.max(2, slitFactor * distanceFactor);
       
       if (xPos >= -50 && xPos < this.cvs.width + 50) {
-        orders.push({ order: m, x: xPos, intensity: intensity, width: peakWidth });
+        orders.push({ order: m, x: xPos, intensity: envelopeIntensity, width: peakWidth });
       }
     }
     
@@ -186,25 +158,18 @@ class GratingFFTSimulation {
   }
 
   fftToScreen(spec) {
-    const N = spec.length;
     const screenIntensity = new Float32Array(this.cvs.width);
     screenIntensity.fill(0);
 
-    // Use discrete orders with simplified positioning
     this.diffractionOrders = this.calculateDiffractionOrders();
     
-    // Apply density effect: higher density = wider spacing
-    const densityFactor = this.density / 700; // normalized to 700 lines/mm baseline
-    
-    // Apply distance effect: farther = wider spacing (very subtle - only 10% range)
-    // Scale from 1.0 to 2.0 meters -> factor from 0.95 to 1.05 (10% range)
+    const densityFactor = Math.pow(this.density / 700, 0.6);
     const distanceFactor = 0.95 + (this.distanceToScreen - 1.0) * 0.1;
     
     for (const order of this.diffractionOrders) {
-      // Adjust position based on density and distance
       const adjustedX = this.cvs.width/2 + (order.x - this.cvs.width/2) * densityFactor * distanceFactor;
       
-      const width = order.width; // Use calculated width based on number of slits
+      const width = order.width;
       for (let dx = -width*2; dx <= width*2; dx++) {
         const x = Math.round(adjustedX + dx);
         if (x >= 0 && x < this.cvs.width) {
@@ -214,13 +179,11 @@ class GratingFFTSimulation {
       }
     }
 
-    // Store adjusted positions for rendering
     this.diffractionOrders = this.diffractionOrders.map(order => ({
       ...order,
       x: this.cvs.width/2 + (order.x - this.cvs.width/2) * densityFactor * distanceFactor
     }));
 
-    // normalize
     let max = 0;
     for (let i = 0; i < screenIntensity.length; i++) if (screenIntensity[i] > max) max = screenIntensity[i];
     if (max > 0) for (let i = 0; i < screenIntensity.length; i++) screenIntensity[i] /= max;
@@ -251,7 +214,6 @@ class GratingFFTSimulation {
     const ctx = this.c;
     const screenY = this.screen.y;
     
-    // Draw horizontal screen line (thicker now for draggability)
     ctx.save();
     ctx.strokeStyle = "#ffffff";
     ctx.lineWidth = 4;
@@ -261,91 +223,67 @@ class GratingFFTSimulation {
     ctx.stroke();
     ctx.restore();
     
-    // Calculate maxHeight
     const maxHeight = this.cvs.height * 0.18;
-    
-    // Calculate envelope width factor based on distance
     const envelopeWidthFactor = 1.0 + (this.distanceToScreen - 1.0) * 0.4;
     const envelopeWidth = this.cvs.width * 0.3 * envelopeWidthFactor;
     
-    // Single-slit diffraction envelope function with distinct lobes
     const singleSlitEnvelope = (x) => {
       const centerX = this.cvs.width / 2;
       const normalizedX = (x - centerX) / envelopeWidth;
-      
-      // Use sinc function to create proper zeros between lobes
-      // sinc(x) = sin(πx)/(πx), and intensity is sinc²(x)
-      const beta = normalizedX * 1.5; // Reduced from 1.8 to make lobes wider
+      const beta = normalizedX * 1.5;
       
       let sincValue;
       if (Math.abs(beta) < 0.001) {
-        sincValue = 1; // Limit as beta approaches 0
+        sincValue = 1;
       } else {
         sincValue = Math.sin(Math.PI * beta) / (Math.PI * beta);
       }
       
-      // Square the sinc to get intensity, and scale to get proper side lobe heights
       let intensity = sincValue * sincValue;
       
-      // Scale to make side lobes about 50% of main lobe
-      // Natural sinc² gives ~4.5% for first side lobe, so we boost it
       if (Math.abs(beta) > 1.0 && Math.abs(beta) < 2.0) {
-        // First side lobes
-        intensity *= 11; // Boost to ~50%
+        intensity *= 11;
       } else if (Math.abs(beta) >= 2.0 && Math.abs(beta) < 3.0) {
-        // Second side lobes  
-        intensity *= 8; // Boost to ~35%
+        intensity *= 8;
       }
       
       return Math.max(0, intensity);
     };
     
-    // Calculate peak heights based on new envelope with side lobes
     const peaks = this.diffractionOrders.map(order => {
       const envelopeIntensity = singleSlitEnvelope(order.x);
       return {
         x: order.x,
-        height: envelopeIntensity * maxHeight * 0.98, // Scale to 98% to stay below envelope
+        height: envelopeIntensity * maxHeight * 0.98,
         order: order.order,
-        envelopeHeight: envelopeIntensity * maxHeight // Store full envelope height for comparison
+        envelopeHeight: envelopeIntensity * maxHeight
       };
     });
     
-    // Filter out peaks that are too small to see
     const visiblePeaks = peaks.filter(p => p.height > maxHeight * 0.01);
-    
-    // Sort peaks by x position
     visiblePeaks.sort((a, b) => a.x - b.x);
     
-    // Draw wavy curve connecting all peaks
     ctx.lineWidth = 2;
     ctx.strokeStyle = i2h(this.color);
     ctx.fillStyle = i2h(this.color);
     
-    // First pass: draw the curve, clamping to envelope
     ctx.beginPath();
     
-    // Start from the left edge at baseline
     const leftmost = visiblePeaks[0];
     const startX = Math.max(0, leftmost.x - 100);
     ctx.moveTo(startX, screenY);
     
-    // Helper function to clamp y value to envelope
     const clampToEnvelope = (x, y) => {
       const envelopeY = screenY - singleSlitEnvelope(x) * maxHeight;
-      return Math.max(y, envelopeY); // Don't go above envelope (lower y = higher on screen)
+      return Math.max(y, envelopeY);
     };
     
-    // Draw smooth sinusoidal curve through each peak
     for (let i = 0; i < visiblePeaks.length; i++) {
       const currentPeak = visiblePeaks[i];
       const nextPeak = visiblePeaks[i + 1];
       
       if (i === 0) {
-        // Calculate spacing for first peak
         const firstSpacing = nextPeak ? (nextPeak.x - currentPeak.x) : (currentPeak.x - startX);
-        
-        // Sharp rise approaching first peak - sample and clamp points along the curve
         const approachX = currentPeak.x - firstSpacing * 0.06;
         const numSamples = 20;
         
@@ -353,7 +291,6 @@ class GratingFFTSimulation {
           const t = s / numSamples;
           const x = startX + t * (approachX - startX);
           
-          // Bezier calculation
           const controlX1 = startX + (approachX - startX) * 0.7;
           const controlY1 = screenY;
           const controlX2 = approachX - (approachX - startX) * 0.1;
@@ -368,7 +305,6 @@ class GratingFFTSimulation {
           else ctx.lineTo(bx, clampedY);
         }
         
-        // Rounded peak top - sample and clamp
         const peakStartX = approachX;
         const peakEndX = currentPeak.x + firstSpacing * 0.06;
         
@@ -393,7 +329,6 @@ class GratingFFTSimulation {
         const midX = (currentPeak.x + nextPeak.x) / 2;
         const numSamples = 20;
         
-        // Descent from peak
         const descentStartX = currentPeak.x + spacing * 0.06;
         for (let s = 0; s <= numSamples; s++) {
           const t = s / numSamples;
@@ -410,7 +345,6 @@ class GratingFFTSimulation {
           ctx.lineTo(bx, clampedY);
         }
         
-        // Ascent approaching next peak
         const nextApproachX = nextPeak.x - spacing * 0.06;
         for (let s = 0; s <= numSamples; s++) {
           const t = s / numSamples;
@@ -427,7 +361,6 @@ class GratingFFTSimulation {
           ctx.lineTo(bx, clampedY);
         }
         
-        // Rounded peak top for next peak
         const nextPeakStartX = nextApproachX;
         const nextPeakEndX = nextPeak.x + spacing * 0.06;
         
@@ -448,7 +381,6 @@ class GratingFFTSimulation {
       }
     }
     
-    // Curve down from last peak to baseline
     const lastPeak = visiblePeaks[visiblePeaks.length - 1];
     const endX = Math.min(this.cvs.width, lastPeak.x + 100);
     const lastSpacing = endX - lastPeak.x;
@@ -470,19 +402,15 @@ class GratingFFTSimulation {
       ctx.lineTo(bx, clampedY);
     }
     
-    // Complete the shape back to start
     ctx.lineTo(startX, screenY);
     ctx.closePath();
     
-    // Fill with semi-transparent color
     ctx.globalAlpha = 0.3;
     ctx.fill();
     
-    // Stroke the outline
     ctx.globalAlpha = 1.0;
     ctx.stroke();
     
-    // Draw smooth dotted white envelope curve OVER the peaks showing side lobes
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#ffffff';
     ctx.globalAlpha = 0.7;
@@ -490,7 +418,6 @@ class GratingFFTSimulation {
     
     ctx.beginPath();
     
-    const centerX = this.cvs.width / 2;
     const numPoints = 400;
     let started = false;
     
@@ -536,7 +463,55 @@ class GratingFFTSimulation {
           const xPos = x + dx;
           if (xPos < 0 || xPos >= this.cvs.width) continue;
           
-          const radialFade = 1 - Math.abs(dx) / width;
+          const radialFade = 1 - Math.abs(dx) / spotWidth;
+        const alpha = combinedIntensity * radialFade;
+        
+        const color = interpolate(0, this.color, alpha);
+        screenCtx.fillStyle = color;
+        screenCtx.fillRect(x, 0, 1, height);
+      }
+    }
+  };
+
+  setDensity = (density) => {
+    this.density = Number(density);
+    this.gratingAperture.density = this.density;
+    this.gratingVisual.density = this.density;
+    this.aperture = this.gratingAperture.buildAperture(this.fftSize, this.xpx2m);
+    this.redraw = true;
+  };
+
+  setWavelength = (wavelengthNm) => {
+    this.wavelength = Number(wavelengthNm) / 1e9;
+    this.color = w2h(this.wavelength);
+    this.redraw = true;
+  };
+
+  setDistance = (distanceMeters) => {
+    const d = Math.max(1.0, Math.min(2.0, Number(distanceMeters)));
+    this.distanceToScreen = d;
+    this.resize();
+    this.redraw = true;
+  };
+
+  setupDragHandlers = () => {
+    this.screen.minY = Math.round(this.cvs.height * 0.25);
+    this.screen.maxY = Math.round(this.cvs.height * 0.75);
+  };
+
+  mouseMove = (event, x, y) => {
+    const prevY = this.screen.y;
+    this.screen.y = Math.max(Math.min(y, this.screen.maxY), this.screen.minY);
+    if (prevY === this.screen.y) return;
+    
+    const fraction = (this.screen.maxY - this.screen.y) / (this.screen.maxY - this.screen.minY);
+    this.distanceToScreen = 1.0 + fraction * 1.0;
+    
+    this.redraw = true;
+  };
+}
+
+export { GratingFFTSimulation }; - Math.abs(dx) / width;
           for (let y = 0; y < h; y += 3) {
             const verticalFade = Math.min(1, 0.3 + 0.7 * (y / h));
             this.c.globalAlpha = verticalFade * radialFade;
@@ -608,55 +583,4 @@ class GratingFFTSimulation {
         const x = Math.round(xScreen + dx);
         if (x < 0 || x >= width) continue;
         
-        const radialFade = 1 - Math.abs(dx) / spotWidth;
-        const alpha = combinedIntensity * radialFade;
-        
-        const color = interpolate(0, this.color, alpha);
-        screenCtx.fillStyle = color;
-        screenCtx.fillRect(x, 0, 1, height);
-      }
-    }
-  };
-
-  setDensity = (density) => {
-    this.density = Number(density);
-    this.gratingAperture.density = this.density;
-    this.gratingVisual.density = this.density;
-    this.aperture = this.gratingAperture.buildAperture(this.fftSize, this.xpx2m);
-    this.redraw = true;
-  };
-
-  setWavelength = (wavelengthNm) => {
-    this.wavelength = Number(wavelengthNm) / 1e9;
-    this.color = w2h(this.wavelength);
-    this.redraw = true;
-  };
-
-  setDistance = (distanceMeters) => {
-    const d = Math.max(1.0, Math.min(2.0, Number(distanceMeters)));
-    this.distanceToScreen = d;
-    this.resize(); // Call resize to recalculate screen position
-    this.redraw = true;
-  };
-
-  setupDragHandlers = () => {
-    // Set min and max Y bounds for the screen
-    this.screen.minY = Math.round(this.cvs.height * 0.25); // 2.0m (farthest)
-    this.screen.maxY = Math.round(this.cvs.height * 0.75); // 1.0m (closest)
-  };
-
-  mouseMove = (event, x, y) => {
-    const prevY = this.screen.y;
-    this.screen.y = Math.max(Math.min(y, this.screen.maxY), this.screen.minY);
-    if (prevY === this.screen.y) return;
-    
-    // Update distance based on new Y position
-    // Y from maxY (0.75*height) = 1.0m to minY (0.25*height) = 2.0m
-    const fraction = (this.screen.maxY - this.screen.y) / (this.screen.maxY - this.screen.minY);
-    this.distanceToScreen = 1.0 + fraction * 1.0;
-    
-    this.redraw = true;
-  };
-}
-
-export { GratingFFTSimulation };
+        const radialFade = 1
