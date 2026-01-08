@@ -4,7 +4,7 @@
 ## History Of Interference
 In Ancient times, the concept of wave interference was not well understood, but early observations of light patterns can be traced back to ancient civilizations. 
 
-The understanding of interference began to take shape with the development of wave theory in the early 18th century, with the famous **Thomas Young's Double-Slit Experiment (1801)** showing the strange behaviours of light. While there were many mathematical approaches afterwards to calculate the interference patterns, it was only in the early 20th century that the concept of **particle wave duelity** slowly began to take shape. 
+The understanding of interference began to take shape with the development of wave theory in the early 18th century, with the famous **Thomas Young's Double-Slit Experiment (1801)** showing the strange behaviours of light. While there were many mathematical approaches afterwards to calculate the interference patterns, it was only in the early 20th century that the concept of **particle wave duality** slowly began to take shape. 
 
 With that, more and more people started to accept the idea that small particles, such as the **Electron and Photons**, are able to exist in a superpositional state, both as a particle and a wave at the same time when unobserved.
 
