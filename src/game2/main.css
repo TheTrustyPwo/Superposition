@@ -31,6 +31,13 @@ body {
     overflow-y: auto; /* Enable scrolling within the container */
 }
 
+.question-main-image {
+    display: block;
+    margin: 15px auto;
+    max-width: 80%;
+    height: auto;
+    border-radius: 10px;
+}
 
 .hidden {
     display: none;
@@ -310,13 +317,25 @@ body {
     color: white;
 }
 
+#progress-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.progress-circle {
+    width: 20px;
+    height: 20px;
+    background-color: grey;
+    border-radius: 50%;
+}
+.progress-circle.correct {
+    background-color: green;
+}
+.progress-circle.wrong {
+    background-color: red;
+}
+
 button:hover {
     background-color: #0056b3;
 }
-
-
-
-
-
-
-
