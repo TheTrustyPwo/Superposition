@@ -244,13 +244,13 @@ function SS_changeWaveLengthQuestions() {
 
         if (isIncrease == 1) {
             wavelengthChange = 'longer';
-            correctOpt = 'The width of the Central Maxima decreases'
-            wrongOpt = 'The width of the Central Maxima increases'
+            correctOpt = 'The width of the Central Maxima increases'
+            wrongOpt = 'The width of the Central Maxima decreases'
 
         } else {
             wavelengthChange = 'shorter';
-            correctOpt = 'The width of the Central Maxima increases'
-            wrongOpt = 'The width of the Central Maxima decreases'
+            correctOpt = 'The width of the Central Maxima decreases'
+            wrongOpt = 'The width of the Central Maxima increases'
 
         };
 
