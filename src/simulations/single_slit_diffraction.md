@@ -1,8 +1,8 @@
 Minima Condition: $b \sin(\theta) = m \lambda$
 
-<div style="display: flex; flex-direction: row; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
-    <canvas id="singleSlit" width="800" height="400"></canvas>
-    <canvas id="screen-view-single" width="40" height="400" style="border-left: 2px solid #ccc; background: black;"></canvas>
+<div style="display: flex; flex-direction: row; align-items: stretch; gap: 20px;">
+  <canvas id="singleSlit" width="800" height="400"></canvas>
+  <canvas id="screen-view-single" width="40" height="400" style="border-left: 2px solid #ccc; background: black;"></canvas>
 </div>
 
 <div class="slitWidth">
